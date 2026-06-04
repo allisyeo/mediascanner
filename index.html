@@ -863,6 +863,280 @@
         overflow-x: auto;
       }
     }
+
+    /* SLA block */
+    .sla-kpis {
+      display: grid;
+      grid-template-columns: repeat(4, minmax(0, 1fr));
+      gap: 14px;
+      margin-bottom: 18px;
+    }
+
+    .sla-kpi {
+      padding: 16px 18px;
+      border-radius: 14px;
+      background: var(--bg);
+      border: 1px solid var(--line);
+    }
+
+    .sla-kpi .label {
+      font-size: 12px;
+      color: var(--muted);
+      margin-bottom: 6px;
+    }
+
+    .sla-kpi .value {
+      font-size: 22px;
+      font-weight: 800;
+      letter-spacing: -0.03em;
+    }
+
+    .sla-kpi .value.good { color: var(--green); }
+    .sla-kpi .value.risk { color: var(--yellow); }
+    .sla-kpi .value.bad { color: var(--red); }
+
+    .sla-status {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      padding: 5px 10px;
+      border-radius: 999px;
+      font-size: 12px;
+      font-weight: 700;
+    }
+
+    .sla-status.good { color: var(--green); background: var(--green-soft); }
+    .sla-status.risk { color: var(--yellow); background: var(--yellow-soft); }
+    .sla-status.overdue { color: var(--red); background: var(--red-soft); }
+
+    .sla-time {
+      font-weight: 700;
+      font-size: 12px;
+    }
+
+    .sla-time.ok { color: var(--green); }
+    .sla-time.warn { color: var(--yellow); }
+    .sla-time.over { color: var(--red); }
+
+    .importance-high { color: var(--red); font-weight: 700; }
+    .importance-medium { color: var(--yellow); font-weight: 700; }
+    .importance-low { color: var(--muted); }
+
+    tr.clickable { cursor: pointer; transition: background 0.12s; }
+    tr.clickable:hover { background: #f8fafc; }
+
+    /* Modals */
+    .modal-overlay {
+      display: none;
+      position: fixed;
+      inset: 0;
+      background: rgba(15, 23, 42, 0.45);
+      backdrop-filter: blur(4px);
+      z-index: 100;
+      align-items: center;
+      justify-content: center;
+      padding: 20px;
+    }
+
+    .modal-overlay.open { display: flex; }
+
+    .modal {
+      background: #fff;
+      border-radius: 20px;
+      border: 1px solid var(--line);
+      box-shadow: var(--shadow);
+      width: 100%;
+      max-width: 520px;
+      max-height: 90vh;
+      overflow-y: auto;
+      animation: modalIn 0.2s ease;
+    }
+
+    @keyframes modalIn {
+      from { opacity: 0; transform: scale(0.96) translateY(8px); }
+      to { opacity: 1; transform: scale(1) translateY(0); }
+    }
+
+    .modal-head {
+      padding: 22px 24px 0;
+      display: flex;
+      justify-content: space-between;
+      align-items: start;
+    }
+
+    .modal-head h3 {
+      margin: 0;
+      font-size: 18px;
+      letter-spacing: -0.03em;
+    }
+
+    .modal-close {
+      border: 0;
+      background: var(--bg);
+      width: 34px;
+      height: 34px;
+      border-radius: 10px;
+      cursor: pointer;
+      font-size: 18px;
+      color: var(--muted);
+      display: grid;
+      place-items: center;
+    }
+
+    .modal-body { padding: 18px 24px 24px; }
+
+    .form-group {
+      margin-bottom: 14px;
+    }
+
+    .form-group label {
+      display: block;
+      font-size: 13px;
+      font-weight: 600;
+      margin-bottom: 6px;
+      color: var(--text);
+    }
+
+    .form-group input,
+    .form-group select,
+    .form-group textarea {
+      width: 100%;
+      border: 1px solid var(--line);
+      border-radius: 12px;
+      padding: 11px 13px;
+      font-size: 14px;
+      outline: none;
+      font-family: inherit;
+    }
+
+    .form-group textarea { min-height: 90px; resize: vertical; }
+
+    .modal-actions {
+      display: flex;
+      gap: 10px;
+      justify-content: flex-end;
+      margin-top: 18px;
+    }
+
+    .source-options {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 10px;
+    }
+
+    .source-option {
+      border: 1px solid var(--line);
+      border-radius: 14px;
+      padding: 14px;
+      cursor: pointer;
+      text-align: center;
+      font-weight: 700;
+      font-size: 13px;
+      transition: 0.15s;
+      background: #fff;
+    }
+
+    .source-option:hover,
+    .source-option.selected {
+      border-color: var(--accent);
+      background: var(--accent-soft);
+      color: var(--accent);
+    }
+
+    .report-summary-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 12px;
+      margin-bottom: 16px;
+    }
+
+    .report-stat {
+      padding: 14px;
+      border-radius: 14px;
+      background: var(--bg);
+    }
+
+    .report-stat strong {
+      display: block;
+      font-size: 20px;
+      margin-bottom: 4px;
+    }
+
+    .report-stat span {
+      font-size: 12px;
+      color: var(--muted);
+    }
+
+    /* Toasts */
+    .toast-container {
+      position: fixed;
+      bottom: 24px;
+      right: 24px;
+      z-index: 200;
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+      pointer-events: none;
+    }
+
+    .toast {
+      background: var(--dark);
+      color: #fff;
+      padding: 14px 18px;
+      border-radius: 14px;
+      font-size: 14px;
+      font-weight: 600;
+      box-shadow: 0 12px 32px rgba(0, 0, 0, 0.2);
+      animation: toastIn 0.25s ease;
+      pointer-events: auto;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      max-width: 360px;
+    }
+
+    .toast.success { background: var(--green); }
+    .toast.info { background: var(--accent); }
+
+    @keyframes toastIn {
+      from { opacity: 0; transform: translateX(20px); }
+      to { opacity: 1; transform: translateX(0); }
+    }
+
+    @keyframes toastOut {
+      to { opacity: 0; transform: translateX(20px); }
+    }
+
+    .reply-textarea {
+      width: 100%;
+      border: 1px solid var(--accent);
+      border-radius: 14px;
+      padding: 14px;
+      font-size: 13px;
+      font-family: inherit;
+      line-height: 1.45;
+      min-height: 80px;
+      resize: vertical;
+      margin-bottom: 12px;
+    }
+
+    .empty-state {
+      text-align: center;
+      padding: 40px 20px;
+      color: var(--muted);
+      font-size: 14px;
+    }
+
+    @media (max-width: 1180px) {
+      .sla-kpis { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+    }
+
+    @media (max-width: 760px) {
+      .sla-kpis { grid-template-columns: 1fr; }
+      .source-options { grid-template-columns: 1fr; }
+      .report-summary-grid { grid-template-columns: 1fr; }
+      .toast-container { left: 16px; right: 16px; bottom: 16px; }
+    }
   </style>
 </head>
 <body>
@@ -899,9 +1173,9 @@
           <p id="pageSubtitle">Мониторинг упоминаний, тональности и активности по источникам</p>
         </div>
         <div class="top-actions">
-          <input class="search" placeholder="Поиск по постам, авторам, тегам..." />
-          <button class="btn secondary">Экспорт</button>
-          <button class="btn">+ Новый проект</button>
+          <input class="search" id="globalSearch" placeholder="Поиск по тексту упоминания..." />
+          <button class="btn secondary" id="btnExport">Экспорт</button>
+          <button class="btn" id="btnNewProject">+ Новый проект</button>
         </div>
       </header>
 
@@ -957,8 +1231,35 @@
                 <div class="source-row"><strong>Instagram</strong><div class="progress"><span style="width: 58%"></span></div><span>58%</span></div>
                 <div class="source-row"><strong>TikTok</strong><div class="progress"><span style="width: 39%"></span></div><span>39%</span></div>
                 <div class="source-row"><strong>YouTube</strong><div class="progress"><span style="width: 31%"></span></div><span>31%</span></div>
+                <div class="source-row"><strong>X/Twitter</strong><div class="progress"><span style="width: 26%"></span></div><span>26%</span></div>
                 <div class="source-row"><strong>Новости</strong><div class="progress"><span style="width: 22%"></span></div><span>22%</span></div>
               </div>
+            </div>
+          </div>
+
+          <div class="card section-card" style="margin-top:16px">
+            <div class="card-head">
+              <h3>SLA по сотрудникам</h3>
+              <span>Обновлено сегодня</span>
+            </div>
+            <div class="sla-kpis" id="slaSummaryKpis"></div>
+            <div class="table-card">
+              <table id="slaTable">
+                <thead>
+                  <tr>
+                    <th>Сотрудник</th>
+                    <th>Роль</th>
+                    <th>Назначено</th>
+                    <th>Обработано</th>
+                    <th>Ср. время ответа</th>
+                    <th>SLA target</th>
+                    <th>SLA fact</th>
+                    <th>Просрочено</th>
+                    <th>Статус</th>
+                  </tr>
+                </thead>
+                <tbody id="slaTableBody"></tbody>
+              </table>
             </div>
           </div>
 
@@ -968,32 +1269,7 @@
                 <h3>Последние важные упоминания</h3>
                 <span>Новые</span>
               </div>
-              <div class="mention-list">
-                <div class="mention">
-                  <div class="avatar">TG</div>
-                  <div>
-                    <h4>@almaty_chat · Telegram</h4>
-                    <p>Интернет опять нестабильно работает вечером. Кто сталкивался?</p>
-                  </div>
-                  <span class="tag red">Негатив</span>
-                </div>
-                <div class="mention">
-                  <div class="avatar">IG</div>
-                  <div>
-                    <h4>@user_kz · Instagram</h4>
-                    <p>Отметили бренд в сторис после подключения услуги.</p>
-                  </div>
-                  <span class="tag green">Позитив</span>
-                </div>
-                <div class="mention">
-                  <div class="avatar">YT</div>
-                  <div>
-                    <h4>Обзор тарифов · YouTube</h4>
-                    <p>В видео сравнивают тарифы операторов связи в Казахстане.</p>
-                  </div>
-                  <span class="tag yellow">Нейтрально</span>
-                </div>
-              </div>
+              <div class="mention-list" id="dashboardMentions"></div>
             </div>
 
             <div class="card section-card">
@@ -1006,8 +1282,8 @@
                 <p>За последние 3 часа выросло количество негативных упоминаний по ключу “интернет не работает”.</p>
                 <div class="reply-text">Рекомендация: включить алерт, подготовить шаблон ответа и передать обращения оператору поддержки.</div>
                 <div class="small-actions">
-                  <button class="small-btn primary">Принять</button>
-                  <button class="small-btn">Отклонить</button>
+                  <button class="small-btn primary" data-action="accept-rec">Принять</button>
+                  <button class="small-btn" data-action="reject-rec">Отклонить</button>
                 </div>
               </div>
             </div>
@@ -1017,13 +1293,36 @@
         <div class="page" id="mentions">
           <div class="page-title-row">
             <h2>Упоминания</h2>
-            <button class="btn">+ Добавить вручную</button>
+            <span id="mentionsCount" style="color:var(--muted);font-size:13px"></span>
           </div>
           <div class="filters">
-            <select class="select"><option>Все источники</option><option>Telegram</option><option>Instagram</option><option>TikTok</option></select>
-            <select class="select"><option>Все тональности</option><option>Позитив</option><option>Негатив</option><option>Нейтрально</option></select>
-            <input class="input" type="date" />
-            <input class="input" placeholder="Ключевое слово" />
+            <select class="select" id="filterSource">
+              <option value="">Все источники</option>
+              <option>Telegram</option>
+              <option>Instagram</option>
+              <option>TikTok</option>
+              <option>YouTube</option>
+              <option>X/Twitter</option>
+              <option>Новости</option>
+            </select>
+            <select class="select" id="filterSentiment">
+              <option value="">Все тональности</option>
+              <option>Позитив</option>
+              <option>Негатив</option>
+              <option>Нейтрально</option>
+            </select>
+            <select class="select" id="filterStatus">
+              <option value="">Все статусы</option>
+              <option>Новый</option>
+              <option>В работе</option>
+              <option>На проверке</option>
+              <option>Обработан</option>
+              <option>Отклонено</option>
+              <option>Передано оператору</option>
+            </select>
+            <select class="select" id="filterEmployee">
+              <option value="">Все сотрудники</option>
+            </select>
           </div>
           <div class="card table-card">
             <table>
@@ -1034,43 +1333,13 @@
                   <th>Автор</th>
                   <th>Текст</th>
                   <th>Тональность</th>
+                  <th>Важность</th>
                   <th>Статус</th>
+                  <th>Сотрудник</th>
+                  <th>SLA</th>
                 </tr>
               </thead>
-              <tbody>
-                <tr>
-                  <td>04.06.2026 09:12</td>
-                  <td>Telegram</td>
-                  <td>@almaty_chat</td>
-                  <td class="text-cell">Интернет опять не работает вечером, скорость падает после 20:00.</td>
-                  <td><span class="tag red">Негатив</span></td>
-                  <td><span class="tag blue">Новый</span></td>
-                </tr>
-                <tr>
-                  <td>04.06.2026 08:44</td>
-                  <td>Instagram</td>
-                  <td>@client_kz</td>
-                  <td class="text-cell">Спасибо за быстрое подключение, мастер приехал вовремя.</td>
-                  <td><span class="tag green">Позитив</span></td>
-                  <td><span class="tag green">Обработан</span></td>
-                </tr>
-                <tr>
-                  <td>03.06.2026 22:18</td>
-                  <td>YouTube</td>
-                  <td>Tech Review KZ</td>
-                  <td class="text-cell">В обзоре сравнили тарифы нескольких операторов и отдельно отметили цену пакета.</td>
-                  <td><span class="tag yellow">Нейтрально</span></td>
-                  <td><span class="tag blue">На проверке</span></td>
-                </tr>
-                <tr>
-                  <td>03.06.2026 17:31</td>
-                  <td>TikTok</td>
-                  <td>@internet_user</td>
-                  <td class="text-cell">Видео с жалобой на долгую обработку заявки.</td>
-                  <td><span class="tag red">Негатив</span></td>
-                  <td><span class="tag red">Важно</span></td>
-                </tr>
-              </tbody>
+              <tbody id="mentionsTableBody"></tbody>
             </table>
           </div>
         </div>
@@ -1078,7 +1347,7 @@
         <div class="page" id="keywords">
           <div class="page-title-row">
             <h2>Ключевые слова</h2>
-            <button class="btn">+ Добавить ключ</button>
+            <button class="btn" id="btnAddKeyword">+ Добавить ключ</button>
           </div>
 
           <div class="keyword-grid">
@@ -1135,7 +1404,7 @@
         <div class="page" id="sources">
           <div class="page-title-row">
             <h2>Источники</h2>
-            <button class="btn">+ Подключить источник</button>
+            <button class="btn" id="btnConnectSource">+ Подключить источник</button>
           </div>
 
           <div class="source-cards">
@@ -1161,7 +1430,19 @@
               <div class="source-icon">YT</div>
               <h3>YouTube</h3>
               <p>Поиск видео, комментариев, каналов и упоминаний в описаниях.</p>
-              <div class="status-line"><span>Статус</span><strong>Подключить</strong></div>
+              <div class="status-line"><span>Статус</span><strong>Подключено</strong></div>
+            </div>
+            <div class="card source-card">
+              <div class="source-icon">X</div>
+              <h3>X / Twitter</h3>
+              <p>Мониторинг постов, реплаев и упоминаний бренда в ленте.</p>
+              <div class="status-line"><span>Статус</span><strong id="xSourceStatus">Не подключено</strong></div>
+            </div>
+            <div class="card source-card">
+              <div class="source-icon">NW</div>
+              <h3>Новости</h3>
+              <p>Открытые новостные сайты, RSS и медиа-агрегаторы.</p>
+              <div class="status-line"><span>Статус</span><strong>Подключено</strong></div>
             </div>
           </div>
         </div>
@@ -1188,30 +1469,10 @@
             <div class="card agent-panel">
               <div class="card-head">
                 <h3>Очередь ответов</h3>
-                <span>28 ожидают проверки</span>
+                <span id="agentQueueCount">ожидают проверки</span>
               </div>
 
-              <div class="reply-card">
-                <h4>Негативное упоминание · Telegram</h4>
-                <p>“Интернет не работает уже второй день, никто не отвечает.”</p>
-                <p class="reply-text">Здравствуйте. Напишите, пожалуйста, номер заявки или адрес в личные сообщения. Мы проверим статус обращения и передадим информацию ответственному специалисту.</p>
-                <div class="small-actions">
-                  <button class="small-btn primary">Отправить</button>
-                  <button class="small-btn">Редактировать</button>
-                  <button class="small-btn">Передать оператору</button>
-                </div>
-              </div>
-
-              <div class="reply-card">
-                <h4>Отметка в Instagram</h4>
-                <p>Пользователь отметил аккаунт в сторис после подключения.</p>
-                <p class="reply-text">Спасибо за обратную связь. Рады, что подключение прошло успешно.</p>
-                <div class="small-actions">
-                  <button class="small-btn primary">Отправить</button>
-                  <button class="small-btn">Редактировать</button>
-                  <button class="small-btn">Отклонить</button>
-                </div>
-              </div>
+              <div id="agentQueue"></div>
             </div>
           </div>
         </div>
@@ -1219,29 +1480,116 @@
         <div class="page" id="reports">
           <div class="page-title-row">
             <h2>Отчёты</h2>
-            <button class="btn">Сформировать отчёт</button>
+            <button class="btn" id="btnGenerateReport">Сформировать отчёт</button>
           </div>
 
           <div class="reports-grid">
             <div class="card report-card">
               <h3>Ежедневный отчёт</h3>
               <p>Краткая сводка по упоминаниям, негативу, росту тем и источникам.</p>
-              <button class="btn secondary">Открыть</button>
+              <button class="btn secondary" data-open-report>Открыть</button>
             </div>
             <div class="card report-card">
               <h3>Конкурентный анализ</h3>
               <p>Сравнение бренда с конкурентами по количеству упоминаний и тональности.</p>
-              <button class="btn secondary">Открыть</button>
+              <button class="btn secondary" data-open-report>Открыть</button>
             </div>
             <div class="card report-card">
               <h3>Репутационный риск</h3>
               <p>Отчёт по резким всплескам негатива, ключевым причинам и каналам.</p>
-              <button class="btn secondary">Открыть</button>
+              <button class="btn secondary" data-open-report>Открыть</button>
             </div>
           </div>
         </div>
       </section>
     </main>
+  </div>
+
+  <div class="toast-container" id="toastContainer"></div>
+
+  <div class="modal-overlay" id="modalNewProject">
+    <div class="modal">
+      <div class="modal-head">
+        <h3>Новый проект</h3>
+        <button class="modal-close" data-close="modalNewProject">&times;</button>
+      </div>
+      <div class="modal-body">
+        <div class="form-group">
+          <label>Название проекта</label>
+          <input type="text" id="projectName" placeholder="Например: Мониторинг бренда Q2" />
+        </div>
+        <div class="form-group">
+          <label>Описание</label>
+          <textarea id="projectDesc" placeholder="Краткое описание целей мониторинга"></textarea>
+        </div>
+        <div class="modal-actions">
+          <button class="btn secondary" data-close="modalNewProject">Отмена</button>
+          <button class="btn" id="confirmNewProject">Создать проект</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="modal-overlay" id="modalAddKeyword">
+    <div class="modal">
+      <div class="modal-head">
+        <h3>Добавить ключевое слово</h3>
+        <button class="modal-close" data-close="modalAddKeyword">&times;</button>
+      </div>
+      <div class="modal-body">
+        <div class="form-group">
+          <label>Ключевое слово или фраза</label>
+          <input type="text" id="keywordInput" placeholder="Например: #тарифы" />
+        </div>
+        <div class="form-group">
+          <label>Категория</label>
+          <select id="keywordCategory">
+            <option>Бренд</option>
+            <option>Проблема</option>
+            <option>Тег</option>
+            <option>Конкуренты</option>
+          </select>
+        </div>
+        <div class="modal-actions">
+          <button class="btn secondary" data-close="modalAddKeyword">Отмена</button>
+          <button class="btn" id="confirmAddKeyword">Добавить</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="modal-overlay" id="modalConnectSource">
+    <div class="modal">
+      <div class="modal-head">
+        <h3>Подключить источник</h3>
+        <button class="modal-close" data-close="modalConnectSource">&times;</button>
+      </div>
+      <div class="modal-body">
+        <p style="color:var(--muted);font-size:13px;margin:0 0 14px">Выберите платформу для подключения мониторинга</p>
+        <div class="source-options" id="sourceOptions">
+          <button type="button" class="source-option" data-source="Telegram">Telegram</button>
+          <button type="button" class="source-option" data-source="Instagram">Instagram</button>
+          <button type="button" class="source-option" data-source="TikTok">TikTok</button>
+          <button type="button" class="source-option" data-source="YouTube">YouTube</button>
+          <button type="button" class="source-option" data-source="X/Twitter">X / Twitter</button>
+          <button type="button" class="source-option" data-source="Новости">Новости</button>
+        </div>
+        <div class="modal-actions">
+          <button class="btn secondary" data-close="modalConnectSource">Отмена</button>
+          <button class="btn" id="confirmConnectSource">Подключить</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="modal-overlay" id="modalReport">
+    <div class="modal">
+      <div class="modal-head">
+        <h3>Сводка отчёта</h3>
+        <button class="modal-close" data-close="modalReport">&times;</button>
+      </div>
+      <div class="modal-body" id="reportSummaryBody"></div>
+    </div>
   </div>
 
   <script>
@@ -1254,20 +1602,442 @@
       reports: ["Отчёты", "Экспорт аналитики и регулярные сводки"]
     };
 
+    const AI_RESPONSES = {
+      negative: "Здравствуйте! Приносим извинения за неудобства. Напишите номер заявки или адрес в личные сообщения — мы проверим статус и оперативно поможем.",
+      positive: "Спасибо за обратную связь! Рады, что всё прошло успешно. Если понадобится помощь — мы всегда на связи.",
+      neutral: "Благодарим за упоминание. Мы следим за обратной связью и учитываем её при улучшении сервиса."
+    };
+
+    const employees = [
+      { name: "Айгуль С.", role: "Старший оператор", assigned: 24, processed: 19, avgResponse: "18 мин", slaTarget: "95%", slaFact: "92%", overdue: 2, status: "risk" },
+      { name: "Данияр К.", role: "Оператор", assigned: 18, processed: 17, avgResponse: "12 мин", slaTarget: "95%", slaFact: "97%", overdue: 0, status: "good" },
+      { name: "Мадина Т.", role: "Оператор", assigned: 21, processed: 14, avgResponse: "31 мин", slaTarget: "95%", slaFact: "78%", overdue: 5, status: "overdue" },
+      { name: "Ерлан Б.", role: "Модератор", assigned: 15, processed: 13, avgResponse: "22 мин", slaTarget: "90%", slaFact: "88%", overdue: 1, status: "risk" },
+      { name: "Сауле Н.", role: "Оператор", assigned: 12, processed: 12, avgResponse: "9 мин", slaTarget: "95%", slaFact: "100%", overdue: 0, status: "good" }
+    ];
+
+    let mentions = [
+      { id: 1, date: "04.06.2026 09:12", source: "Telegram", author: "@almaty_chat", text: "Интернет опять не работает вечером, скорость падает после 20:00.", sentiment: "Негатив", importance: "Высокая", status: "Новый", employee: "Мадина Т.", slaMinutes: -15 },
+      { id: 2, date: "04.06.2026 08:44", source: "Instagram", author: "@client_kz", text: "Спасибо за быстрое подключение, мастер приехал вовремя.", sentiment: "Позитив", importance: "Низкая", status: "Обработан", employee: "Данияр К.", slaMinutes: 120 },
+      { id: 3, date: "04.06.2026 08:10", source: "TikTok", author: "@internet_user", text: "Видео с жалобой на долгую обработку заявки — уже 3 дня жду.", sentiment: "Негатив", importance: "Высокая", status: "В работе", employee: "Айгуль С.", slaMinutes: 25 },
+      { id: 4, date: "03.06.2026 22:18", source: "YouTube", author: "Tech Review KZ", text: "В обзоре сравнили тарифы нескольких операторов и отдельно отметили цену пакета.", sentiment: "Нейтрально", importance: "Средняя", status: "На проверке", employee: "Ерлан Б.", slaMinutes: 45 },
+      { id: 5, date: "03.06.2026 19:05", source: "X/Twitter", author: "@kz_tech_news", text: "Пользователи жалуются на перебои связи в Алматы — тренд набирает обороты.", sentiment: "Негатив", importance: "Высокая", status: "Новый", employee: "Мадина Т.", slaMinutes: -8 },
+      { id: 6, date: "03.06.2026 17:31", source: "Новости", author: "Tengrinews", text: "Статья: операторы связи Казахстана готовят новые тарифные планы на лето.", sentiment: "Нейтрально", importance: "Средняя", status: "Обработан", employee: "Сауле Н.", slaMinutes: 90 },
+      { id: 7, date: "03.06.2026 15:20", source: "Telegram", author: "@astana_reviews", text: "Отметили бренд в положительном отзыве о скорости интернета.", sentiment: "Позитив", importance: "Низкая", status: "Обработан", employee: "Данияр К.", slaMinutes: 60 },
+      { id: 8, date: "03.06.2026 14:00", source: "Instagram", author: "@user_kz", text: "Отметили бренд в сторис после подключения услуги — всё отлично!", sentiment: "Позитив", importance: "Низкая", status: "На проверке", employee: "Сауле Н.", slaMinutes: 35 },
+      { id: 9, date: "03.06.2026 11:45", source: "TikTok", author: "@speedtest_kz", text: "Ролик с тестом скорости — результаты ниже заявленных.", sentiment: "Негатив", importance: "Средняя", status: "Передано оператору", employee: "Айгуль С.", slaMinutes: 10 },
+      { id: 10, date: "02.06.2026 20:30", source: "YouTube", author: "Обзор тарифов", text: "В видео сравнивают тарифы операторов связи в Казахстане.", sentiment: "Нейтрально", importance: "Средняя", status: "Обработан", employee: "Ерлан Б.", slaMinutes: 55 },
+      { id: 11, date: "02.06.2026 18:15", source: "X/Twitter", author: "@support_needed", text: "Третий день без интернета, поддержка не отвечает на звонки.", sentiment: "Негатив", importance: "Высокая", status: "В работе", employee: "Мадина Т.", slaMinutes: -22 },
+      { id: 12, date: "02.06.2026 16:00", source: "Новости", author: "Informburo", text: "Регулятор обсуждает новые требования к качеству интернет-услуг.", sentiment: "Нейтрально", importance: "Высокая", status: "Новый", employee: "Ерлан Б.", slaMinutes: 18 },
+      { id: 13, date: "02.06.2026 10:22", source: "Telegram", author: "@shymkent_chat", text: "Кто-нибудь сталкивался с обрывами связи в районе Абылай-хана?", sentiment: "Негатив", importance: "Средняя", status: "Отклонено", employee: "Данияр К.", slaMinutes: 0 },
+      { id: 14, date: "01.06.2026 21:00", source: "Instagram", author: "@brand_lover", text: "Лучший оператор в городе, рекомендую всем друзьям!", sentiment: "Позитив", importance: "Низкая", status: "Обработан", employee: "Сауле Н.", slaMinutes: 75 }
+    ];
+
+    const agentReplies = {};
+    let selectedSource = "";
+    let editingReply = {};
+
+    function initAgentReplies() {
+      mentions.filter(m => ["Новый", "В работе", "На проверке"].includes(m.status)).slice(0, 4).forEach(m => {
+        if (!agentReplies[m.id]) {
+          const key = m.sentiment === "Позитив" ? "positive" : m.sentiment === "Негатив" ? "negative" : "neutral";
+          agentReplies[m.id] = { text: AI_RESPONSES[key], editing: false };
+        }
+      });
+    }
+
+    function showToast(message, type = "default") {
+      const container = document.getElementById("toastContainer");
+      const toast = document.createElement("div");
+      toast.className = "toast" + (type !== "default" ? " " + type : "");
+      toast.textContent = message;
+      container.appendChild(toast);
+      setTimeout(() => {
+        toast.style.animation = "toastOut 0.25s ease forwards";
+        setTimeout(() => toast.remove(), 250);
+      }, 3200);
+    }
+
+    function openModal(id) {
+      document.getElementById(id).classList.add("open");
+    }
+
+    function closeModal(id) {
+      document.getElementById(id).classList.remove("open");
+    }
+
+    function sentimentTag(s) {
+      const map = { "Позитив": "green", "Негатив": "red", "Нейтрально": "yellow" };
+      return `<span class="tag ${map[s] || "blue"}">${s}</span>`;
+    }
+
+    function statusTag(s) {
+      const map = {
+        "Новый": "blue", "В работе": "yellow", "На проверке": "blue",
+        "Обработан": "green", "Отклонено": "red", "Передано оператору": "yellow"
+      };
+      return `<span class="tag ${map[s] || "blue"}">${s}</span>`;
+    }
+
+    function slaStatusLabel(s) {
+      const map = { good: "Хорошо", risk: "Риск", overdue: "Просрочено" };
+      return map[s] || s;
+    }
+
+    function formatSla(minutes) {
+      if (minutes < 0) return `<span class="sla-time over">Просрочено ${Math.abs(minutes)} мин</span>`;
+      if (minutes <= 15) return `<span class="sla-time warn">${minutes} мин</span>`;
+      return `<span class="sla-time ok">${minutes} мин</span>`;
+    }
+
+    function sourceAbbr(source) {
+      const map = { "Telegram": "TG", "Instagram": "IG", "TikTok": "TT", "YouTube": "YT", "X/Twitter": "X", "Новости": "NW" };
+      return map[source] || source.slice(0, 2).toUpperCase();
+    }
+
+    function importanceClass(i) {
+      if (i === "Высокая") return "importance-high";
+      if (i === "Средняя") return "importance-medium";
+      return "importance-low";
+    }
+
+    function renderSla() {
+      const totalAssigned = employees.reduce((s, e) => s + e.assigned, 0);
+      const totalProcessed = employees.reduce((s, e) => s + e.processed, 0);
+      const totalOverdue = employees.reduce((s, e) => s + e.overdue, 0);
+      const inProgress = mentions.filter(m => ["Новый", "В работе", "На проверке", "Передано оператору"].includes(m.status)).length;
+      const avgSla = Math.round(employees.reduce((s, e) => s + parseInt(e.slaFact), 0) / employees.length);
+
+      document.getElementById("slaSummaryKpis").innerHTML = `
+        <div class="sla-kpi"><div class="label">Общий SLA выполнения</div><div class="value ${avgSla >= 93 ? "good" : avgSla >= 85 ? "risk" : "bad"}">${avgSla}%</div></div>
+        <div class="sla-kpi"><div class="label">Среднее время ответа</div><div class="value">19 мин</div></div>
+        <div class="sla-kpi"><div class="label">Просроченные обращения</div><div class="value bad">${totalOverdue}</div></div>
+        <div class="sla-kpi"><div class="label">Обращения в работе</div><div class="value risk">${inProgress}</div></div>
+      `;
+
+      document.getElementById("slaTableBody").innerHTML = employees.map(e => `
+        <tr>
+          <td><strong>${e.name}</strong></td>
+          <td>${e.role}</td>
+          <td>${e.assigned}</td>
+          <td>${e.processed}</td>
+          <td>${e.avgResponse}</td>
+          <td>${e.slaTarget}</td>
+          <td>${e.slaFact}</td>
+          <td>${e.overdue}</td>
+          <td><span class="sla-status ${e.status}">${slaStatusLabel(e.status)}</span></td>
+        </tr>
+      `).join("");
+    }
+
+    function getFilteredMentions() {
+      const source = document.getElementById("filterSource").value;
+      const sentiment = document.getElementById("filterSentiment").value;
+      const status = document.getElementById("filterStatus").value;
+      const employee = document.getElementById("filterEmployee").value;
+      const search = document.getElementById("globalSearch").value.toLowerCase().trim();
+
+      return mentions.filter(m => {
+        if (source && m.source !== source) return false;
+        if (sentiment && m.sentiment !== sentiment) return false;
+        if (status && m.status !== status) return false;
+        if (employee && m.employee !== employee) return false;
+        if (search && !m.text.toLowerCase().includes(search) && !m.author.toLowerCase().includes(search)) return false;
+        return true;
+      });
+    }
+
+    function renderMentions() {
+      const filtered = getFilteredMentions();
+      const tbody = document.getElementById("mentionsTableBody");
+      document.getElementById("mentionsCount").textContent = `Показано: ${filtered.length} из ${mentions.length}`;
+
+      if (!filtered.length) {
+        tbody.innerHTML = `<tr><td colspan="9" class="empty-state">Упоминания не найдены. Измените фильтры или поисковый запрос.</td></tr>`;
+        return;
+      }
+
+      tbody.innerHTML = filtered.map(m => `
+        <tr class="clickable" data-mention-id="${m.id}">
+          <td>${m.date}</td>
+          <td>${m.source}</td>
+          <td>${m.author}</td>
+          <td class="text-cell">${m.text}</td>
+          <td>${sentimentTag(m.sentiment)}</td>
+          <td><span class="${importanceClass(m.importance)}">${m.importance}</span></td>
+          <td>${statusTag(m.status)}</td>
+          <td>${m.employee}</td>
+          <td>${formatSla(m.slaMinutes)}</td>
+        </tr>
+      `).join("");
+    }
+
+    function renderDashboardMentions() {
+      const important = mentions.filter(m => m.importance === "Высокая" || m.sentiment === "Негатив").slice(0, 3);
+      document.getElementById("dashboardMentions").innerHTML = important.map(m => `
+        <div class="mention">
+          <div class="avatar">${sourceAbbr(m.source)}</div>
+          <div>
+            <h4>${m.author} · ${m.source}</h4>
+            <p>${m.text}</p>
+          </div>
+          ${sentimentTag(m.sentiment)}
+        </div>
+      `).join("");
+    }
+
+    function renderAgentQueue() {
+      const queue = mentions.filter(m => ["Новый", "В работе", "На проверке"].includes(m.status)).slice(0, 4);
+      const container = document.getElementById("agentQueue");
+      const countEl = document.getElementById("agentQueueCount");
+      const totalQueue = mentions.filter(m => ["Новый", "В работе", "На проверке"].includes(m.status)).length;
+      if (countEl) countEl.textContent = totalQueue + " ожидают проверки";
+
+      if (!queue.length) {
+        container.innerHTML = `<div class="empty-state">Очередь пуста — все обращения обработаны.</div>`;
+        return;
+      }
+
+      container.innerHTML = queue.map(m => {
+        const reply = agentReplies[m.id] || { text: "", editing: false };
+        const replyBlock = reply.editing
+          ? `<textarea class="reply-textarea" data-reply-id="${m.id}">${reply.text}</textarea>`
+          : `<p class="reply-text">${reply.text || "Ответ не сгенерирован. Нажмите «Сгенерировать AI-ответ»."}</p>`;
+
+        return `
+          <div class="reply-card" data-mention-id="${m.id}">
+            <h4>${m.sentiment} · ${m.source} · ${m.author}</h4>
+            <p>"${m.text}"</p>
+            ${replyBlock}
+            <div class="small-actions">
+              <button class="small-btn" data-action="generate" data-id="${m.id}">Сгенерировать AI-ответ</button>
+              <button class="small-btn primary" data-action="send" data-id="${m.id}">Отправить</button>
+              <button class="small-btn" data-action="edit" data-id="${m.id}">${reply.editing ? "Сохранить" : "Редактировать"}</button>
+              <button class="small-btn" data-action="transfer" data-id="${m.id}">Передать оператору</button>
+              <button class="small-btn" data-action="reject" data-id="${m.id}">Отклонить</button>
+            </div>
+          </div>
+        `;
+      }).join("");
+    }
+
+    function populateEmployeeFilter() {
+      const select = document.getElementById("filterEmployee");
+      employees.forEach(e => {
+        const opt = document.createElement("option");
+        opt.value = e.name;
+        opt.textContent = e.name;
+        select.appendChild(opt);
+      });
+    }
+
+    function navigateTo(page) {
+      document.querySelectorAll(".nav-item").forEach(item => {
+        item.classList.toggle("active", item.dataset.page === page);
+      });
+      document.querySelectorAll(".page").forEach(section => {
+        section.classList.toggle("active", section.id === page);
+      });
+      document.getElementById("pageTitle").textContent = pages[page][0];
+      document.getElementById("pageSubtitle").textContent = pages[page][1];
+    }
+
+    function generateReportSummary() {
+      const total = mentions.length;
+      const negative = mentions.filter(m => m.sentiment === "Негатив").length;
+      const processed = mentions.filter(m => m.status === "Обработан").length;
+      const overdue = mentions.filter(m => m.slaMinutes < 0).length;
+      const sources = [...new Set(mentions.map(m => m.source))].length;
+
+      document.getElementById("reportSummaryBody").innerHTML = `
+        <p style="color:var(--muted);font-size:13px;margin:0 0 16px">Краткая сводка за период 01.06 — 04.06.2026</p>
+        <div class="report-summary-grid">
+          <div class="report-stat"><strong>${total}</strong><span>Всего упоминаний</span></div>
+          <div class="report-stat"><strong>${negative}</strong><span>Негативных</span></div>
+          <div class="report-stat"><strong>${processed}</strong><span>Обработано</span></div>
+          <div class="report-stat"><strong>${overdue}</strong><span>Просрочено SLA</span></div>
+          <div class="report-stat"><strong>${sources}</strong><span>Активных источников</span></div>
+          <div class="report-stat"><strong>${Math.round(processed / total * 100)}%</strong><span>Доля обработанных</span></div>
+        </div>
+        <p style="font-size:13px;line-height:1.5;color:var(--text)">Основной риск: рост негатива по ключу «интернет не работает» в Telegram и X/Twitter. Рекомендуется усилить мониторинг вечерних часов.</p>
+        <div class="modal-actions">
+          <button class="btn secondary" data-close="modalReport">Закрыть</button>
+          <button class="btn" data-action="export-report">Экспортировать</button>
+        </div>
+      `;
+    }
+
     document.querySelectorAll(".nav-item").forEach(button => {
-      button.addEventListener("click", () => {
-        const page = button.dataset.page;
+      button.addEventListener("click", () => navigateTo(button.dataset.page));
+    });
 
-        document.querySelectorAll(".nav-item").forEach(item => item.classList.remove("active"));
-        button.classList.add("active");
+    document.getElementById("btnExport").addEventListener("click", () => {
+      showToast("Отчёт сформирован", "success");
+    });
 
-        document.querySelectorAll(".page").forEach(section => section.classList.remove("active"));
-        document.getElementById(page).classList.add("active");
+    document.getElementById("btnNewProject").addEventListener("click", () => openModal("modalNewProject"));
+    document.getElementById("btnAddKeyword").addEventListener("click", () => openModal("modalAddKeyword"));
+    document.getElementById("btnConnectSource").addEventListener("click", () => openModal("modalConnectSource"));
+    document.getElementById("btnGenerateReport").addEventListener("click", () => {
+      generateReportSummary();
+      openModal("modalReport");
+    });
 
-        document.getElementById("pageTitle").textContent = pages[page][0];
-        document.getElementById("pageSubtitle").textContent = pages[page][1];
+    document.getElementById("confirmNewProject").addEventListener("click", () => {
+      closeModal("modalNewProject");
+      showToast("Проект «" + (document.getElementById("projectName").value || "Новый проект") + "» создан", "info");
+      document.getElementById("projectName").value = "";
+      document.getElementById("projectDesc").value = "";
+    });
+
+    document.getElementById("confirmAddKeyword").addEventListener("click", () => {
+      const kw = document.getElementById("keywordInput").value.trim();
+      if (kw) {
+        closeModal("modalAddKeyword");
+        showToast("Ключевое слово добавлено", "success");
+        document.getElementById("keywordInput").value = "";
+      }
+    });
+
+    document.getElementById("confirmConnectSource").addEventListener("click", () => {
+      if (!selectedSource) { selectedSource = "TikTok"; }
+      closeModal("modalConnectSource");
+      showToast("Источник подключен", "success");
+      if (selectedSource === "X/Twitter") {
+        document.getElementById("xSourceStatus").textContent = "Подключено";
+      }
+      selectedSource = "";
+      document.querySelectorAll(".source-option").forEach(o => o.classList.remove("selected"));
+    });
+
+    document.querySelectorAll(".source-option").forEach(btn => {
+      btn.addEventListener("click", () => {
+        document.querySelectorAll(".source-option").forEach(o => o.classList.remove("selected"));
+        btn.classList.add("selected");
+        selectedSource = btn.dataset.source;
       });
     });
+
+    document.querySelectorAll("[data-close]").forEach(btn => {
+      btn.addEventListener("click", () => closeModal(btn.dataset.close));
+    });
+
+    document.querySelectorAll(".modal-overlay").forEach(overlay => {
+      overlay.addEventListener("click", e => {
+        if (e.target === overlay) closeModal(overlay.id);
+      });
+    });
+
+    ["filterSource", "filterSentiment", "filterStatus", "filterEmployee"].forEach(id => {
+      document.getElementById(id).addEventListener("change", renderMentions);
+    });
+
+    document.getElementById("globalSearch").addEventListener("input", () => {
+      renderMentions();
+      if (document.getElementById("globalSearch").value.trim()) {
+        navigateTo("mentions");
+      }
+    });
+
+    document.getElementById("agentQueue").addEventListener("click", e => {
+      const btn = e.target.closest("[data-action]");
+      if (!btn) return;
+      const id = parseInt(btn.dataset.id);
+      const mention = mentions.find(m => m.id === id);
+      if (!mention) return;
+
+      if (!agentReplies[id]) agentReplies[id] = { text: "", editing: false };
+
+      switch (btn.dataset.action) {
+        case "generate": {
+          const key = mention.sentiment === "Позитив" ? "positive" : mention.sentiment === "Негатив" ? "negative" : "neutral";
+          agentReplies[id].text = AI_RESPONSES[key];
+          agentReplies[id].editing = false;
+          renderAgentQueue();
+          break;
+        }
+        case "send": {
+          if (!agentReplies[id].text) {
+            const key = mention.sentiment === "Позитив" ? "positive" : mention.sentiment === "Негатив" ? "negative" : "neutral";
+            agentReplies[id].text = AI_RESPONSES[key];
+          }
+          mention.status = "Обработан";
+          mention.slaMinutes = 0;
+          delete agentReplies[id];
+          showToast("Ответ отправлен", "success");
+          renderMentions();
+          renderAgentQueue();
+          renderSla();
+          renderDashboardMentions();
+          break;
+        }
+        case "edit": {
+          if (agentReplies[id].editing) {
+            const textarea = document.querySelector(`textarea[data-reply-id="${id}"]`);
+            if (textarea) agentReplies[id].text = textarea.value;
+            agentReplies[id].editing = false;
+          } else {
+            agentReplies[id].editing = true;
+          }
+          renderAgentQueue();
+          break;
+        }
+        case "reject": {
+          mention.status = "Отклонено";
+          delete agentReplies[id];
+          renderMentions();
+          renderAgentQueue();
+          renderDashboardMentions();
+          break;
+        }
+        case "transfer": {
+          mention.status = "Передано оператору";
+          showToast("Обращение передано оператору", "info");
+          renderMentions();
+          renderAgentQueue();
+          renderSla();
+          break;
+        }
+      }
+    });
+
+    document.getElementById("modalReport").addEventListener("click", e => {
+      if (e.target.dataset.action === "export-report") {
+        closeModal("modalReport");
+        showToast("Отчёт сформирован", "success");
+      }
+    });
+
+    document.getElementById("mentionsTableBody").addEventListener("click", e => {
+      const row = e.target.closest("[data-mention-id]");
+      if (row) navigateTo("agent");
+    });
+
+    document.querySelectorAll(".switch").forEach(sw => {
+      sw.addEventListener("click", () => sw.classList.toggle("on"));
+    });
+
+    document.querySelectorAll("[data-open-report]").forEach(btn => {
+      btn.addEventListener("click", () => {
+        generateReportSummary();
+        openModal("modalReport");
+      });
+    });
+
+    document.querySelectorAll("[data-action='accept-rec'], [data-action='reject-rec']").forEach(btn => {
+      btn.addEventListener("click", () => {
+        showToast(btn.dataset.action === "accept-rec" ? "Рекомендация принята" : "Рекомендация отклонена", "info");
+      });
+    });
+
+    document.querySelector(".upgrade")?.addEventListener("click", () => showToast("Настройки агента открыты", "info"));
+
+    initAgentReplies();
+    populateEmployeeFilter();
+    renderSla();
+    renderMentions();
+    renderDashboardMentions();
+    renderAgentQueue();
   </script>
 </body>
 </html>
