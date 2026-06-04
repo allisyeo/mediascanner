@@ -1,0 +1,1273 @@
+
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>MediaScanner — Interface Mockup</title>
+  <style>
+    :root {
+      --bg: #f5f7fb;
+      --panel: #ffffff;
+      --text: #151923;
+      --muted: #697386;
+      --line: #e6eaf1;
+      --dark: #101828;
+      --accent: #2557d6;
+      --accent-soft: #eaf0ff;
+      --green: #0f9f6e;
+      --green-soft: #e8f8f2;
+      --red: #d92d20;
+      --red-soft: #fff0ef;
+      --yellow: #b7791f;
+      --yellow-soft: #fff7e6;
+      --purple: #6941c6;
+      --purple-soft: #f2edff;
+      --shadow: 0 16px 40px rgba(16, 24, 40, 0.08);
+      --radius: 18px;
+    }
+
+    * {
+      box-sizing: border-box;
+    }
+
+    body {
+      margin: 0;
+      font-family: Inter, -apple-system, BlinkMacSystemFont, "Segoe UI", Arial, sans-serif;
+      background: var(--bg);
+      color: var(--text);
+    }
+
+    .app {
+      display: grid;
+      grid-template-columns: 280px 1fr;
+      min-height: 100vh;
+    }
+
+    .sidebar {
+      background: #0f172a;
+      color: #fff;
+      padding: 24px 18px;
+      display: flex;
+      flex-direction: column;
+      gap: 24px;
+      position: sticky;
+      top: 0;
+      height: 100vh;
+    }
+
+    .brand {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      padding: 0 8px 12px;
+    }
+
+    .logo {
+      width: 42px;
+      height: 42px;
+      border-radius: 14px;
+      background: linear-gradient(135deg, #3b82f6, #8b5cf6);
+      display: grid;
+      place-items: center;
+      font-weight: 800;
+      letter-spacing: -0.04em;
+      box-shadow: 0 10px 25px rgba(59, 130, 246, 0.35);
+    }
+
+    .brand-title {
+      font-size: 18px;
+      font-weight: 750;
+      letter-spacing: -0.03em;
+    }
+
+    .brand-subtitle {
+      color: #94a3b8;
+      font-size: 12px;
+      margin-top: 2px;
+    }
+
+    .nav {
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+    }
+
+    .nav-item {
+      border: 0;
+      background: transparent;
+      color: #cbd5e1;
+      padding: 12px 14px;
+      border-radius: 14px;
+      text-align: left;
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      cursor: pointer;
+      font-size: 14px;
+      transition: 0.18s ease;
+    }
+
+    .nav-item:hover,
+    .nav-item.active {
+      color: #fff;
+      background: rgba(255, 255, 255, 0.1);
+    }
+
+    .nav-icon {
+      width: 22px;
+      display: inline-grid;
+      place-items: center;
+      opacity: 0.9;
+    }
+
+    .sidebar-bottom {
+      margin-top: auto;
+      padding: 16px;
+      border-radius: 18px;
+      background: rgba(255, 255, 255, 0.08);
+      border: 1px solid rgba(255, 255, 255, 0.08);
+    }
+
+    .sidebar-bottom h4 {
+      margin: 0 0 6px;
+      font-size: 14px;
+    }
+
+    .sidebar-bottom p {
+      margin: 0 0 12px;
+      font-size: 12px;
+      line-height: 1.45;
+      color: #cbd5e1;
+    }
+
+    .upgrade {
+      width: 100%;
+      border: 0;
+      background: #fff;
+      color: #0f172a;
+      padding: 10px 12px;
+      border-radius: 12px;
+      font-weight: 700;
+      cursor: pointer;
+    }
+
+    .main {
+      padding: 24px 28px 36px;
+      overflow: hidden;
+    }
+
+    .topbar {
+      background: rgba(255, 255, 255, 0.84);
+      backdrop-filter: blur(16px);
+      border: 1px solid var(--line);
+      border-radius: 22px;
+      padding: 16px 18px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      box-shadow: 0 10px 30px rgba(16, 24, 40, 0.04);
+      position: sticky;
+      top: 16px;
+      z-index: 5;
+    }
+
+    .title h1 {
+      margin: 0;
+      font-size: 24px;
+      letter-spacing: -0.04em;
+    }
+
+    .title p {
+      margin: 4px 0 0;
+      color: var(--muted);
+      font-size: 13px;
+    }
+
+    .top-actions {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .search {
+      width: 320px;
+      background: var(--bg);
+      border: 1px solid var(--line);
+      border-radius: 14px;
+      padding: 12px 14px;
+      outline: none;
+      font-size: 14px;
+    }
+
+    .btn {
+      border: 0;
+      border-radius: 14px;
+      padding: 12px 16px;
+      background: var(--accent);
+      color: white;
+      font-weight: 700;
+      cursor: pointer;
+      box-shadow: 0 8px 18px rgba(37, 87, 214, 0.18);
+    }
+
+    .btn.secondary {
+      background: #fff;
+      color: var(--text);
+      border: 1px solid var(--line);
+      box-shadow: none;
+    }
+
+    .content {
+      margin-top: 24px;
+    }
+
+    .page {
+      display: none;
+      animation: fade 0.2s ease;
+    }
+
+    .page.active {
+      display: block;
+    }
+
+    @keyframes fade {
+      from { opacity: 0; transform: translateY(6px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    .grid-kpis {
+      display: grid;
+      grid-template-columns: repeat(4, minmax(0, 1fr));
+      gap: 16px;
+    }
+
+    .card {
+      background: var(--panel);
+      border: 1px solid var(--line);
+      border-radius: var(--radius);
+      box-shadow: 0 10px 30px rgba(16, 24, 40, 0.04);
+    }
+
+    .kpi {
+      padding: 20px;
+    }
+
+    .kpi-label {
+      color: var(--muted);
+      font-size: 13px;
+      margin-bottom: 10px;
+    }
+
+    .kpi-value {
+      font-size: 30px;
+      font-weight: 800;
+      letter-spacing: -0.05em;
+      margin-bottom: 10px;
+    }
+
+    .kpi-change {
+      font-size: 12px;
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      padding: 6px 10px;
+      border-radius: 999px;
+      font-weight: 700;
+    }
+
+    .positive {
+      color: var(--green);
+      background: var(--green-soft);
+    }
+
+    .negative {
+      color: var(--red);
+      background: var(--red-soft);
+    }
+
+    .neutral {
+      color: var(--purple);
+      background: var(--purple-soft);
+    }
+
+    .dashboard-grid {
+      display: grid;
+      grid-template-columns: 1.45fr 0.85fr;
+      gap: 16px;
+      margin-top: 16px;
+    }
+
+    .section-card {
+      padding: 20px;
+    }
+
+    .card-head {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 18px;
+    }
+
+    .card-head h3 {
+      margin: 0;
+      font-size: 16px;
+      letter-spacing: -0.02em;
+    }
+
+    .card-head span {
+      color: var(--muted);
+      font-size: 12px;
+    }
+
+    .chart {
+      height: 250px;
+      display: flex;
+      align-items: end;
+      gap: 12px;
+      padding-top: 8px;
+    }
+
+    .bar-wrap {
+      flex: 1;
+      height: 100%;
+      display: flex;
+      flex-direction: column;
+      justify-content: end;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .bar {
+      width: 100%;
+      max-width: 38px;
+      border-radius: 12px 12px 6px 6px;
+      background: linear-gradient(180deg, #2557d6, #9eb6ff);
+      min-height: 20px;
+      position: relative;
+    }
+
+    .bar::after {
+      content: attr(data-value);
+      position: absolute;
+      top: -24px;
+      left: 50%;
+      transform: translateX(-50%);
+      font-size: 11px;
+      color: var(--muted);
+      opacity: 0;
+      transition: 0.15s ease;
+    }
+
+    .bar:hover::after {
+      opacity: 1;
+    }
+
+    .bar-label {
+      color: var(--muted);
+      font-size: 11px;
+    }
+
+    .source-list {
+      display: flex;
+      flex-direction: column;
+      gap: 14px;
+    }
+
+    .source-row {
+      display: grid;
+      grid-template-columns: 90px 1fr 46px;
+      align-items: center;
+      gap: 10px;
+      font-size: 13px;
+    }
+
+    .progress {
+      height: 10px;
+      border-radius: 999px;
+      background: var(--bg);
+      overflow: hidden;
+    }
+
+    .progress span {
+      display: block;
+      height: 100%;
+      border-radius: inherit;
+      background: var(--accent);
+    }
+
+    .split {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 16px;
+      margin-top: 16px;
+    }
+
+    .mention-list {
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+    }
+
+    .mention {
+      padding: 14px;
+      border: 1px solid var(--line);
+      border-radius: 16px;
+      display: grid;
+      grid-template-columns: 44px 1fr auto;
+      gap: 12px;
+      align-items: start;
+      background: #fff;
+    }
+
+    .avatar {
+      width: 44px;
+      height: 44px;
+      border-radius: 14px;
+      background: var(--accent-soft);
+      display: grid;
+      place-items: center;
+      color: var(--accent);
+      font-weight: 800;
+    }
+
+    .mention h4 {
+      margin: 0 0 4px;
+      font-size: 14px;
+    }
+
+    .mention p {
+      margin: 0;
+      color: var(--muted);
+      font-size: 13px;
+      line-height: 1.45;
+    }
+
+    .tag {
+      padding: 6px 10px;
+      border-radius: 999px;
+      font-size: 12px;
+      font-weight: 750;
+      white-space: nowrap;
+    }
+
+    .tag.red {
+      color: var(--red);
+      background: var(--red-soft);
+    }
+
+    .tag.green {
+      color: var(--green);
+      background: var(--green-soft);
+    }
+
+    .tag.yellow {
+      color: var(--yellow);
+      background: var(--yellow-soft);
+    }
+
+    .tag.blue {
+      color: var(--accent);
+      background: var(--accent-soft);
+    }
+
+    .table-card {
+      overflow: hidden;
+    }
+
+    .filters {
+      display: flex;
+      gap: 10px;
+      margin-bottom: 16px;
+      flex-wrap: wrap;
+    }
+
+    .select,
+    .input {
+      border: 1px solid var(--line);
+      background: #fff;
+      padding: 11px 12px;
+      border-radius: 13px;
+      color: var(--text);
+      outline: none;
+      font-size: 14px;
+    }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 13px;
+      background: #fff;
+    }
+
+    th {
+      text-align: left;
+      color: var(--muted);
+      font-weight: 750;
+      padding: 14px 16px;
+      border-bottom: 1px solid var(--line);
+      background: #fbfcfe;
+    }
+
+    td {
+      padding: 15px 16px;
+      border-bottom: 1px solid var(--line);
+      vertical-align: top;
+    }
+
+    tr:last-child td {
+      border-bottom: 0;
+    }
+
+    .text-cell {
+      max-width: 520px;
+      line-height: 1.45;
+    }
+
+    .page-title-row {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 16px;
+    }
+
+    .page-title-row h2 {
+      margin: 0;
+      font-size: 22px;
+      letter-spacing: -0.04em;
+    }
+
+    .keyword-grid {
+      display: grid;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: 16px;
+    }
+
+    .keyword-card {
+      padding: 18px;
+    }
+
+    .keyword-top {
+      display: flex;
+      align-items: start;
+      justify-content: space-between;
+      gap: 10px;
+      margin-bottom: 14px;
+    }
+
+    .keyword-top h3 {
+      margin: 0;
+      font-size: 16px;
+    }
+
+    .keyword-meta {
+      color: var(--muted);
+      font-size: 12px;
+      margin-bottom: 14px;
+    }
+
+    .keyword-stats {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 10px;
+    }
+
+    .mini-stat {
+      padding: 12px;
+      border-radius: 14px;
+      background: var(--bg);
+    }
+
+    .mini-stat strong {
+      display: block;
+      font-size: 18px;
+      margin-bottom: 4px;
+    }
+
+    .mini-stat span {
+      color: var(--muted);
+      font-size: 12px;
+    }
+
+    .source-cards {
+      display: grid;
+      grid-template-columns: repeat(4, minmax(0, 1fr));
+      gap: 16px;
+    }
+
+    .source-card {
+      padding: 18px;
+    }
+
+    .source-icon {
+      width: 48px;
+      height: 48px;
+      border-radius: 16px;
+      display: grid;
+      place-items: center;
+      font-weight: 800;
+      margin-bottom: 14px;
+      background: var(--accent-soft);
+      color: var(--accent);
+    }
+
+    .source-card h3 {
+      margin: 0 0 6px;
+      font-size: 16px;
+    }
+
+    .source-card p {
+      margin: 0 0 14px;
+      color: var(--muted);
+      font-size: 13px;
+      line-height: 1.45;
+    }
+
+    .status-line {
+      display: flex;
+      justify-content: space-between;
+      font-size: 12px;
+      color: var(--muted);
+      padding-top: 12px;
+      border-top: 1px solid var(--line);
+    }
+
+    .agent-layout {
+      display: grid;
+      grid-template-columns: 0.9fr 1.1fr;
+      gap: 16px;
+    }
+
+    .agent-panel {
+      padding: 20px;
+    }
+
+    .agent-box {
+      background: #0f172a;
+      color: white;
+      border-radius: 20px;
+      padding: 22px;
+      min-height: 290px;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+    }
+
+    .agent-box h3 {
+      margin: 0 0 10px;
+      font-size: 22px;
+      letter-spacing: -0.04em;
+    }
+
+    .agent-box p {
+      margin: 0;
+      color: #cbd5e1;
+      line-height: 1.55;
+      font-size: 14px;
+    }
+
+    .mode-list {
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+      margin-top: 16px;
+    }
+
+    .mode {
+      padding: 14px;
+      border-radius: 16px;
+      border: 1px solid rgba(255, 255, 255, 0.12);
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .switch {
+      width: 44px;
+      height: 24px;
+      border-radius: 999px;
+      background: #334155;
+      padding: 3px;
+      display: flex;
+      justify-content: flex-start;
+    }
+
+    .switch.on {
+      background: #22c55e;
+      justify-content: flex-end;
+    }
+
+    .knob {
+      width: 18px;
+      height: 18px;
+      border-radius: 50%;
+      background: #fff;
+    }
+
+    .reply-card {
+      padding: 16px;
+      border: 1px solid var(--line);
+      border-radius: 16px;
+      margin-bottom: 12px;
+      background: #fff;
+    }
+
+    .reply-card h4 {
+      margin: 0 0 8px;
+      font-size: 14px;
+    }
+
+    .reply-card p {
+      margin: 0 0 12px;
+      color: var(--muted);
+      line-height: 1.45;
+      font-size: 13px;
+    }
+
+    .reply-text {
+      padding: 14px;
+      border-radius: 14px;
+      background: var(--bg);
+      color: var(--text) !important;
+      margin-bottom: 12px !important;
+    }
+
+    .small-actions {
+      display: flex;
+      gap: 8px;
+    }
+
+    .small-btn {
+      border: 1px solid var(--line);
+      background: #fff;
+      border-radius: 12px;
+      padding: 8px 11px;
+      font-size: 12px;
+      cursor: pointer;
+      font-weight: 750;
+    }
+
+    .small-btn.primary {
+      background: var(--accent);
+      border-color: var(--accent);
+      color: #fff;
+    }
+
+    .reports-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr 1fr;
+      gap: 16px;
+    }
+
+    .report-card {
+      padding: 20px;
+    }
+
+    .report-card h3 {
+      margin: 0 0 10px;
+    }
+
+    .report-card p {
+      margin: 0 0 18px;
+      color: var(--muted);
+      font-size: 13px;
+      line-height: 1.45;
+    }
+
+    @media (max-width: 1180px) {
+      .app {
+        grid-template-columns: 92px 1fr;
+      }
+
+      .brand-text,
+      .nav-text,
+      .sidebar-bottom {
+        display: none;
+      }
+
+      .sidebar {
+        align-items: center;
+      }
+
+      .nav-item {
+        justify-content: center;
+        padding: 14px;
+      }
+
+      .grid-kpis,
+      .source-cards,
+      .keyword-grid,
+      .reports-grid {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+      }
+
+      .dashboard-grid,
+      .split,
+      .agent-layout {
+        grid-template-columns: 1fr;
+      }
+    }
+
+    @media (max-width: 760px) {
+      .app {
+        grid-template-columns: 1fr;
+      }
+
+      .sidebar {
+        position: static;
+        height: auto;
+        flex-direction: row;
+        overflow-x: auto;
+        padding: 12px;
+      }
+
+      .brand {
+        display: none;
+      }
+
+      .nav {
+        flex-direction: row;
+      }
+
+      .main {
+        padding: 16px;
+      }
+
+      .topbar {
+        flex-direction: column;
+        align-items: stretch;
+        gap: 14px;
+      }
+
+      .top-actions {
+        flex-direction: column;
+        align-items: stretch;
+      }
+
+      .search {
+        width: 100%;
+      }
+
+      .grid-kpis,
+      .source-cards,
+      .keyword-grid,
+      .reports-grid {
+        grid-template-columns: 1fr;
+      }
+
+      table {
+        min-width: 760px;
+      }
+
+      .table-card {
+        overflow-x: auto;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="app">
+    <aside class="sidebar">
+      <div class="brand">
+        <div class="logo">MS</div>
+        <div class="brand-text">
+          <div class="brand-title">MediaScanner</div>
+          <div class="brand-subtitle">Social listening platform</div>
+        </div>
+      </div>
+
+      <nav class="nav">
+        <button class="nav-item active" data-page="dashboard"><span class="nav-icon">⌁</span><span class="nav-text">Dashboard</span></button>
+        <button class="nav-item" data-page="mentions"><span class="nav-icon">#</span><span class="nav-text">Упоминания</span></button>
+        <button class="nav-item" data-page="keywords"><span class="nav-icon">⌕</span><span class="nav-text">Ключевые слова</span></button>
+        <button class="nav-item" data-page="sources"><span class="nav-icon">◉</span><span class="nav-text">Источники</span></button>
+        <button class="nav-item" data-page="agent"><span class="nav-icon">✦</span><span class="nav-text">AI-агент</span></button>
+        <button class="nav-item" data-page="reports"><span class="nav-icon">▣</span><span class="nav-text">Отчёты</span></button>
+      </nav>
+
+      <div class="sidebar-bottom">
+        <h4>OpenClaw Agent</h4>
+        <p>AI-агент сейчас работает в режиме согласования: ответы не отправляются без подтверждения.</p>
+        <button class="upgrade">Настроить агента</button>
+      </div>
+    </aside>
+
+    <main class="main">
+      <header class="topbar">
+        <div class="title">
+          <h1 id="pageTitle">Dashboard</h1>
+          <p id="pageSubtitle">Мониторинг упоминаний, тональности и активности по источникам</p>
+        </div>
+        <div class="top-actions">
+          <input class="search" placeholder="Поиск по постам, авторам, тегам..." />
+          <button class="btn secondary">Экспорт</button>
+          <button class="btn">+ Новый проект</button>
+        </div>
+      </header>
+
+      <section class="content">
+        <div class="page active" id="dashboard">
+          <div class="grid-kpis">
+            <div class="card kpi">
+              <div class="kpi-label">Всего упоминаний</div>
+              <div class="kpi-value">12 430</div>
+              <div class="kpi-change positive">↑ 18% за неделю</div>
+            </div>
+            <div class="card kpi">
+              <div class="kpi-label">Упоминаний сегодня</div>
+              <div class="kpi-value">384</div>
+              <div class="kpi-change positive">↑ 42 новых</div>
+            </div>
+            <div class="card kpi">
+              <div class="kpi-label">Негатив</div>
+              <div class="kpi-value">47</div>
+              <div class="kpi-change negative">↑ риск-алерт</div>
+            </div>
+            <div class="card kpi">
+              <div class="kpi-label">AI-ответы в очереди</div>
+              <div class="kpi-value">28</div>
+              <div class="kpi-change neutral">требуют проверки</div>
+            </div>
+          </div>
+
+          <div class="dashboard-grid">
+            <div class="card section-card">
+              <div class="card-head">
+                <h3>Динамика упоминаний</h3>
+                <span>Последние 7 дней</span>
+              </div>
+              <div class="chart">
+                <div class="bar-wrap"><div class="bar" data-value="920" style="height: 52%"></div><div class="bar-label">Пн</div></div>
+                <div class="bar-wrap"><div class="bar" data-value="1130" style="height: 64%"></div><div class="bar-label">Вт</div></div>
+                <div class="bar-wrap"><div class="bar" data-value="870" style="height: 49%"></div><div class="bar-label">Ср</div></div>
+                <div class="bar-wrap"><div class="bar" data-value="1460" style="height: 82%"></div><div class="bar-label">Чт</div></div>
+                <div class="bar-wrap"><div class="bar" data-value="1210" style="height: 68%"></div><div class="bar-label">Пт</div></div>
+                <div class="bar-wrap"><div class="bar" data-value="650" style="height: 36%"></div><div class="bar-label">Сб</div></div>
+                <div class="bar-wrap"><div class="bar" data-value="780" style="height: 44%"></div><div class="bar-label">Вс</div></div>
+              </div>
+            </div>
+
+            <div class="card section-card">
+              <div class="card-head">
+                <h3>Источники</h3>
+                <span>Доля упоминаний</span>
+              </div>
+              <div class="source-list">
+                <div class="source-row"><strong>Telegram</strong><div class="progress"><span style="width: 74%"></span></div><span>74%</span></div>
+                <div class="source-row"><strong>Instagram</strong><div class="progress"><span style="width: 58%"></span></div><span>58%</span></div>
+                <div class="source-row"><strong>TikTok</strong><div class="progress"><span style="width: 39%"></span></div><span>39%</span></div>
+                <div class="source-row"><strong>YouTube</strong><div class="progress"><span style="width: 31%"></span></div><span>31%</span></div>
+                <div class="source-row"><strong>Новости</strong><div class="progress"><span style="width: 22%"></span></div><span>22%</span></div>
+              </div>
+            </div>
+          </div>
+
+          <div class="split">
+            <div class="card section-card">
+              <div class="card-head">
+                <h3>Последние важные упоминания</h3>
+                <span>Новые</span>
+              </div>
+              <div class="mention-list">
+                <div class="mention">
+                  <div class="avatar">TG</div>
+                  <div>
+                    <h4>@almaty_chat · Telegram</h4>
+                    <p>Интернет опять нестабильно работает вечером. Кто сталкивался?</p>
+                  </div>
+                  <span class="tag red">Негатив</span>
+                </div>
+                <div class="mention">
+                  <div class="avatar">IG</div>
+                  <div>
+                    <h4>@user_kz · Instagram</h4>
+                    <p>Отметили бренд в сторис после подключения услуги.</p>
+                  </div>
+                  <span class="tag green">Позитив</span>
+                </div>
+                <div class="mention">
+                  <div class="avatar">YT</div>
+                  <div>
+                    <h4>Обзор тарифов · YouTube</h4>
+                    <p>В видео сравнивают тарифы операторов связи в Казахстане.</p>
+                  </div>
+                  <span class="tag yellow">Нейтрально</span>
+                </div>
+              </div>
+            </div>
+
+            <div class="card section-card">
+              <div class="card-head">
+                <h3>AI-рекомендации</h3>
+                <span>OpenClaw queue</span>
+              </div>
+              <div class="reply-card">
+                <h4>Риск репутационного всплеска</h4>
+                <p>За последние 3 часа выросло количество негативных упоминаний по ключу “интернет не работает”.</p>
+                <div class="reply-text">Рекомендация: включить алерт, подготовить шаблон ответа и передать обращения оператору поддержки.</div>
+                <div class="small-actions">
+                  <button class="small-btn primary">Принять</button>
+                  <button class="small-btn">Отклонить</button>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="page" id="mentions">
+          <div class="page-title-row">
+            <h2>Упоминания</h2>
+            <button class="btn">+ Добавить вручную</button>
+          </div>
+          <div class="filters">
+            <select class="select"><option>Все источники</option><option>Telegram</option><option>Instagram</option><option>TikTok</option></select>
+            <select class="select"><option>Все тональности</option><option>Позитив</option><option>Негатив</option><option>Нейтрально</option></select>
+            <input class="input" type="date" />
+            <input class="input" placeholder="Ключевое слово" />
+          </div>
+          <div class="card table-card">
+            <table>
+              <thead>
+                <tr>
+                  <th>Дата</th>
+                  <th>Источник</th>
+                  <th>Автор</th>
+                  <th>Текст</th>
+                  <th>Тональность</th>
+                  <th>Статус</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td>04.06.2026 09:12</td>
+                  <td>Telegram</td>
+                  <td>@almaty_chat</td>
+                  <td class="text-cell">Интернет опять не работает вечером, скорость падает после 20:00.</td>
+                  <td><span class="tag red">Негатив</span></td>
+                  <td><span class="tag blue">Новый</span></td>
+                </tr>
+                <tr>
+                  <td>04.06.2026 08:44</td>
+                  <td>Instagram</td>
+                  <td>@client_kz</td>
+                  <td class="text-cell">Спасибо за быстрое подключение, мастер приехал вовремя.</td>
+                  <td><span class="tag green">Позитив</span></td>
+                  <td><span class="tag green">Обработан</span></td>
+                </tr>
+                <tr>
+                  <td>03.06.2026 22:18</td>
+                  <td>YouTube</td>
+                  <td>Tech Review KZ</td>
+                  <td class="text-cell">В обзоре сравнили тарифы нескольких операторов и отдельно отметили цену пакета.</td>
+                  <td><span class="tag yellow">Нейтрально</span></td>
+                  <td><span class="tag blue">На проверке</span></td>
+                </tr>
+                <tr>
+                  <td>03.06.2026 17:31</td>
+                  <td>TikTok</td>
+                  <td>@internet_user</td>
+                  <td class="text-cell">Видео с жалобой на долгую обработку заявки.</td>
+                  <td><span class="tag red">Негатив</span></td>
+                  <td><span class="tag red">Важно</span></td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+
+        <div class="page" id="keywords">
+          <div class="page-title-row">
+            <h2>Ключевые слова</h2>
+            <button class="btn">+ Добавить ключ</button>
+          </div>
+
+          <div class="keyword-grid">
+            <div class="card keyword-card">
+              <div class="keyword-top">
+                <h3>Казахтелеком</h3>
+                <span class="tag green">Активен</span>
+              </div>
+              <div class="keyword-meta">Бренд · Telegram, Instagram, YouTube</div>
+              <div class="keyword-stats">
+                <div class="mini-stat"><strong>4 820</strong><span>упоминаний</span></div>
+                <div class="mini-stat"><strong>11%</strong><span>негатив</span></div>
+              </div>
+            </div>
+
+            <div class="card keyword-card">
+              <div class="keyword-top">
+                <h3>интернет не работает</h3>
+                <span class="tag red">Риск</span>
+              </div>
+              <div class="keyword-meta">Проблема · Telegram, TikTok</div>
+              <div class="keyword-stats">
+                <div class="mini-stat"><strong>1 246</strong><span>упоминаний</span></div>
+                <div class="mini-stat"><strong>68%</strong><span>негатив</span></div>
+              </div>
+            </div>
+
+            <div class="card keyword-card">
+              <div class="keyword-top">
+                <h3>#тарифы</h3>
+                <span class="tag green">Активен</span>
+              </div>
+              <div class="keyword-meta">Тег · TikTok, YouTube, Новости</div>
+              <div class="keyword-stats">
+                <div class="mini-stat"><strong>914</strong><span>упоминаний</span></div>
+                <div class="mini-stat"><strong>7%</strong><span>негатив</span></div>
+              </div>
+            </div>
+
+            <div class="card keyword-card">
+              <div class="keyword-top">
+                <h3>конкуренты</h3>
+                <span class="tag yellow">Наблюдение</span>
+              </div>
+              <div class="keyword-meta">Группа · Новости, YouTube, Telegram</div>
+              <div class="keyword-stats">
+                <div class="mini-stat"><strong>2 112</strong><span>упоминаний</span></div>
+                <div class="mini-stat"><strong>34%</strong><span>рост</span></div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="page" id="sources">
+          <div class="page-title-row">
+            <h2>Источники</h2>
+            <button class="btn">+ Подключить источник</button>
+          </div>
+
+          <div class="source-cards">
+            <div class="card source-card">
+              <div class="source-icon">TG</div>
+              <h3>Telegram</h3>
+              <p>Открытые каналы, группы с ботом, мониторинг ключевых слов.</p>
+              <div class="status-line"><span>Статус</span><strong>Подключено</strong></div>
+            </div>
+            <div class="card source-card">
+              <div class="source-icon">IG</div>
+              <h3>Instagram</h3>
+              <p>Упоминания, комментарии, отметки бизнес/creator-аккаунта.</p>
+              <div class="status-line"><span>Статус</span><strong>Требует API</strong></div>
+            </div>
+            <div class="card source-card">
+              <div class="source-icon">TT</div>
+              <h3>TikTok</h3>
+              <p>Публичные данные через доступные API и разрешённые источники.</p>
+              <div class="status-line"><span>Статус</span><strong>Не подключено</strong></div>
+            </div>
+            <div class="card source-card">
+              <div class="source-icon">YT</div>
+              <h3>YouTube</h3>
+              <p>Поиск видео, комментариев, каналов и упоминаний в описаниях.</p>
+              <div class="status-line"><span>Статус</span><strong>Подключить</strong></div>
+            </div>
+          </div>
+        </div>
+
+        <div class="page" id="agent">
+          <div class="page-title-row">
+            <h2>AI-агент OpenClaw</h2>
+            <button class="btn">+ Новое правило</button>
+          </div>
+
+          <div class="agent-layout">
+            <div class="agent-box">
+              <div>
+                <h3>Режим агента</h3>
+                <p>Агент анализирует новые упоминания, готовит ответы и передаёт рискованные сообщения оператору. Автоотправка отключена.</p>
+              </div>
+              <div class="mode-list">
+                <div class="mode"><span>Генерировать ответы</span><div class="switch on"><div class="knob"></div></div></div>
+                <div class="mode"><span>Отправлять без проверки</span><div class="switch"><div class="knob"></div></div></div>
+                <div class="mode"><span>Блокировать конфликтные темы</span><div class="switch on"><div class="knob"></div></div></div>
+              </div>
+            </div>
+
+            <div class="card agent-panel">
+              <div class="card-head">
+                <h3>Очередь ответов</h3>
+                <span>28 ожидают проверки</span>
+              </div>
+
+              <div class="reply-card">
+                <h4>Негативное упоминание · Telegram</h4>
+                <p>“Интернет не работает уже второй день, никто не отвечает.”</p>
+                <p class="reply-text">Здравствуйте. Напишите, пожалуйста, номер заявки или адрес в личные сообщения. Мы проверим статус обращения и передадим информацию ответственному специалисту.</p>
+                <div class="small-actions">
+                  <button class="small-btn primary">Отправить</button>
+                  <button class="small-btn">Редактировать</button>
+                  <button class="small-btn">Передать оператору</button>
+                </div>
+              </div>
+
+              <div class="reply-card">
+                <h4>Отметка в Instagram</h4>
+                <p>Пользователь отметил аккаунт в сторис после подключения.</p>
+                <p class="reply-text">Спасибо за обратную связь. Рады, что подключение прошло успешно.</p>
+                <div class="small-actions">
+                  <button class="small-btn primary">Отправить</button>
+                  <button class="small-btn">Редактировать</button>
+                  <button class="small-btn">Отклонить</button>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="page" id="reports">
+          <div class="page-title-row">
+            <h2>Отчёты</h2>
+            <button class="btn">Сформировать отчёт</button>
+          </div>
+
+          <div class="reports-grid">
+            <div class="card report-card">
+              <h3>Ежедневный отчёт</h3>
+              <p>Краткая сводка по упоминаниям, негативу, росту тем и источникам.</p>
+              <button class="btn secondary">Открыть</button>
+            </div>
+            <div class="card report-card">
+              <h3>Конкурентный анализ</h3>
+              <p>Сравнение бренда с конкурентами по количеству упоминаний и тональности.</p>
+              <button class="btn secondary">Открыть</button>
+            </div>
+            <div class="card report-card">
+              <h3>Репутационный риск</h3>
+              <p>Отчёт по резким всплескам негатива, ключевым причинам и каналам.</p>
+              <button class="btn secondary">Открыть</button>
+            </div>
+          </div>
+        </div>
+      </section>
+    </main>
+  </div>
+
+  <script>
+    const pages = {
+      dashboard: ["Dashboard", "Мониторинг упоминаний, тональности и активности по источникам"],
+      mentions: ["Упоминания", "Все найденные посты, комментарии, теги и отметки"],
+      keywords: ["Ключевые слова", "Настройка брендов, тегов, конкурентов и проблемных тем"],
+      sources: ["Источники", "Подключение соцсетей, мессенджеров и открытых источников"],
+      agent: ["AI-агент", "Очередь ответов, правила и режимы автоматизации"],
+      reports: ["Отчёты", "Экспорт аналитики и регулярные сводки"]
+    };
+
+    document.querySelectorAll(".nav-item").forEach(button => {
+      button.addEventListener("click", () => {
+        const page = button.dataset.page;
+
+        document.querySelectorAll(".nav-item").forEach(item => item.classList.remove("active"));
+        button.classList.add("active");
+
+        document.querySelectorAll(".page").forEach(section => section.classList.remove("active"));
+        document.getElementById(page).classList.add("active");
+
+        document.getElementById("pageTitle").textContent = pages[page][0];
+        document.getElementById("pageSubtitle").textContent = pages[page][1];
+      });
+    });
+  </script>
+</body>
+</html>
