@@ -572,6 +572,40 @@
       gap: 10px;
     }
 
+    .keyword-card.inactive {
+      opacity: 0.72;
+      background: #fafbfc;
+    }
+
+    .keyword-card-actions {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      margin-top: 14px;
+      padding-top: 14px;
+      border-top: 1px solid var(--line);
+    }
+
+    .source-checkboxes {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 8px;
+    }
+
+    .source-checkboxes label {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      font-size: 13px;
+      cursor: pointer;
+      padding: 6px 0;
+    }
+
+    .source-checkboxes input {
+      width: auto;
+      accent-color: var(--accent);
+    }
+
     .mini-stat {
       padding: 12px;
       border-radius: 14px;
@@ -1535,6 +1569,9 @@
             <select class="select" id="filterEmployee">
               <option value="">Все сотрудники</option>
             </select>
+            <select class="select" id="filterKeyword">
+              <option value="">Все ключевые слова</option>
+            </select>
           </div>
           <div class="card table-card">
             <table>
@@ -1573,55 +1610,7 @@
             <button class="btn" id="btnAddKeyword">+ Добавить ключ</button>
           </div>
 
-          <div class="keyword-grid">
-            <div class="card keyword-card">
-              <div class="keyword-top">
-                <h3>Казахтелеком</h3>
-                <span class="tag green">Активен</span>
-              </div>
-              <div class="keyword-meta">Бренд · Telegram, Instagram, YouTube</div>
-              <div class="keyword-stats">
-                <div class="mini-stat"><strong>4 820</strong><span>упоминаний</span></div>
-                <div class="mini-stat"><strong>11%</strong><span>негатив</span></div>
-              </div>
-            </div>
-
-            <div class="card keyword-card">
-              <div class="keyword-top">
-                <h3>интернет не работает</h3>
-                <span class="tag red">Риск</span>
-              </div>
-              <div class="keyword-meta">Проблема · Telegram, TikTok</div>
-              <div class="keyword-stats">
-                <div class="mini-stat"><strong>1 246</strong><span>упоминаний</span></div>
-                <div class="mini-stat"><strong>68%</strong><span>негатив</span></div>
-              </div>
-            </div>
-
-            <div class="card keyword-card">
-              <div class="keyword-top">
-                <h3>#тарифы</h3>
-                <span class="tag green">Активен</span>
-              </div>
-              <div class="keyword-meta">Тег · TikTok, YouTube, Новости</div>
-              <div class="keyword-stats">
-                <div class="mini-stat"><strong>914</strong><span>упоминаний</span></div>
-                <div class="mini-stat"><strong>7%</strong><span>негатив</span></div>
-              </div>
-            </div>
-
-            <div class="card keyword-card">
-              <div class="keyword-top">
-                <h3>конкуренты</h3>
-                <span class="tag yellow">Наблюдение</span>
-              </div>
-              <div class="keyword-meta">Группа · Новости, YouTube, Telegram</div>
-              <div class="keyword-stats">
-                <div class="mini-stat"><strong>2 112</strong><span>упоминаний</span></div>
-                <div class="mini-stat"><strong>34%</strong><span>рост</span></div>
-              </div>
-            </div>
-          </div>
+          <div class="keyword-grid" id="keywordGrid"></div>
         </div>
 
         <div class="page" id="sources">
@@ -1778,19 +1767,40 @@
         <div class="form-group">
           <label>Ключевое слово или фраза</label>
           <input type="text" id="keywordInput" placeholder="Например: #тарифы" />
+          <div class="form-error" id="keywordFormError">Введите ключевое слово</div>
         </div>
         <div class="form-group">
-          <label>Категория</label>
-          <select id="keywordCategory">
-            <option>Бренд</option>
-            <option>Проблема</option>
-            <option>Тег</option>
-            <option>Конкуренты</option>
+          <label>Тип</label>
+          <select id="keywordType">
+            <option value="бренд">Бренд</option>
+            <option value="продукт">Продукт</option>
+            <option value="конкурент">Конкурент</option>
+            <option value="персона">Персона</option>
+            <option value="тег">Тег</option>
+            <option value="проблема">Проблема</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <label>Источники</label>
+          <div class="source-checkboxes" id="keywordSources">
+            <label><input type="checkbox" value="Telegram" checked /> Telegram</label>
+            <label><input type="checkbox" value="Instagram" /> Instagram</label>
+            <label><input type="checkbox" value="TikTok" /> TikTok</label>
+            <label><input type="checkbox" value="YouTube" /> YouTube</label>
+            <label><input type="checkbox" value="X/Twitter" /> X/Twitter</label>
+            <label><input type="checkbox" value="Новости" /> Новости</label>
+          </div>
+        </div>
+        <div class="form-group">
+          <label>Статус</label>
+          <select id="keywordStatus">
+            <option value="active">Активен</option>
+            <option value="inactive">Выключен</option>
           </select>
         </div>
         <div class="modal-actions">
           <button class="btn secondary" data-close="modalAddKeyword">Отмена</button>
-          <button class="btn" id="confirmAddKeyword">Добавить</button>
+          <button class="btn" id="confirmAddKeyword">Сохранить</button>
         </div>
       </div>
     </div>
@@ -1938,6 +1948,196 @@
     let actionLog = [];
     let activeReplyMentionId = null;
     let instagramConnected = false;
+
+    const KEYWORDS_STORAGE_KEY = "kt_mediascanner_keywords";
+
+    function getDefaultKeywords() {
+      return [
+        { id: "kw_1", text: "Казахтелеком", type: "бренд", sources: ["Telegram", "Instagram", "YouTube"], active: true, baselineMentions: 4820, baselineNegative: 11, secondaryLabel: "негатив" },
+        { id: "kw_2", text: "интернет не работает", type: "проблема", sources: ["Telegram", "TikTok"], active: true, baselineMentions: 1246, baselineNegative: 68, secondaryLabel: "негатив", isRisk: true },
+        { id: "kw_3", text: "#тарифы", type: "тег", sources: ["TikTok", "YouTube", "Новости"], active: true, baselineMentions: 914, baselineNegative: 7, secondaryLabel: "негатив" },
+        { id: "kw_4", text: "конкуренты", type: "конкурент", sources: ["Новости", "YouTube", "Telegram"], active: true, baselineMentions: 2112, baselineSecondary: 34, secondaryLabel: "рост", isObservation: true }
+      ];
+    }
+
+    let keywords = [];
+
+    function loadKeywords() {
+      try {
+        const stored = localStorage.getItem(KEYWORDS_STORAGE_KEY);
+        if (stored) {
+          keywords = JSON.parse(stored);
+          return;
+        }
+      } catch (e) {
+        console.warn("Не удалось прочитать keywords из localStorage:", e);
+      }
+      keywords = getDefaultKeywords();
+      saveKeywords();
+    }
+
+    function saveKeywords() {
+      try {
+        localStorage.setItem(KEYWORDS_STORAGE_KEY, JSON.stringify(keywords));
+      } catch (e) {
+        console.warn("Не удалось сохранить keywords в localStorage:", e);
+      }
+    }
+
+    function formatKeywordType(type) {
+      const map = { бренд: "Бренд", продукт: "Продукт", конкурент: "Конкурент", персона: "Персона", тег: "Тег", проблема: "Проблема" };
+      return map[type] || type;
+    }
+
+    function matchMentionsForKeyword(keyword) {
+      const needle = keyword.text.toLowerCase().replace(/^#/, "");
+      return mentions.filter(m =>
+        keyword.sources.includes(m.source) &&
+        (m.text.toLowerCase().includes(needle) || m.text.toLowerCase().includes(keyword.text.toLowerCase()))
+      );
+    }
+
+    function computeKeywordStats(keyword) {
+      const matched = matchMentionsForKeyword(keyword);
+      if (matched.length) {
+        const negative = matched.filter(m => m.sentiment === "Негатив").length;
+        return {
+          count: matched.length,
+          secondary: Math.round((negative / matched.length) * 100),
+          secondaryLabel: "негатив"
+        };
+      }
+      return {
+        count: keyword.baselineMentions || 0,
+        secondary: keyword.baselineSecondary ?? keyword.baselineNegative ?? 0,
+        secondaryLabel: keyword.secondaryLabel || "негатив"
+      };
+    }
+
+    function keywordStatusTag(keyword) {
+      if (!keyword.active) return `<span class="tag yellow">Выключен</span>`;
+      if (keyword.isRisk) return `<span class="tag red">Риск</span>`;
+      if (keyword.isObservation) return `<span class="tag yellow">Наблюдение</span>`;
+      const stats = computeKeywordStats(keyword);
+      if (stats.secondaryLabel === "негатив" && stats.secondary >= 50) return `<span class="tag red">Риск</span>`;
+      return `<span class="tag green">Активен</span>`;
+    }
+
+    function renderKeywords() {
+      const grid = document.getElementById("keywordGrid");
+      if (!grid) return;
+
+      if (!keywords.length) {
+        grid.innerHTML = `<div class="empty-state">Ключевых слов пока нет. Нажмите «+ Добавить ключ».</div>`;
+        return;
+      }
+
+      grid.innerHTML = keywords.map(kw => {
+        const stats = computeKeywordStats(kw);
+        const countStr = stats.count.toLocaleString("ru-RU");
+        return `
+          <div class="card keyword-card ${kw.active ? "" : "inactive"}" data-keyword-id="${kw.id}">
+            <div class="keyword-top">
+              <h3>${kw.text}</h3>
+              ${keywordStatusTag(kw)}
+            </div>
+            <div class="keyword-meta">${formatKeywordType(kw.type)} · ${kw.sources.join(", ")}</div>
+            <div class="keyword-stats">
+              <div class="mini-stat"><strong>${countStr}</strong><span>упоминаний</span></div>
+              <div class="mini-stat"><strong>${stats.secondary}%</strong><span>${stats.secondaryLabel}</span></div>
+            </div>
+            <div class="keyword-card-actions">
+              <button class="small-btn" data-keyword-action="toggle" data-id="${kw.id}">${kw.active ? "Отключить" : "Активировать"}</button>
+              <button class="small-btn" data-keyword-action="delete" data-id="${kw.id}">Удалить</button>
+            </div>
+          </div>
+        `;
+      }).join("");
+    }
+
+    function populateKeywordFilter() {
+      const select = document.getElementById("filterKeyword");
+      if (!select) return;
+      const current = select.value;
+      select.innerHTML = `<option value="">Все ключевые слова</option>`;
+      keywords.filter(k => k.active).forEach(kw => {
+        const opt = document.createElement("option");
+        opt.value = kw.id;
+        opt.textContent = kw.text;
+        select.appendChild(opt);
+      });
+      if ([...select.options].some(o => o.value === current)) select.value = current;
+    }
+
+    function resetKeywordForm() {
+      document.getElementById("keywordInput").value = "";
+      document.getElementById("keywordType").value = "бренд";
+      document.getElementById("keywordStatus").value = "active";
+      document.getElementById("keywordFormError").classList.remove("visible");
+      document.querySelectorAll("#keywordSources input[type=checkbox]").forEach((cb, i) => {
+        cb.checked = i === 0;
+      });
+    }
+
+    function getSelectedKeywordSources() {
+      return [...document.querySelectorAll("#keywordSources input:checked")].map(cb => cb.value);
+    }
+
+    function addKeywordFromForm() {
+      const text = document.getElementById("keywordInput").value.trim();
+      const errorEl = document.getElementById("keywordFormError");
+
+      if (!text) {
+        errorEl.classList.add("visible");
+        showToast("Введите ключевое слово", "error");
+        return;
+      }
+
+      const sources = getSelectedKeywordSources();
+      if (!sources.length) {
+        showToast("Выберите хотя бы один источник", "warning");
+        return;
+      }
+
+      errorEl.classList.remove("visible");
+
+      const keyword = {
+        id: "kw_" + Date.now(),
+        text,
+        type: document.getElementById("keywordType").value,
+        sources,
+        active: document.getElementById("keywordStatus").value === "active",
+        baselineMentions: 0,
+        baselineNegative: 0,
+        secondaryLabel: "негатив"
+      };
+
+      keywords.unshift(keyword);
+      saveKeywords();
+      renderKeywords();
+      populateKeywordFilter();
+      resetKeywordForm();
+      closeModal("modalAddKeyword");
+      showToast("Ключевое слово добавлено", "success");
+    }
+
+    function toggleKeyword(id) {
+      const kw = keywords.find(k => k.id === id);
+      if (!kw) return;
+      kw.active = !kw.active;
+      saveKeywords();
+      renderKeywords();
+      populateKeywordFilter();
+      showToast(kw.active ? "Ключевое слово активировано" : "Ключевое слово отключено", "success");
+    }
+
+    function deleteKeyword(id) {
+      keywords = keywords.filter(k => k.id !== id);
+      saveKeywords();
+      renderKeywords();
+      populateKeywordFilter();
+      showToast("Ключевое слово удалено", "success");
+    }
 
     /**
      * Отправка ответа в Instagram через backend API.
@@ -2296,6 +2496,7 @@
       const sentiment = document.getElementById("filterSentiment").value;
       const status = document.getElementById("filterStatus").value;
       const employee = document.getElementById("filterEmployee").value;
+      const keywordId = document.getElementById("filterKeyword")?.value || "";
       const search = document.getElementById("globalSearch").value.toLowerCase().trim();
 
       return mentions.filter(m => {
@@ -2303,6 +2504,10 @@
         if (sentiment && m.sentiment !== sentiment) return false;
         if (status && m.status !== status) return false;
         if (employee && m.employee !== employee) return false;
+        if (keywordId) {
+          const kw = keywords.find(k => k.id === keywordId);
+          if (kw && !matchMentionsForKeyword(kw).some(x => x.id === m.id)) return false;
+        }
         if (search && !m.text.toLowerCase().includes(search) && !m.author.toLowerCase().includes(search)) return false;
         return true;
       });
@@ -2451,7 +2656,10 @@
     });
 
     document.getElementById("btnNewProject").addEventListener("click", () => openModal("modalNewProject"));
-    document.getElementById("btnAddKeyword").addEventListener("click", () => openModal("modalAddKeyword"));
+    document.getElementById("btnAddKeyword").addEventListener("click", () => {
+      resetKeywordForm();
+      openModal("modalAddKeyword");
+    });
     document.getElementById("btnConnectSource").addEventListener("click", () => openModal("modalConnectSource"));
     document.getElementById("btnGenerateReport").addEventListener("click", () => {
       generateReportSummary();
@@ -2465,13 +2673,14 @@
       document.getElementById("projectDesc").value = "";
     });
 
-    document.getElementById("confirmAddKeyword").addEventListener("click", () => {
-      const kw = document.getElementById("keywordInput").value.trim();
-      if (kw) {
-        closeModal("modalAddKeyword");
-        showToast("Ключевое слово добавлено", "success");
-        document.getElementById("keywordInput").value = "";
-      }
+    document.getElementById("confirmAddKeyword").addEventListener("click", addKeywordFromForm);
+
+    document.getElementById("keywordGrid").addEventListener("click", e => {
+      const btn = e.target.closest("[data-keyword-action]");
+      if (!btn) return;
+      const id = btn.dataset.id;
+      if (btn.dataset.keywordAction === "toggle") toggleKeyword(id);
+      if (btn.dataset.keywordAction === "delete") deleteKeyword(id);
     });
 
     document.getElementById("confirmConnectSource").addEventListener("click", () => {
@@ -2503,7 +2712,7 @@
       });
     });
 
-    ["filterSource", "filterSentiment", "filterStatus", "filterEmployee"].forEach(id => {
+    ["filterSource", "filterSentiment", "filterStatus", "filterEmployee", "filterKeyword"].forEach(id => {
       document.getElementById(id).addEventListener("change", renderMentions);
     });
 
@@ -2702,11 +2911,14 @@
     document.querySelector(".upgrade")?.addEventListener("click", () => showToast("Настройки агента открыты", "info"));
 
     initAgentReplies();
+    loadKeywords();
     populateEmployeeFilter();
+    populateKeywordFilter();
     updateInstagramConnectionUI();
     renderActionLog();
     renderSla();
     renderMentions();
+    renderKeywords();
     renderDashboardMentions();
     renderAgentQueue();
   </script>
