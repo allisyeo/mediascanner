@@ -1127,6 +1127,217 @@
       font-size: 14px;
     }
 
+    /* Instagram type labels */
+    .ig-type {
+      display: inline-block;
+      padding: 4px 8px;
+      border-radius: 8px;
+      font-size: 11px;
+      font-weight: 700;
+      white-space: nowrap;
+      background: linear-gradient(135deg, #fdf497, #fd5949, #d6249f, #285aeb);
+      background-size: 200% 200%;
+      color: #fff;
+      text-shadow: 0 1px 2px rgba(0,0,0,0.2);
+    }
+
+    .ig-type.comment { background: #e1306c; }
+    .ig-type.mention { background: #833ab4; }
+    .ig-type.story { background: #f77737; }
+    .ig-type.dm { background: #405de6; }
+
+    .mention-actions {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 4px;
+      min-width: 240px;
+      max-width: 280px;
+    }
+
+    .mention-actions .small-btn {
+      padding: 5px 7px;
+      font-size: 10px;
+      line-height: 1.2;
+    }
+
+    .mention-actions .small-btn.ig {
+      background: linear-gradient(135deg, #833ab4, #fd1d1d, #fcb045);
+      border-color: transparent;
+      color: #fff;
+    }
+
+    .source-cell {
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+    }
+
+    /* Instagram integration block */
+    .integration-block {
+      padding: 22px;
+      margin-bottom: 16px;
+      border: 1px solid var(--line);
+      border-radius: var(--radius);
+      background: linear-gradient(135deg, #fff 0%, #faf5ff 100%);
+    }
+
+    .integration-block h3 {
+      margin: 0 0 6px;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .integration-meta {
+      color: var(--muted);
+      font-size: 13px;
+      margin-bottom: 14px;
+    }
+
+    .integration-status {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      padding: 6px 12px;
+      border-radius: 999px;
+      font-size: 12px;
+      font-weight: 700;
+      margin-bottom: 14px;
+    }
+
+    .integration-status.connected { background: var(--green-soft); color: var(--green); }
+    .integration-status.disconnected { background: var(--red-soft); color: var(--red); }
+    .integration-status.pending { background: var(--yellow-soft); color: var(--yellow); }
+
+    .integration-warning {
+      padding: 12px 14px;
+      border-radius: 12px;
+      background: var(--yellow-soft);
+      border: 1px solid #f0d090;
+      font-size: 12px;
+      line-height: 1.5;
+      color: #7a5c10;
+      margin-bottom: 14px;
+    }
+
+    .integration-actions {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+    }
+
+    .demo-banner {
+      padding: 10px 14px;
+      border-radius: 12px;
+      background: var(--accent-soft);
+      border: 1px solid #c7d7ff;
+      font-size: 12px;
+      color: var(--accent);
+      font-weight: 600;
+      margin-bottom: 14px;
+    }
+
+    .mention-preview {
+      padding: 12px 14px;
+      border-radius: 12px;
+      background: var(--bg);
+      border: 1px solid var(--line);
+      font-size: 13px;
+      line-height: 1.5;
+      margin-bottom: 14px;
+    }
+
+    .mention-preview .label {
+      font-size: 11px;
+      color: var(--muted);
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.04em;
+      margin-bottom: 4px;
+    }
+
+    .reply-history {
+      margin-top: 16px;
+      border-top: 1px solid var(--line);
+      padding-top: 14px;
+    }
+
+    .reply-history h4 {
+      margin: 0 0 10px;
+      font-size: 13px;
+    }
+
+    .history-item {
+      padding: 10px 12px;
+      border-radius: 12px;
+      background: var(--bg);
+      margin-bottom: 8px;
+      font-size: 12px;
+    }
+
+    .history-item .meta {
+      color: var(--muted);
+      margin-bottom: 4px;
+      display: flex;
+      justify-content: space-between;
+      gap: 8px;
+      flex-wrap: wrap;
+    }
+
+    .history-status {
+      font-weight: 700;
+      padding: 2px 8px;
+      border-radius: 999px;
+      font-size: 11px;
+    }
+
+    .history-status.demo_sent { background: var(--purple-soft); color: var(--purple); }
+    .history-status.sent { background: var(--green-soft); color: var(--green); }
+    .history-status.failed { background: var(--red-soft); color: var(--red); }
+
+    .action-log {
+      margin-top: 16px;
+      padding: 18px;
+    }
+
+    .action-log-list {
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+      max-height: 220px;
+      overflow-y: auto;
+    }
+
+    .log-entry {
+      padding: 10px 12px;
+      border-radius: 12px;
+      border: 1px solid var(--line);
+      font-size: 12px;
+      display: grid;
+      grid-template-columns: 130px 1fr;
+      gap: 10px;
+    }
+
+    .log-entry time {
+      color: var(--muted);
+      font-size: 11px;
+    }
+
+    .form-error {
+      color: var(--red);
+      font-size: 12px;
+      font-weight: 600;
+      margin-top: 6px;
+      display: none;
+    }
+
+    .form-error.visible { display: block; }
+
+    .toast.warning { background: var(--yellow); color: #fff; }
+    .toast.error { background: var(--red); }
+
+    .modal.modal-wide { max-width: 640px; }
+
     @media (max-width: 1180px) {
       .sla-kpis { grid-template-columns: repeat(2, minmax(0, 1fr)); }
     }
@@ -1317,6 +1528,7 @@
               <option>В работе</option>
               <option>На проверке</option>
               <option>Обработан</option>
+              <option>Ответ отправлен</option>
               <option>Отклонено</option>
               <option>Передано оператору</option>
             </select>
@@ -1337,10 +1549,21 @@
                   <th>Статус</th>
                   <th>Сотрудник</th>
                   <th>SLA</th>
+                  <th>Действия</th>
                 </tr>
               </thead>
               <tbody id="mentionsTableBody"></tbody>
             </table>
+          </div>
+
+          <div class="card action-log section-card">
+            <div class="card-head">
+              <h3>Журнал действий</h3>
+              <span>Instagram и ответы операторов</span>
+            </div>
+            <div class="action-log-list" id="actionLogList">
+              <div class="empty-state" style="padding:20px">Действий пока нет</div>
+            </div>
           </div>
         </div>
 
@@ -1407,6 +1630,21 @@
             <button class="btn" id="btnConnectSource">+ Подключить источник</button>
           </div>
 
+          <div class="card integration-block">
+            <h3>📷 Instagram Business Account</h3>
+            <p class="integration-meta">Интеграция для отправки ответов на комментарии, упоминания и DM через backend</p>
+            <div class="integration-status disconnected" id="instagramConnectionStatus">
+              <span>●</span> Не подключено
+            </div>
+            <div class="integration-warning">
+              Для реальной отправки ответов нужен backend, Instagram Graph API, business/creator account и безопасное хранение access token на сервере. Токены не хранятся во frontend.
+            </div>
+            <div class="integration-actions">
+              <button class="btn" id="btnConnectInstagram">Подключить Instagram</button>
+              <button class="btn secondary" id="btnCheckInstagram">Проверить соединение</button>
+            </div>
+          </div>
+
           <div class="source-cards">
             <div class="card source-card">
               <div class="source-icon">TG</div>
@@ -1418,7 +1656,7 @@
               <div class="source-icon">IG</div>
               <h3>Instagram</h3>
               <p>Упоминания, комментарии, отметки бизнес/creator-аккаунта.</p>
-              <div class="status-line"><span>Статус</span><strong>Требует API</strong></div>
+              <div class="status-line"><span>Статус</span><strong id="instagramSourceCardStatus">Требует API</strong></div>
             </div>
             <div class="card source-card">
               <div class="source-icon">TT</div>
@@ -1592,6 +1830,51 @@
     </div>
   </div>
 
+  <div class="modal-overlay" id="modalReply">
+    <div class="modal modal-wide">
+      <div class="modal-head">
+        <h3>Ответ на упоминание</h3>
+        <button class="modal-close" data-close="modalReply">&times;</button>
+      </div>
+      <div class="modal-body">
+        <div class="demo-banner" id="replyDemoBanner">Demo mode: ответы не отправляются в Instagram, только имитируются локально.</div>
+        <div id="replyModalMeta"></div>
+        <div class="form-group">
+          <label>Текст ответа</label>
+          <textarea id="replyModalText" placeholder="Введите текст ответа..."></textarea>
+          <div class="form-error" id="replyModalError">Введите текст ответа</div>
+        </div>
+        <div class="reply-history" id="replyModalHistory"></div>
+        <div class="modal-actions">
+          <button class="btn secondary" data-close="modalReply">Закрыть</button>
+          <button class="btn secondary" id="btnModalGenerateReply">Сгенерировать ответ</button>
+          <button class="btn" id="btnModalSendReply">Отправить</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="modal-overlay" id="modalConnectInstagram">
+    <div class="modal">
+      <div class="modal-head">
+        <h3>Подключение Instagram</h3>
+        <button class="modal-close" data-close="modalConnectInstagram">&times;</button>
+      </div>
+      <div class="modal-body">
+        <div class="integration-warning">
+          OAuth и access token обрабатываются только на backend. Frontend инициирует подключение и получает статус.
+        </div>
+        <p style="font-size:13px;color:var(--muted);line-height:1.5;margin:0 0 14px">
+          В production здесь будет редирект на <code>/api/instagram/oauth/start</code> — сервер безопасно сохранит token.
+        </p>
+        <div class="modal-actions">
+          <button class="btn secondary" data-close="modalConnectInstagram">Отмена</button>
+          <button class="btn" id="confirmConnectInstagram">Подключить (demo)</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
   <script>
     const pages = {
       dashboard: ["Dashboard", "Мониторинг упоминаний, тональности и активности по источникам"],
@@ -1608,6 +1891,21 @@
       neutral: "Благодарим за упоминание. Мы следим за обратной связью и учитываем её при улучшении сервиса."
     };
 
+    // Конфиг приложения — DEMO_MODE отключается при подключении backend
+    const APP_CONFIG = {
+      DEMO_MODE: true,
+      API_BASE: "" // например: "https://api.mediascanner.local"
+    };
+
+    const CURRENT_USER = "Данияр К.";
+
+    const IG_TYPE_LABELS = {
+      instagram_comment: { label: "Instagram Comment", css: "comment" },
+      instagram_mention: { label: "Instagram Mention", css: "mention" },
+      instagram_story_mention: { label: "Instagram Story Mention", css: "story" },
+      instagram_dm: { label: "Instagram DM", css: "dm" }
+    };
+
     const employees = [
       { name: "Айгуль С.", role: "Старший оператор", assigned: 24, processed: 19, avgResponse: "18 мин", slaTarget: "95%", slaFact: "92%", overdue: 2, status: "risk" },
       { name: "Данияр К.", role: "Оператор", assigned: 18, processed: 17, avgResponse: "12 мин", slaTarget: "95%", slaFact: "97%", overdue: 0, status: "good" },
@@ -1617,25 +1915,288 @@
     ];
 
     let mentions = [
-      { id: 1, date: "04.06.2026 09:12", source: "Telegram", author: "@almaty_chat", text: "Интернет опять не работает вечером, скорость падает после 20:00.", sentiment: "Негатив", importance: "Высокая", status: "Новый", employee: "Мадина Т.", slaMinutes: -15 },
-      { id: 2, date: "04.06.2026 08:44", source: "Instagram", author: "@client_kz", text: "Спасибо за быстрое подключение, мастер приехал вовремя.", sentiment: "Позитив", importance: "Низкая", status: "Обработан", employee: "Данияр К.", slaMinutes: 120 },
-      { id: 3, date: "04.06.2026 08:10", source: "TikTok", author: "@internet_user", text: "Видео с жалобой на долгую обработку заявки — уже 3 дня жду.", sentiment: "Негатив", importance: "Высокая", status: "В работе", employee: "Айгуль С.", slaMinutes: 25 },
-      { id: 4, date: "03.06.2026 22:18", source: "YouTube", author: "Tech Review KZ", text: "В обзоре сравнили тарифы нескольких операторов и отдельно отметили цену пакета.", sentiment: "Нейтрально", importance: "Средняя", status: "На проверке", employee: "Ерлан Б.", slaMinutes: 45 },
-      { id: 5, date: "03.06.2026 19:05", source: "X/Twitter", author: "@kz_tech_news", text: "Пользователи жалуются на перебои связи в Алматы — тренд набирает обороты.", sentiment: "Негатив", importance: "Высокая", status: "Новый", employee: "Мадина Т.", slaMinutes: -8 },
-      { id: 6, date: "03.06.2026 17:31", source: "Новости", author: "Tengrinews", text: "Статья: операторы связи Казахстана готовят новые тарифные планы на лето.", sentiment: "Нейтрально", importance: "Средняя", status: "Обработан", employee: "Сауле Н.", slaMinutes: 90 },
-      { id: 7, date: "03.06.2026 15:20", source: "Telegram", author: "@astana_reviews", text: "Отметили бренд в положительном отзыве о скорости интернета.", sentiment: "Позитив", importance: "Низкая", status: "Обработан", employee: "Данияр К.", slaMinutes: 60 },
-      { id: 8, date: "03.06.2026 14:00", source: "Instagram", author: "@user_kz", text: "Отметили бренд в сторис после подключения услуги — всё отлично!", sentiment: "Позитив", importance: "Низкая", status: "На проверке", employee: "Сауле Н.", slaMinutes: 35 },
-      { id: 9, date: "03.06.2026 11:45", source: "TikTok", author: "@speedtest_kz", text: "Ролик с тестом скорости — результаты ниже заявленных.", sentiment: "Негатив", importance: "Средняя", status: "Передано оператору", employee: "Айгуль С.", slaMinutes: 10 },
-      { id: 10, date: "02.06.2026 20:30", source: "YouTube", author: "Обзор тарифов", text: "В видео сравнивают тарифы операторов связи в Казахстане.", sentiment: "Нейтрально", importance: "Средняя", status: "Обработан", employee: "Ерлан Б.", slaMinutes: 55 },
-      { id: 11, date: "02.06.2026 18:15", source: "X/Twitter", author: "@support_needed", text: "Третий день без интернета, поддержка не отвечает на звонки.", sentiment: "Негатив", importance: "Высокая", status: "В работе", employee: "Мадина Т.", slaMinutes: -22 },
-      { id: 12, date: "02.06.2026 16:00", source: "Новости", author: "Informburo", text: "Регулятор обсуждает новые требования к качеству интернет-услуг.", sentiment: "Нейтрально", importance: "Высокая", status: "Новый", employee: "Ерлан Б.", slaMinutes: 18 },
-      { id: 13, date: "02.06.2026 10:22", source: "Telegram", author: "@shymkent_chat", text: "Кто-нибудь сталкивался с обрывами связи в районе Абылай-хана?", sentiment: "Негатив", importance: "Средняя", status: "Отклонено", employee: "Данияр К.", slaMinutes: 0 },
-      { id: 14, date: "01.06.2026 21:00", source: "Instagram", author: "@brand_lover", text: "Лучший оператор в городе, рекомендую всем друзьям!", sentiment: "Позитив", importance: "Низкая", status: "Обработан", employee: "Сауле Н.", slaMinutes: 75 }
+      { id: 1, date: "04.06.2026 09:12", source: "Telegram", author: "@almaty_chat", text: "Интернет опять не работает вечером, скорость падает после 20:00.", sentiment: "Негатив", importance: "Высокая", status: "Новый", employee: "Мадина Т.", slaMinutes: -15, instagramSourceType: null, instagramCommentId: null, replyHistory: [] },
+      { id: 2, date: "04.06.2026 08:44", source: "Instagram", author: "@client_kz", text: "Спасибо за быстрое подключение, мастер приехал вовремя.", sentiment: "Позитив", importance: "Низкая", status: "Обработан", employee: "Данияр К.", slaMinutes: 120, instagramSourceType: "instagram_comment", instagramCommentId: "ig_cmt_17823456789012", replyHistory: [{ author: "Данияр К.", date: "04.06.2026 09:00", text: "Спасибо за отзыв! Рады помочь.", status: "demo_sent" }] },
+      { id: 3, date: "04.06.2026 08:10", source: "TikTok", author: "@internet_user", text: "Видео с жалобой на долгую обработку заявки — уже 3 дня жду.", sentiment: "Негатив", importance: "Высокая", status: "В работе", employee: "Айгуль С.", slaMinutes: 25, instagramSourceType: null, instagramCommentId: null, replyHistory: [] },
+      { id: 4, date: "03.06.2026 22:18", source: "YouTube", author: "Tech Review KZ", text: "В обзоре сравнили тарифы нескольких операторов и отдельно отметили цену пакета.", sentiment: "Нейтрально", importance: "Средняя", status: "На проверке", employee: "Ерлан Б.", slaMinutes: 45, instagramSourceType: null, instagramCommentId: null, replyHistory: [] },
+      { id: 5, date: "03.06.2026 19:05", source: "X/Twitter", author: "@kz_tech_news", text: "Пользователи жалуются на перебои связи в Алматы — тренд набирает обороты.", sentiment: "Негатив", importance: "Высокая", status: "Новый", employee: "Мадина Т.", slaMinutes: -8, instagramSourceType: null, instagramCommentId: null, replyHistory: [] },
+      { id: 6, date: "03.06.2026 17:31", source: "Новости", author: "Tengrinews", text: "Статья: операторы связи Казахстана готовят новые тарифные планы на лето.", sentiment: "Нейтрально", importance: "Средняя", status: "Обработан", employee: "Сауле Н.", slaMinutes: 90, instagramSourceType: null, instagramCommentId: null, replyHistory: [] },
+      { id: 7, date: "03.06.2026 15:20", source: "Telegram", author: "@astana_reviews", text: "Отметили бренд в положительном отзыве о скорости интернета.", sentiment: "Позитив", importance: "Низкая", status: "Обработан", employee: "Данияр К.", slaMinutes: 60, instagramSourceType: null, instagramCommentId: null, replyHistory: [] },
+      { id: 8, date: "03.06.2026 14:00", source: "Instagram", author: "@user_kz", text: "Отметили бренд в сторис после подключения услуги — всё отлично!", sentiment: "Позитив", importance: "Низкая", status: "На проверке", employee: "Сауле Н.", slaMinutes: 35, instagramSourceType: "instagram_story_mention", instagramCommentId: "ig_story_17823456789034", replyHistory: [] },
+      { id: 9, date: "03.06.2026 11:45", source: "TikTok", author: "@speedtest_kz", text: "Ролик с тестом скорости — результаты ниже заявленных.", sentiment: "Негатив", importance: "Средняя", status: "Передано оператору", employee: "Айгуль С.", slaMinutes: 10, instagramSourceType: null, instagramCommentId: null, replyHistory: [] },
+      { id: 10, date: "02.06.2026 20:30", source: "YouTube", author: "Обзор тарифов", text: "В видео сравнивают тарифы операторов связи в Казахстане.", sentiment: "Нейтрально", importance: "Средняя", status: "Обработан", employee: "Ерлан Б.", slaMinutes: 55, instagramSourceType: null, instagramCommentId: null, replyHistory: [] },
+      { id: 11, date: "02.06.2026 18:15", source: "X/Twitter", author: "@support_needed", text: "Третий день без интернета, поддержка не отвечает на звонки.", sentiment: "Негатив", importance: "Высокая", status: "В работе", employee: "Мадина Т.", slaMinutes: -22, instagramSourceType: null, instagramCommentId: null, replyHistory: [] },
+      { id: 12, date: "02.06.2026 16:00", source: "Новости", author: "Informburo", text: "Регулятор обсуждает новые требования к качеству интернет-услуг.", sentiment: "Нейтрально", importance: "Высокая", status: "Новый", employee: "Ерлан Б.", slaMinutes: 18, instagramSourceType: null, instagramCommentId: null, replyHistory: [] },
+      { id: 13, date: "02.06.2026 10:22", source: "Telegram", author: "@shymkent_chat", text: "Кто-нибудь сталкивался с обрывами связи в районе Абылай-хана?", sentiment: "Негатив", importance: "Средняя", status: "Отклонено", employee: "Данияр К.", slaMinutes: 0, instagramSourceType: null, instagramCommentId: null, replyHistory: [] },
+      { id: 14, date: "01.06.2026 21:00", source: "Instagram", author: "@brand_lover", text: "Лучший оператор в городе, рекомендую всем друзьям!", sentiment: "Позитив", importance: "Низкая", status: "Обработан", employee: "Сауле Н.", slaMinutes: 75, instagramSourceType: "instagram_mention", instagramCommentId: "ig_media_17823456789056", replyHistory: [] },
+      { id: 15, date: "04.06.2026 07:30", source: "Instagram", author: "@help_me_kz", text: "Здравствуйте, не могу подключить роутер, напишите в директ.", sentiment: "Нейтрально", importance: "Средняя", status: "Новый", employee: "Данияр К.", slaMinutes: 42, instagramSourceType: "instagram_dm", instagramCommentId: "ig_dm_17823456789078", replyHistory: [] },
+      { id: 16, date: "04.06.2026 06:55", source: "Instagram", author: "@angry_client", text: "Почему так долго отвечаете на комментарии? Уже второй день жду!", sentiment: "Негатив", importance: "Высокая", status: "Новый", employee: "Данияр К.", slaMinutes: 8, instagramSourceType: "instagram_comment", instagramCommentId: "ig_cmt_17823456789099", replyHistory: [] }
     ];
 
     const agentReplies = {};
     let selectedSource = "";
-    let editingReply = {};
+    let mentionDrafts = {};
+    let actionLog = [];
+    let activeReplyMentionId = null;
+    let instagramConnected = false;
+
+    /**
+     * Отправка ответа в Instagram через backend API.
+     * Access token хранится только на сервере — frontend передаёт payload без секретов.
+     */
+    async function sendInstagramReply(payload) {
+      // TODO: replace demo mode with backend API call
+      // const response = await fetch(`${APP_CONFIG.API_BASE}/api/instagram/reply`, {
+      //   method: "POST",
+      //   headers: { "Content-Type": "application/json" },
+      //   body: JSON.stringify(payload)
+      // });
+      // if (!response.ok) {
+      //   const err = await response.json().catch(() => ({}));
+      //   throw new Error(err.message || "Instagram reply failed");
+      // }
+      // return response.json();
+
+      if (APP_CONFIG.DEMO_MODE) {
+        await new Promise(resolve => setTimeout(resolve, 500));
+        return {
+          success: true,
+          mode: "demo",
+          messageId: "demo_ig_" + Date.now(),
+          payload
+        };
+      }
+
+      throw new Error("Backend API не настроен");
+    }
+
+    function isInstagramMention(mention) {
+      return mention.source === "Instagram" && mention.instagramSourceType;
+    }
+
+    function getAiReplyText(mention) {
+      const key = mention.sentiment === "Позитив" ? "positive" : mention.sentiment === "Негатив" ? "negative" : "neutral";
+      return AI_RESPONSES[key];
+    }
+
+    function instagramTypeBadge(mention) {
+      if (!isInstagramMention(mention)) return "";
+      const info = IG_TYPE_LABELS[mention.instagramSourceType];
+      if (!info) return "";
+      return `<span class="ig-type ${info.css}">${info.label}</span>`;
+    }
+
+    function historyStatusLabel(status) {
+      const map = { demo_sent: "demo sent", sent: "sent", failed: "failed" };
+      return map[status] || status;
+    }
+
+    function addActionLog(entry) {
+      actionLog.unshift({
+        time: new Date().toLocaleString("ru-RU"),
+        ...entry
+      });
+      if (actionLog.length > 50) actionLog.pop();
+      renderActionLog();
+    }
+
+    function renderActionLog() {
+      const container = document.getElementById("actionLogList");
+      if (!actionLog.length) {
+        container.innerHTML = `<div class="empty-state" style="padding:20px">Действий пока нет</div>`;
+        return;
+      }
+      container.innerHTML = actionLog.map(log => `
+        <div class="log-entry">
+          <time>${log.time}</time>
+          <div><strong>${log.action}</strong> — ${log.detail}</div>
+        </div>
+      `).join("");
+    }
+
+    function updateEmployeeSla(employeeName, wasOverdue) {
+      const emp = employees.find(e => e.name === employeeName);
+      if (!emp) return;
+      emp.processed += 1;
+      if (wasOverdue && emp.overdue > 0) emp.overdue -= 1;
+      const fact = Math.min(100, Math.round((emp.processed / emp.assigned) * 100));
+      emp.slaFact = fact + "%";
+      if (fact >= 95) emp.status = "good";
+      else if (fact >= 85) emp.status = "risk";
+      else emp.status = "overdue";
+    }
+
+    function buildInstagramPayload(mention, replyText) {
+      return {
+        mentionId: String(mention.id),
+        instagramCommentId: mention.instagramCommentId || "",
+        recipientUsername: mention.author.replace(/^@/, ""),
+        replyText: replyText,
+        sourceType: mention.instagramSourceType
+      };
+    }
+
+    function appendReplyHistory(mention, text, status) {
+      if (!mention.replyHistory) mention.replyHistory = [];
+      mention.replyHistory.push({
+        author: CURRENT_USER,
+        date: new Date().toLocaleString("ru-RU"),
+        text,
+        status
+      });
+    }
+
+    function renderReplyHistory(mention) {
+      const container = document.getElementById("replyModalHistory");
+      if (!mention.replyHistory || !mention.replyHistory.length) {
+        container.innerHTML = `<div class="reply-history"><h4>История ответов</h4><p style="color:var(--muted);font-size:12px;margin:0">Ответов пока нет</p></div>`;
+        return;
+      }
+      container.innerHTML = `
+        <div class="reply-history">
+          <h4>История ответов (${mention.replyHistory.length})</h4>
+          ${mention.replyHistory.map(h => `
+            <div class="history-item">
+              <div class="meta">
+                <span>${h.author} · ${h.date}</span>
+                <span class="history-status ${h.status}">${historyStatusLabel(h.status)}</span>
+              </div>
+              <div>${h.text}</div>
+            </div>
+          `).join("")}
+        </div>
+      `;
+    }
+
+    function openReplyModal(mentionId) {
+      const mention = mentions.find(m => m.id === mentionId);
+      if (!mention) return;
+      activeReplyMentionId = mentionId;
+
+      const draft = mentionDrafts[mentionId] || "";
+      document.getElementById("replyModalText").value = draft;
+      document.getElementById("replyModalError").classList.remove("visible");
+      document.getElementById("replyDemoBanner").style.display = APP_CONFIG.DEMO_MODE ? "block" : "none";
+
+      document.getElementById("replyModalMeta").innerHTML = `
+        <div class="mention-preview">
+          <div class="label">Источник</div>
+          <div class="source-cell" style="flex-direction:row;align-items:center;gap:8px">
+            <strong>${mention.source}</strong>
+            ${instagramTypeBadge(mention)}
+          </div>
+        </div>
+        <div class="mention-preview">
+          <div class="label">Автор</div>
+          <div>${mention.author}</div>
+        </div>
+        <div class="mention-preview">
+          <div class="label">Текст упоминания</div>
+          <div>${mention.text}</div>
+        </div>
+      `;
+
+      renderReplyHistory(mention);
+      openModal("modalReply");
+    }
+
+    function validateReplyText(text) {
+      if (!text || !text.trim()) {
+        document.getElementById("replyModalError").classList.add("visible");
+        showToast("Введите текст ответа", "error");
+        return false;
+      }
+      document.getElementById("replyModalError").classList.remove("visible");
+      return true;
+    }
+
+    async function handleInstagramSend(mentionId, replyText) {
+      const mention = mentions.find(m => m.id === mentionId);
+      if (!mention) return;
+
+      if (!isInstagramMention(mention)) {
+        showToast("Отправка в Instagram доступна только для Instagram-упоминаний", "warning");
+        return;
+      }
+
+      if (!validateReplyText(replyText)) return;
+
+      if (APP_CONFIG.DEMO_MODE) {
+        showToast("Тестовая отправка (demo mode)", "info");
+      }
+
+      const payload = buildInstagramPayload(mention, replyText.trim());
+
+      try {
+        const result = await sendInstagramReply(payload);
+        const historyStatus = APP_CONFIG.DEMO_MODE ? "demo_sent" : "sent";
+        const wasOverdue = mention.slaMinutes < 0;
+
+        appendReplyHistory(mention, replyText.trim(), historyStatus);
+        mention.status = "Ответ отправлен";
+        mention.slaMinutes = 0;
+        delete mentionDrafts[mentionId];
+
+        updateEmployeeSla(mention.employee, wasOverdue);
+
+        addActionLog({
+          action: "Instagram reply",
+          detail: `${mention.author} · ${IG_TYPE_LABELS[mention.instagramSourceType]?.label || "Instagram"} · ${historyStatus}`
+        });
+
+        showToast("Ответ отправлен в Instagram demo mode", "success");
+
+        renderMentions();
+        renderSla();
+        renderDashboardMentions();
+        renderAgentQueue();
+        if (activeReplyMentionId === mentionId) {
+          renderReplyHistory(mention);
+          document.getElementById("replyModalText").value = "";
+        }
+
+        return result;
+      } catch (err) {
+        appendReplyHistory(mention, replyText.trim(), "failed");
+        addActionLog({ action: "Instagram reply failed", detail: err.message });
+        showToast("Ошибка отправки: " + err.message, "error");
+        if (activeReplyMentionId === mentionId) renderReplyHistory(mention);
+      }
+    }
+
+    function handleGenericSend(mentionId) {
+      const mention = mentions.find(m => m.id === mentionId);
+      if (!mention) return;
+      const text = document.getElementById("replyModalText").value;
+      if (!validateReplyText(text)) return;
+
+      mentionDrafts[mentionId] = text.trim();
+      appendReplyHistory(mention, text.trim(), APP_CONFIG.DEMO_MODE ? "demo_sent" : "sent");
+      mention.status = isInstagramMention(mention) ? "Ответ отправлен" : "Обработан";
+      const wasOverdue = mention.slaMinutes < 0;
+      mention.slaMinutes = 0;
+      updateEmployeeSla(mention.employee, wasOverdue);
+
+      addActionLog({ action: "Ответ сохранён", detail: `${mention.source} · ${mention.author}` });
+      showToast("Ответ отправлен", "success");
+
+      renderMentions();
+      renderSla();
+      renderReplyHistory(mention);
+      closeModal("modalReply");
+    }
+
+    function updateInstagramConnectionUI() {
+      const el = document.getElementById("instagramConnectionStatus");
+      if (!el) return;
+      if (instagramConnected) {
+        el.className = "integration-status connected";
+        el.innerHTML = "<span>●</span> Подключено (demo)";
+      } else {
+        el.className = "integration-status disconnected";
+        el.innerHTML = "<span>●</span> Не подключено";
+      }
+    }
 
     function initAgentReplies() {
       mentions.filter(m => ["Новый", "В работе", "На проверке"].includes(m.status)).slice(0, 4).forEach(m => {
@@ -1674,7 +2235,7 @@
     function statusTag(s) {
       const map = {
         "Новый": "blue", "В работе": "yellow", "На проверке": "blue",
-        "Обработан": "green", "Отклонено": "red", "Передано оператору": "yellow"
+        "Обработан": "green", "Ответ отправлен": "green", "Отклонено": "red", "Передано оператору": "yellow"
       };
       return `<span class="tag ${map[s] || "blue"}">${s}</span>`;
     }
@@ -1753,21 +2314,35 @@
       document.getElementById("mentionsCount").textContent = `Показано: ${filtered.length} из ${mentions.length}`;
 
       if (!filtered.length) {
-        tbody.innerHTML = `<tr><td colspan="9" class="empty-state">Упоминания не найдены. Измените фильтры или поисковый запрос.</td></tr>`;
+        tbody.innerHTML = `<tr><td colspan="10" class="empty-state">Упоминания не найдены. Измените фильтры или поисковый запрос.</td></tr>`;
         return;
       }
 
       tbody.innerHTML = filtered.map(m => `
-        <tr class="clickable" data-mention-id="${m.id}">
+        <tr data-mention-id="${m.id}">
           <td>${m.date}</td>
-          <td>${m.source}</td>
+          <td>
+            <div class="source-cell">
+              <span>${m.source}</span>
+              ${instagramTypeBadge(m)}
+            </div>
+          </td>
           <td>${m.author}</td>
-          <td class="text-cell">${m.text}</td>
+          <td class="text-cell">${m.text}${m.replyHistory && m.replyHistory.length ? `<br><small style="color:var(--muted)">${m.replyHistory.length} ответ(ов) в истории</small>` : ""}</td>
           <td>${sentimentTag(m.sentiment)}</td>
           <td><span class="${importanceClass(m.importance)}">${m.importance}</span></td>
           <td>${statusTag(m.status)}</td>
           <td>${m.employee}</td>
           <td>${formatSla(m.slaMinutes)}</td>
+          <td>
+            <div class="mention-actions">
+              <button class="small-btn primary" data-mention-action="reply" data-id="${m.id}">Ответить</button>
+              <button class="small-btn" data-mention-action="ai" data-id="${m.id}">Сгенерировать AI-ответ</button>
+              <button class="small-btn ig" data-mention-action="instagram" data-id="${m.id}">Отправить в Instagram</button>
+              <button class="small-btn" data-mention-action="edit" data-id="${m.id}">Редактировать</button>
+              <button class="small-btn" data-mention-action="cancel" data-id="${m.id}">Отменить</button>
+            </div>
+          </td>
         </tr>
       `).join("");
     }
@@ -2009,8 +2584,102 @@
     });
 
     document.getElementById("mentionsTableBody").addEventListener("click", e => {
-      const row = e.target.closest("[data-mention-id]");
-      if (row) navigateTo("agent");
+      const btn = e.target.closest("[data-mention-action]");
+      if (!btn) return;
+      e.stopPropagation();
+
+      const id = parseInt(btn.dataset.id);
+      const mention = mentions.find(m => m.id === id);
+      if (!mention) return;
+
+      switch (btn.dataset.mentionAction) {
+        case "reply":
+          openReplyModal(id);
+          break;
+        case "ai": {
+          const aiText = getAiReplyText(mention);
+          mentionDrafts[id] = aiText;
+          openReplyModal(id);
+          document.getElementById("replyModalText").value = aiText;
+          showToast("AI-ответ сгенерирован", "info");
+          break;
+        }
+        case "instagram": {
+          if (!isInstagramMention(mention)) {
+            showToast("Отправка в Instagram доступна только для Instagram-упоминаний", "warning");
+            return;
+          }
+          const draft = mentionDrafts[id] || "";
+          if (!draft.trim()) {
+            openReplyModal(id);
+            showToast("Введите или сгенерируйте текст ответа", "warning");
+            return;
+          }
+          handleInstagramSend(id, draft);
+          break;
+        }
+        case "edit":
+          openReplyModal(id);
+          setTimeout(() => document.getElementById("replyModalText").focus(), 100);
+          break;
+        case "cancel":
+          delete mentionDrafts[id];
+          if (activeReplyMentionId === id) {
+            document.getElementById("replyModalText").value = "";
+            closeModal("modalReply");
+          }
+          showToast("Черновик отменён", "info");
+          break;
+      }
+    });
+
+    document.getElementById("btnModalGenerateReply").addEventListener("click", () => {
+      const mention = mentions.find(m => m.id === activeReplyMentionId);
+      if (!mention) return;
+      const text = getAiReplyText(mention);
+      document.getElementById("replyModalText").value = text;
+      mentionDrafts[activeReplyMentionId] = text;
+      document.getElementById("replyModalError").classList.remove("visible");
+      showToast("AI-ответ сгенерирован", "info");
+    });
+
+    document.getElementById("btnModalSendReply").addEventListener("click", async () => {
+      const mention = mentions.find(m => m.id === activeReplyMentionId);
+      if (!mention) return;
+      const text = document.getElementById("replyModalText").value;
+
+      if (isInstagramMention(mention)) {
+        await handleInstagramSend(activeReplyMentionId, text);
+        if (text.trim()) closeModal("modalReply");
+      } else {
+        handleGenericSend(activeReplyMentionId);
+      }
+    });
+
+    document.getElementById("replyModalText").addEventListener("input", e => {
+      if (activeReplyMentionId) mentionDrafts[activeReplyMentionId] = e.target.value;
+    });
+
+    document.getElementById("btnConnectInstagram").addEventListener("click", () => openModal("modalConnectInstagram"));
+
+    document.getElementById("confirmConnectInstagram").addEventListener("click", () => {
+      // TODO: в production — window.location.href = `${APP_CONFIG.API_BASE}/api/instagram/oauth/start`;
+      instagramConnected = true;
+      updateInstagramConnectionUI();
+      const igCard = document.getElementById("instagramSourceCardStatus");
+      if (igCard) igCard.textContent = "Подключено (demo)";
+      closeModal("modalConnectInstagram");
+      showToast("Instagram подключён (demo). Token хранится на backend.", "success");
+      addActionLog({ action: "Instagram OAuth", detail: "Подключение выполнено в demo mode" });
+    });
+
+    document.getElementById("btnCheckInstagram").addEventListener("click", () => {
+      // TODO: fetch(`${APP_CONFIG.API_BASE}/api/instagram/status`)
+      if (instagramConnected) {
+        showToast("Соединение активно (demo mode)", "success");
+      } else {
+        showToast("Instagram не подключён. Нажмите «Подключить Instagram».", "warning");
+      }
     });
 
     document.querySelectorAll(".switch").forEach(sw => {
@@ -2034,6 +2703,8 @@
 
     initAgentReplies();
     populateEmployeeFilter();
+    updateInstagramConnectionUI();
+    renderActionLog();
     renderSla();
     renderMentions();
     renderDashboardMentions();
