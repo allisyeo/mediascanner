@@ -1372,6 +1372,86 @@
 
     .modal.modal-wide { max-width: 640px; }
 
+    /* Period filter */
+    .period-bar {
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+      margin-top: 16px;
+      padding: 14px 18px;
+      background: #fff;
+      border: 1px solid var(--line);
+      border-radius: 16px;
+      box-shadow: 0 6px 20px rgba(16, 24, 40, 0.04);
+    }
+
+    .period-bar.hidden { display: none; }
+
+    .period-controls {
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .period-controls label {
+      font-size: 13px;
+      font-weight: 700;
+      color: var(--muted);
+    }
+
+    .period-select {
+      border: 1px solid var(--line);
+      background: var(--bg);
+      padding: 10px 12px;
+      border-radius: 12px;
+      font-size: 13px;
+      outline: none;
+      min-width: 180px;
+    }
+
+    .period-custom {
+      display: none;
+      flex-wrap: wrap;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .period-custom.visible { display: flex; }
+
+    .period-custom input[type="date"] {
+      border: 1px solid var(--line);
+      border-radius: 12px;
+      padding: 9px 11px;
+      font-size: 13px;
+      outline: none;
+    }
+
+    .period-label {
+      font-size: 13px;
+      color: var(--accent);
+      font-weight: 700;
+      white-space: nowrap;
+    }
+
+    .btn.small {
+      padding: 9px 14px;
+      font-size: 12px;
+      border-radius: 12px;
+    }
+
+    .chart-empty {
+      height: 250px;
+      display: grid;
+      place-items: center;
+      color: var(--muted);
+      font-size: 14px;
+      background: var(--bg);
+      border-radius: 14px;
+    }
+
     @media (max-width: 1180px) {
       .sla-kpis { grid-template-columns: repeat(2, minmax(0, 1fr)); }
     }
@@ -1381,6 +1461,10 @@
       .source-options { grid-template-columns: 1fr; }
       .report-summary-grid { grid-template-columns: 1fr; }
       .toast-container { left: 16px; right: 16px; bottom: 16px; }
+      .period-bar { flex-direction: column; align-items: stretch; }
+      .period-controls { flex-direction: column; align-items: stretch; }
+      .period-select { width: 100%; }
+      .period-label { text-align: center; white-space: normal; }
     }
   </style>
 </head>
@@ -1424,46 +1508,40 @@
         </div>
       </header>
 
+      <div class="period-bar" id="periodBar">
+        <div class="period-controls">
+          <label for="periodPreset">Период</label>
+          <select class="period-select" id="periodPreset">
+            <option value="today">Сегодня</option>
+            <option value="yesterday">Вчера</option>
+            <option value="last7" selected>Последние 7 дней</option>
+            <option value="last30">Последние 30 дней</option>
+            <option value="currentMonth">Текущий месяц</option>
+            <option value="lastMonth">Прошлый месяц</option>
+            <option value="custom">Произвольный период</option>
+          </select>
+          <div class="period-custom" id="periodCustomRange">
+            <input type="date" id="periodStart" />
+            <span style="color:var(--muted);font-size:13px">—</span>
+            <input type="date" id="periodEnd" />
+            <button class="btn small" id="periodApply">Применить</button>
+          </div>
+          <button class="btn secondary small" id="periodReset">Сбросить период</button>
+        </div>
+        <div class="period-label" id="periodLabel">Период: последние 7 дней</div>
+      </div>
+
       <section class="content">
         <div class="page active" id="dashboard">
-          <div class="grid-kpis">
-            <div class="card kpi">
-              <div class="kpi-label">Всего упоминаний</div>
-              <div class="kpi-value">12 430</div>
-              <div class="kpi-change positive">↑ 18% за неделю</div>
-            </div>
-            <div class="card kpi">
-              <div class="kpi-label">Упоминаний сегодня</div>
-              <div class="kpi-value">384</div>
-              <div class="kpi-change positive">↑ 42 новых</div>
-            </div>
-            <div class="card kpi">
-              <div class="kpi-label">Негатив</div>
-              <div class="kpi-value">47</div>
-              <div class="kpi-change negative">↑ риск-алерт</div>
-            </div>
-            <div class="card kpi">
-              <div class="kpi-label">AI-ответы в очереди</div>
-              <div class="kpi-value">28</div>
-              <div class="kpi-change neutral">требуют проверки</div>
-            </div>
-          </div>
+          <div class="grid-kpis" id="dashboardKpis"></div>
 
           <div class="dashboard-grid">
             <div class="card section-card">
               <div class="card-head">
                 <h3>Динамика упоминаний</h3>
-                <span>Последние 7 дней</span>
+                <span id="chartPeriodLabel">Последние 7 дней</span>
               </div>
-              <div class="chart">
-                <div class="bar-wrap"><div class="bar" data-value="920" style="height: 52%"></div><div class="bar-label">Пн</div></div>
-                <div class="bar-wrap"><div class="bar" data-value="1130" style="height: 64%"></div><div class="bar-label">Вт</div></div>
-                <div class="bar-wrap"><div class="bar" data-value="870" style="height: 49%"></div><div class="bar-label">Ср</div></div>
-                <div class="bar-wrap"><div class="bar" data-value="1460" style="height: 82%"></div><div class="bar-label">Чт</div></div>
-                <div class="bar-wrap"><div class="bar" data-value="1210" style="height: 68%"></div><div class="bar-label">Пт</div></div>
-                <div class="bar-wrap"><div class="bar" data-value="650" style="height: 36%"></div><div class="bar-label">Сб</div></div>
-                <div class="bar-wrap"><div class="bar" data-value="780" style="height: 44%"></div><div class="bar-label">Вс</div></div>
-              </div>
+              <div class="chart" id="dashboardChart"></div>
             </div>
 
             <div class="card section-card">
@@ -1471,14 +1549,7 @@
                 <h3>Источники</h3>
                 <span>Доля упоминаний</span>
               </div>
-              <div class="source-list">
-                <div class="source-row"><strong>Telegram</strong><div class="progress"><span style="width: 74%"></span></div><span>74%</span></div>
-                <div class="source-row"><strong>Instagram</strong><div class="progress"><span style="width: 58%"></span></div><span>58%</span></div>
-                <div class="source-row"><strong>TikTok</strong><div class="progress"><span style="width: 39%"></span></div><span>39%</span></div>
-                <div class="source-row"><strong>YouTube</strong><div class="progress"><span style="width: 31%"></span></div><span>31%</span></div>
-                <div class="source-row"><strong>X/Twitter</strong><div class="progress"><span style="width: 26%"></span></div><span>26%</span></div>
-                <div class="source-row"><strong>Новости</strong><div class="progress"><span style="width: 22%"></span></div><span>22%</span></div>
-              </div>
+              <div class="source-list" id="dashboardSources"></div>
             </div>
           </div>
 
@@ -1632,6 +1703,14 @@
               <button class="btn" id="btnConnectInstagram">Подключить Instagram</button>
               <button class="btn secondary" id="btnCheckInstagram">Проверить соединение</button>
             </div>
+          </div>
+
+          <div class="card section-card" style="margin-top:16px;margin-bottom:16px">
+            <div class="card-head">
+              <h3>Активность по источникам</h3>
+              <span id="sourcesActivityLabel">За выбранный период</span>
+            </div>
+            <div class="source-list" id="sourcesActivityList"></div>
           </div>
 
           <div class="source-cards">
@@ -1923,24 +2002,272 @@
       { name: "Альменбетова Айнур Мейрамбековна", role: "Модератор", assigned: 15, processed: 13, avgResponse: "16 мин", slaTarget: "90%", slaFact: "91%", overdue: 1, status: "risk" }
     ];
 
-    let mentions = [
-      { id: 1, date: "04.06.2026 09:12", source: "Telegram", author: "@almaty_chat", text: "Интернет опять не работает вечером, скорость падает после 20:00.", sentiment: "Негатив", importance: "Высокая", status: "Новый", employee: "Жансая Медеубаева", slaMinutes: -15, instagramSourceType: null, instagramCommentId: null, replyHistory: [] },
-      { id: 2, date: "04.06.2026 08:44", source: "Instagram", author: "@client_kz", text: "Спасибо за быстрое подключение, мастер приехал вовремя.", sentiment: "Позитив", importance: "Низкая", status: "Обработан", employee: "Каракоз Сыздыкова", slaMinutes: 120, instagramSourceType: "instagram_comment", instagramCommentId: "ig_cmt_17823456789012", replyHistory: [{ author: "Каракоз Сыздыкова", date: "04.06.2026 09:00", text: "Спасибо за отзыв! Рады помочь.", status: "demo_sent" }] },
-      { id: 3, date: "04.06.2026 08:10", source: "TikTok", author: "@internet_user", text: "Видео с жалобой на долгую обработку заявки — уже 3 дня жду.", sentiment: "Негатив", importance: "Высокая", status: "В работе", employee: "Ляззат Баймагамбетова", slaMinutes: 25, instagramSourceType: null, instagramCommentId: null, replyHistory: [] },
-      { id: 4, date: "03.06.2026 22:18", source: "YouTube", author: "Tech Review KZ", text: "В обзоре сравнили тарифы нескольких операторов и отдельно отметили цену пакета.", sentiment: "Нейтрально", importance: "Средняя", status: "На проверке", employee: "Альменбетова Айнур Мейрамбековна", slaMinutes: 45, instagramSourceType: null, instagramCommentId: null, replyHistory: [] },
-      { id: 5, date: "03.06.2026 19:05", source: "X/Twitter", author: "@kz_tech_news", text: "Пользователи жалуются на перебои связи в Алматы — тренд набирает обороты.", sentiment: "Негатив", importance: "Высокая", status: "Новый", employee: "Жансая Медеубаева", slaMinutes: -8, instagramSourceType: null, instagramCommentId: null, replyHistory: [] },
-      { id: 6, date: "03.06.2026 17:31", source: "Новости", author: "Tengrinews", text: "Статья: операторы связи Казахстана готовят новые тарифные планы на лето.", sentiment: "Нейтрально", importance: "Средняя", status: "Обработан", employee: "Каракоз Сыздыкова", slaMinutes: 90, instagramSourceType: null, instagramCommentId: null, replyHistory: [] },
-      { id: 7, date: "03.06.2026 15:20", source: "Telegram", author: "@astana_reviews", text: "Отметили бренд в положительном отзыве о скорости интернета.", sentiment: "Позитив", importance: "Низкая", status: "Обработан", employee: "Ляззат Баймагамбетова", slaMinutes: 60, instagramSourceType: null, instagramCommentId: null, replyHistory: [] },
-      { id: 8, date: "03.06.2026 14:00", source: "Instagram", author: "@user_kz", text: "Отметили бренд в сторис после подключения услуги — всё отлично!", sentiment: "Позитив", importance: "Низкая", status: "На проверке", employee: "Каракоз Сыздыкова", slaMinutes: 35, instagramSourceType: "instagram_story_mention", instagramCommentId: "ig_story_17823456789034", replyHistory: [] },
-      { id: 9, date: "03.06.2026 11:45", source: "TikTok", author: "@speedtest_kz", text: "Ролик с тестом скорости — результаты ниже заявленных.", sentiment: "Негатив", importance: "Средняя", status: "Передано оператору", employee: "Жансая Медеубаева", slaMinutes: 10, instagramSourceType: null, instagramCommentId: null, replyHistory: [] },
-      { id: 10, date: "02.06.2026 20:30", source: "YouTube", author: "Обзор тарифов", text: "В видео сравнивают тарифы операторов связи в Казахстане.", sentiment: "Нейтрально", importance: "Средняя", status: "Обработан", employee: "Альменбетова Айнур Мейрамбековна", slaMinutes: 55, instagramSourceType: null, instagramCommentId: null, replyHistory: [] },
-      { id: 11, date: "02.06.2026 18:15", source: "X/Twitter", author: "@support_needed", text: "Третий день без интернета, поддержка не отвечает на звонки.", sentiment: "Негатив", importance: "Высокая", status: "В работе", employee: "Жансая Медеубаева", slaMinutes: -22, instagramSourceType: null, instagramCommentId: null, replyHistory: [] },
-      { id: 12, date: "02.06.2026 16:00", source: "Новости", author: "Informburo", text: "Регулятор обсуждает новые требования к качеству интернет-услуг.", sentiment: "Нейтрально", importance: "Высокая", status: "Новый", employee: "Альменбетова Айнур Мейрамбековна", slaMinutes: 18, instagramSourceType: null, instagramCommentId: null, replyHistory: [] },
-      { id: 13, date: "02.06.2026 10:22", source: "Telegram", author: "@shymkent_chat", text: "Кто-нибудь сталкивался с обрывами связи в районе Абылай-хана?", sentiment: "Негатив", importance: "Средняя", status: "Отклонено", employee: "Ляззат Баймагамбетова", slaMinutes: 0, instagramSourceType: null, instagramCommentId: null, replyHistory: [] },
-      { id: 14, date: "01.06.2026 21:00", source: "Instagram", author: "@brand_lover", text: "Лучший оператор в городе, рекомендую всем друзьям!", sentiment: "Позитив", importance: "Низкая", status: "Обработан", employee: "Каракоз Сыздыкова", slaMinutes: 75, instagramSourceType: "instagram_mention", instagramCommentId: "ig_media_17823456789056", replyHistory: [] },
-      { id: 15, date: "04.06.2026 07:30", source: "Instagram", author: "@help_me_kz", text: "Здравствуйте, не могу подключить роутер, напишите в директ.", sentiment: "Нейтрально", importance: "Средняя", status: "Новый", employee: "Альменбетова Айнур Мейрамбековна", slaMinutes: 42, instagramSourceType: "instagram_dm", instagramCommentId: "ig_dm_17823456789078", replyHistory: [] },
-      { id: 16, date: "04.06.2026 06:55", source: "Instagram", author: "@angry_client", text: "Почему так долго отвечаете на комментарии? Уже второй день жду!", sentiment: "Негатив", importance: "Высокая", status: "Новый", employee: "Альменбетова Айнур Мейрамбековна", slaMinutes: 8, instagramSourceType: "instagram_comment", instagramCommentId: "ig_cmt_17823456789099", replyHistory: [] }
-    ];
+    let periodFilter = { preset: "last7", customStart: null, customEnd: null };
+    const PERIOD_PAGES = ["dashboard", "mentions", "agent", "reports", "sources"];
+
+    function startOfDay(d) {
+      const x = new Date(d);
+      x.setHours(0, 0, 0, 0);
+      return x;
+    }
+
+    function endOfDay(d) {
+      const x = new Date(d);
+      x.setHours(23, 59, 59, 999);
+      return x;
+    }
+
+    function formatRuDateTime(d) {
+      const pad = n => String(n).padStart(2, "0");
+      return `${pad(d.getDate())}.${pad(d.getMonth() + 1)}.${d.getFullYear()} ${pad(d.getHours())}:${pad(d.getMinutes())}`;
+    }
+
+    function formatRuDate(d) {
+      const pad = n => String(n).padStart(2, "0");
+      return `${pad(d.getDate())}.${pad(d.getMonth() + 1)}.${d.getFullYear()}`;
+    }
+
+    function makeDate(daysOffset, hours, minutes) {
+      const d = startOfDay(new Date());
+      d.setDate(d.getDate() + daysOffset);
+      d.setHours(hours, minutes, 0, 0);
+      return d;
+    }
+
+    function createMention(id, daysOffset, hours, minutes, data) {
+      const published = makeDate(daysOffset, hours, minutes);
+      const slaMinutes = data.slaMinutes ?? 60;
+      const slaDeadline = new Date(published.getTime() + slaMinutes * 60000);
+      const isProcessed = ["Обработан", "Ответ отправлен"].includes(data.status);
+      return {
+        id,
+        publishedAt: published.toISOString(),
+        createdAt: published.toISOString(),
+        updatedAt: published.toISOString(),
+        slaDeadline: slaDeadline.toISOString(),
+        repliedAt: isProcessed ? new Date(published.getTime() + 45 * 60000).toISOString() : null,
+        date: formatRuDateTime(published),
+        ...data
+      };
+    }
+
+    function buildDemoMentions() {
+      const t = [
+        [0, 9, 12, { source: "Telegram", author: "@almaty_chat", text: "Интернет опять не работает вечером, скорость падает после 20:00.", sentiment: "Негатив", importance: "Высокая", status: "Новый", employee: "Жансая Медеубаева", slaMinutes: -15, instagramSourceType: null, instagramCommentId: null, replyHistory: [] }],
+        [0, 8, 44, { source: "Instagram", author: "@client_kz", text: "Спасибо за быстрое подключение, мастер приехал вовремя.", sentiment: "Позитив", importance: "Низкая", status: "Обработан", employee: "Каракоз Сыздыкова", slaMinutes: 120, instagramSourceType: "instagram_comment", instagramCommentId: "ig_cmt_17823456789012", replyHistory: [{ author: "Каракоз Сыздыкова", date: "сегодня", text: "Спасибо за отзыв! Рады помочь.", status: "demo_sent" }] }],
+        [0, 8, 10, { source: "TikTok", author: "@internet_user", text: "Видео с жалобой на долгую обработку заявки — уже 3 дня жду.", sentiment: "Негатив", importance: "Высокая", status: "В работе", employee: "Ляззат Баймагамбетова", slaMinutes: 25, instagramSourceType: null, instagramCommentId: null, replyHistory: [] }],
+        [0, 7, 30, { source: "Instagram", author: "@help_me_kz", text: "Здравствуйте, не могу подключить роутер, напишите в директ.", sentiment: "Нейтрально", importance: "Средняя", status: "Новый", employee: "Альменбетова Айнур Мейрамбековна", slaMinutes: 42, instagramSourceType: "instagram_dm", instagramCommentId: "ig_dm_17823456789078", replyHistory: [] }],
+        [0, 6, 55, { source: "Instagram", author: "@angry_client", text: "Почему так долго отвечаете на комментарии? Уже второй день жду!", sentiment: "Негатив", importance: "Высокая", status: "Новый", employee: "Альменбетова Айнур Мейрамбековна", slaMinutes: 8, instagramSourceType: "instagram_comment", instagramCommentId: "ig_cmt_17823456789099", replyHistory: [] }],
+        [-1, 22, 18, { source: "YouTube", author: "Tech Review KZ", text: "В обзоре сравнили тарифы нескольких операторов и отдельно отметили цену пакета.", sentiment: "Нейтрально", importance: "Средняя", status: "На проверке", employee: "Альменбетова Айнур Мейрамбековна", slaMinutes: 45, instagramSourceType: null, instagramCommentId: null, replyHistory: [] }],
+        [-1, 19, 5, { source: "X/Twitter", author: "@kz_tech_news", text: "Пользователи жалуются на перебои связи в Алматы — тренд набирает обороты.", sentiment: "Негатив", importance: "Высокая", status: "Новый", employee: "Жансая Медеубаева", slaMinutes: -8, instagramSourceType: null, instagramCommentId: null, replyHistory: [] }],
+        [-1, 17, 31, { source: "Новости", author: "Tengrinews", text: "Статья: операторы связи Казахстана готовят новые тарифные планы на лето.", sentiment: "Нейтрально", importance: "Средняя", status: "Обработан", employee: "Каракоз Сыздыкова", slaMinutes: 90, instagramSourceType: null, instagramCommentId: null, replyHistory: [] }],
+        [-2, 15, 20, { source: "Telegram", author: "@astana_reviews", text: "Отметили бренд в положительном отзыве о скорости интернета.", sentiment: "Позитив", importance: "Низкая", status: "Обработан", employee: "Ляззат Баймагамбетова", slaMinutes: 60, instagramSourceType: null, instagramCommentId: null, replyHistory: [] }],
+        [-2, 14, 0, { source: "Instagram", author: "@user_kz", text: "Отметили бренд в сторис после подключения услуги — всё отлично!", sentiment: "Позитив", importance: "Низкая", status: "На проверке", employee: "Каракоз Сыздыкова", slaMinutes: 35, instagramSourceType: "instagram_story_mention", instagramCommentId: "ig_story_17823456789034", replyHistory: [] }],
+        [-3, 11, 45, { source: "TikTok", author: "@speedtest_kz", text: "Ролик с тестом скорости — результаты ниже заявленных.", sentiment: "Негатив", importance: "Средняя", status: "Передано оператору", employee: "Жансая Медеубаева", slaMinutes: 10, instagramSourceType: null, instagramCommentId: null, replyHistory: [] }],
+        [-4, 20, 30, { source: "YouTube", author: "Обзор тарифов", text: "В видео сравнивают тарифы операторов связи в Казахстане.", sentiment: "Нейтрально", importance: "Средняя", status: "Обработан", employee: "Альменбетова Айнур Мейрамбековна", slaMinutes: 55, instagramSourceType: null, instagramCommentId: null, replyHistory: [] }],
+        [-5, 18, 15, { source: "X/Twitter", author: "@support_needed", text: "Третий день без интернета, поддержка не отвечает на звонки.", sentiment: "Негатив", importance: "Высокая", status: "В работе", employee: "Жансая Медеубаева", slaMinutes: -22, instagramSourceType: null, instagramCommentId: null, replyHistory: [] }],
+        [-6, 16, 0, { source: "Новости", author: "Informburo", text: "Регулятор обсуждает новые требования к качеству интернет-услуг.", sentiment: "Нейтрально", importance: "Высокая", status: "Новый", employee: "Альменбетова Айнур Мейрамбековна", slaMinutes: 18, instagramSourceType: null, instagramCommentId: null, replyHistory: [] }],
+        [-6, 10, 22, { source: "Telegram", author: "@shymkent_chat", text: "Кто-нибудь сталкивался с обрывами связи в районе Абылай-хана?", sentiment: "Негатив", importance: "Средняя", status: "Отклонено", employee: "Ляззат Баймагамбетова", slaMinutes: 0, instagramSourceType: null, instagramCommentId: null, replyHistory: [] }],
+        [-10, 21, 0, { source: "Instagram", author: "@brand_lover", text: "Лучший оператор в городе, рекомендую всем друзьям!", sentiment: "Позитив", importance: "Низкая", status: "Обработан", employee: "Каракоз Сыздыкова", slaMinutes: 75, instagramSourceType: "instagram_mention", instagramCommentId: "ig_media_17823456789056", replyHistory: [] }],
+        [-12, 13, 40, { source: "Telegram", author: "@tariff_watch", text: "Обсуждают новые тарифы оператора в регионах.", sentiment: "Нейтрально", importance: "Средняя", status: "Обработан", employee: "Ляззат Баймагамбетова", slaMinutes: 30, instagramSourceType: null, instagramCommentId: null, replyHistory: [] }],
+        [-35, 12, 0, { source: "Новости", author: "Kursiv", text: "Аналитика рынка телекома за прошлый месяц.", sentiment: "Нейтрально", importance: "Средняя", status: "Обработан", employee: "Каракоз Сыздыкова", slaMinutes: 0, instagramSourceType: null, instagramCommentId: null, replyHistory: [] }],
+        [-38, 9, 30, { source: "YouTube", author: "Tech KZ", text: "Обзор скорости интернета в прошлом месяце.", sentiment: "Негатив", importance: "Высокая", status: "Обработан", employee: "Жансая Медеубаева", slaMinutes: 0, instagramSourceType: null, instagramCommentId: null, replyHistory: [] }],
+        [-42, 16, 20, { source: "TikTok", author: "@old_review", text: "Архивное видео с жалобами на связь.", sentiment: "Негатив", importance: "Средняя", status: "Обработан", employee: "Альменбетова Айнур Мейрамбековна", slaMinutes: 0, instagramSourceType: null, instagramCommentId: null, replyHistory: [] }]
+      ];
+      return t.map((row, i) => createMention(i + 1, row[0], row[1], row[2], row[3]));
+    }
+
+    let mentions = buildDemoMentions();
+
+    function getPeriodBounds() {
+      const now = new Date();
+      const todayStart = startOfDay(now);
+      const todayEnd = endOfDay(now);
+
+      switch (periodFilter.preset) {
+        case "today":
+          return [todayStart, todayEnd];
+        case "yesterday": {
+          const y = new Date(todayStart);
+          y.setDate(y.getDate() - 1);
+          return [y, endOfDay(y)];
+        }
+        case "last7": {
+          const s = new Date(todayStart);
+          s.setDate(s.getDate() - 6);
+          return [s, todayEnd];
+        }
+        case "last30": {
+          const s = new Date(todayStart);
+          s.setDate(s.getDate() - 29);
+          return [s, todayEnd];
+        }
+        case "currentMonth": {
+          const s = new Date(now.getFullYear(), now.getMonth(), 1);
+          return [startOfDay(s), todayEnd];
+        }
+        case "lastMonth": {
+          const s = new Date(now.getFullYear(), now.getMonth() - 1, 1);
+          const e = new Date(now.getFullYear(), now.getMonth(), 0);
+          return [startOfDay(s), endOfDay(e)];
+        }
+        case "custom": {
+          if (periodFilter.customStart && periodFilter.customEnd) {
+            return [startOfDay(new Date(periodFilter.customStart)), endOfDay(new Date(periodFilter.customEnd))];
+          }
+          return [todayStart, todayEnd];
+        }
+        default:
+          return [todayStart, todayEnd];
+      }
+    }
+
+    function isDateInPeriod(isoDate) {
+      const d = new Date(isoDate);
+      const [start, end] = getPeriodBounds();
+      return d >= start && d <= end;
+    }
+
+    function getMentionsByPeriod() {
+      return mentions.filter(m => isDateInPeriod(m.publishedAt));
+    }
+
+    function getPeriodLabelText() {
+      const labels = {
+        today: "сегодня",
+        yesterday: "вчера",
+        last7: "последние 7 дней",
+        last30: "последние 30 дней",
+        currentMonth: "текущий месяц",
+        lastMonth: "прошлый месяц"
+      };
+      if (periodFilter.preset === "custom" && periodFilter.customStart && periodFilter.customEnd) {
+        return `${formatRuDate(new Date(periodFilter.customStart))} — ${formatRuDate(new Date(periodFilter.customEnd))}`;
+      }
+      return labels[periodFilter.preset] || "последние 7 дней";
+    }
+
+    function updatePeriodLabel() {
+      const el = document.getElementById("periodLabel");
+      if (el) el.textContent = "Период: " + getPeriodLabelText();
+      const chartLbl = document.getElementById("chartPeriodLabel");
+      if (chartLbl) chartLbl.textContent = getPeriodLabelText();
+    }
+
+    function updatePeriodBarVisibility(page) {
+      const bar = document.getElementById("periodBar");
+      if (bar) bar.classList.toggle("hidden", !PERIOD_PAGES.includes(page));
+    }
+
+    function applyPeriodFilter(showToastMsg) {
+      updatePeriodLabel();
+      renderAll();
+      if (showToastMsg) showToast("Период применён", "success");
+    }
+
+    function resetPeriodFilter() {
+      periodFilter = { preset: "last7", customStart: null, customEnd: null };
+      document.getElementById("periodPreset").value = "last7";
+      document.getElementById("periodCustomRange").classList.remove("visible");
+      document.getElementById("periodStart").value = "";
+      document.getElementById("periodEnd").value = "";
+      updatePeriodLabel();
+      renderAll();
+      showToast("Период сброшен", "info");
+    }
+
+    function renderAll() {
+      renderDashboardKpis();
+      renderDashboardChart();
+      renderDashboardSources();
+      renderSla();
+      renderMentions();
+      renderDashboardMentions();
+      renderAgentQueue();
+      renderKeywords();
+      renderActionLog();
+      renderSourcesActivity();
+    }
+
+    function renderDashboardKpis() {
+      const data = getMentionsByPeriod();
+      const total = data.length;
+      const todayStart = startOfDay(new Date()).getTime();
+      const todayData = mentions.filter(m => startOfDay(new Date(m.publishedAt)).getTime() === todayStart);
+      const negative = data.filter(m => m.sentiment === "Негатив").length;
+      const queue = data.filter(m => ["Новый", "В работе", "На проверке"].includes(m.status)).length;
+
+      document.getElementById("dashboardKpis").innerHTML = `
+        <div class="card kpi"><div class="kpi-label">Всего упоминаний</div><div class="kpi-value">${total.toLocaleString("ru-RU")}</div><div class="kpi-change ${total ? "positive" : "neutral"}">${total ? "за период" : "нет данных"}</div></div>
+        <div class="card kpi"><div class="kpi-label">Упоминаний сегодня</div><div class="kpi-value">${todayData.length}</div><div class="kpi-change positive">${todayData.length ? "в текущем дне" : "0 сегодня"}</div></div>
+        <div class="card kpi"><div class="kpi-label">Негатив</div><div class="kpi-value">${negative}</div><div class="kpi-change ${negative > 5 ? "negative" : "neutral"}">${negative ? "за период" : "нет негатива"}</div></div>
+        <div class="card kpi"><div class="kpi-label">AI-ответы в очереди</div><div class="kpi-value">${queue}</div><div class="kpi-change neutral">${queue ? "требуют проверки" : "очередь пуста"}</div></div>
+      `;
+    }
+
+    function renderDashboardChart() {
+      const container = document.getElementById("dashboardChart");
+      const [start, end] = getPeriodBounds();
+      const data = getMentionsByPeriod();
+
+      if (!data.length) {
+        container.className = "chart-empty";
+        container.innerHTML = "Нет данных за выбранный период";
+        return;
+      }
+
+      container.className = "chart";
+      const days = [];
+      const d = startOfDay(new Date(start));
+      const endDay = startOfDay(new Date(end));
+      while (d <= endDay) {
+        days.push(new Date(d));
+        d.setDate(d.getDate() + 1);
+      }
+
+      const counts = days.map(day => {
+        const ds = startOfDay(day).getTime();
+        const de = endOfDay(day).getTime();
+        return data.filter(m => {
+          const t = new Date(m.publishedAt).getTime();
+          return t >= ds && t <= de;
+        }).length;
+      });
+
+      const max = Math.max(...counts, 1);
+      const dayNames = ["Вс", "Пн", "Вт", "Ср", "Чт", "Пт", "Сб"];
+
+      container.innerHTML = days.map((day, i) => {
+        const h = Math.max(8, Math.round((counts[i] / max) * 100));
+        const lbl = days.length <= 7 ? dayNames[day.getDay()] : formatRuDate(day).slice(0, 5);
+        return `<div class="bar-wrap"><div class="bar" data-value="${counts[i]}" style="height:${h}%"></div><div class="bar-label">${lbl}</div></div>`;
+      }).join("");
+    }
+
+    function renderSourceList(containerId, data) {
+      const el = document.getElementById(containerId);
+      if (!el) return;
+      const sources = ["Telegram", "Instagram", "TikTok", "YouTube", "X/Twitter", "Новости"];
+      if (!data.length) {
+        el.innerHTML = `<div class="empty-state" style="padding:20px">Нет данных за выбранный период</div>`;
+        return;
+      }
+      const total = data.length;
+      el.innerHTML = sources.map(src => {
+        const count = data.filter(m => m.source === src).length;
+        if (!count) return "";
+        const pct = Math.round((count / total) * 100);
+        return `<div class="source-row"><strong>${src}</strong><div class="progress"><span style="width:${pct}%"></span></div><span>${pct}%</span></div>`;
+      }).filter(Boolean).join("") || `<div class="empty-state" style="padding:20px">Нет данных за выбранный период</div>`;
+    }
+
+    function renderDashboardSources() {
+      renderSourceList("dashboardSources", getMentionsByPeriod());
+    }
+
+    function renderSourcesActivity() {
+      renderSourceList("sourcesActivityList", getMentionsByPeriod());
+    }
 
     const agentReplies = {};
     let selectedSource = "";
@@ -1991,7 +2318,7 @@
 
     function matchMentionsForKeyword(keyword) {
       const needle = keyword.text.toLowerCase().replace(/^#/, "");
-      return mentions.filter(m =>
+      return getMentionsByPeriod().filter(m =>
         keyword.sources.includes(m.source) &&
         (m.text.toLowerCase().includes(needle) || m.text.toLowerCase().includes(keyword.text.toLowerCase()))
       );
@@ -1999,18 +2326,14 @@
 
     function computeKeywordStats(keyword) {
       const matched = matchMentionsForKeyword(keyword);
-      if (matched.length) {
-        const negative = matched.filter(m => m.sentiment === "Негатив").length;
-        return {
-          count: matched.length,
-          secondary: Math.round((negative / matched.length) * 100),
-          secondaryLabel: "негатив"
-        };
+      if (!matched.length) {
+        return { count: 0, secondary: 0, secondaryLabel: keyword.secondaryLabel || "негатив" };
       }
+      const negative = matched.filter(m => m.sentiment === "Негатив").length;
       return {
-        count: keyword.baselineMentions || 0,
-        secondary: keyword.baselineSecondary ?? keyword.baselineNegative ?? 0,
-        secondaryLabel: keyword.secondaryLabel || "негатив"
+        count: matched.length,
+        secondary: Math.round((negative / matched.length) * 100),
+        secondaryLabel: "негатив"
       };
     }
 
@@ -2193,6 +2516,7 @@
     function addActionLog(entry) {
       actionLog.unshift({
         time: new Date().toLocaleString("ru-RU"),
+        timestamp: new Date().toISOString(),
         ...entry
       });
       if (actionLog.length > 50) actionLog.pop();
@@ -2201,11 +2525,12 @@
 
     function renderActionLog() {
       const container = document.getElementById("actionLogList");
-      if (!actionLog.length) {
-        container.innerHTML = `<div class="empty-state" style="padding:20px">Действий пока нет</div>`;
+      const filtered = actionLog.filter(log => !log.timestamp || isDateInPeriod(log.timestamp));
+      if (!filtered.length) {
+        container.innerHTML = `<div class="empty-state" style="padding:20px">${actionLog.length ? "Нет данных за выбранный период" : "Действий пока нет"}</div>`;
         return;
       }
-      container.innerHTML = actionLog.map(log => `
+      container.innerHTML = filtered.map(log => `
         <div class="log-entry">
           <time>${log.time}</time>
           <div><strong>${log.action}</strong> — ${log.detail}</div>
@@ -2345,10 +2670,7 @@
 
         showToast("Ответ отправлен в Instagram demo mode", "success");
 
-        renderMentions();
-        renderSla();
-        renderDashboardMentions();
-        renderAgentQueue();
+        renderAll();
         if (activeReplyMentionId === mentionId) {
           renderReplyHistory(mention);
           document.getElementById("replyModalText").value = "";
@@ -2379,10 +2701,9 @@
       addActionLog({ action: "Ответ сохранён", detail: `${mention.source} · ${mention.author}` });
       showToast("Ответ отправлен", "success");
 
-      renderMentions();
-      renderSla();
       renderReplyHistory(mention);
       closeModal("modalReply");
+      renderAll();
     }
 
     function updateInstagramConnectionUI() {
@@ -2462,21 +2783,37 @@
     }
 
     function renderSla() {
-      const totalAssigned = employees.reduce((s, e) => s + e.assigned, 0);
-      const totalProcessed = employees.reduce((s, e) => s + e.processed, 0);
-      const totalOverdue = employees.reduce((s, e) => s + e.overdue, 0);
-      const inProgress = mentions.filter(m => ["Новый", "В работе", "На проверке", "Передано оператору"].includes(m.status)).length;
-      const avgSla = Math.round(employees.reduce((s, e) => s + parseInt(e.slaFact), 0) / employees.length);
-      const avgResponseMin = Math.round(employees.reduce((s, e) => s + parseInt(e.avgResponse), 0) / employees.length);
+      const periodMentions = getMentionsByPeriod();
+      const inProgress = periodMentions.filter(m => ["Новый", "В работе", "На проверке", "Передано оператору"].includes(m.status)).length;
+      const totalOverdue = periodMentions.filter(m => m.slaMinutes < 0).length;
+
+      const rows = employees.map(emp => {
+        const empMentions = periodMentions.filter(m => m.employee === emp.name);
+        const assigned = empMentions.length;
+        const processed = empMentions.filter(m => ["Обработан", "Ответ отправлен"].includes(m.status)).length;
+        const overdue = empMentions.filter(m => m.slaMinutes < 0).length;
+        const slaFact = assigned ? Math.round((processed / assigned) * 100) : 0;
+        let status = slaFact >= 93 ? "good" : slaFact >= 85 ? "risk" : assigned ? "overdue" : emp.status;
+        if (!assigned) status = emp.status;
+        return { ...emp, assigned, processed, overdue, slaFact: slaFact + "%", status };
+      });
+
+      const avgSla = rows.length ? Math.round(rows.reduce((s, e) => s + parseInt(e.slaFact), 0) / rows.length) : 0;
+      const avgResponseMin = rows.length ? Math.round(rows.reduce((s, e) => s + parseInt(e.avgResponse), 0) / rows.length) : 0;
 
       document.getElementById("slaSummaryKpis").innerHTML = `
         <div class="sla-kpi"><div class="label">Общий SLA выполнения</div><div class="value ${avgSla >= 93 ? "good" : avgSla >= 85 ? "risk" : "bad"}">${avgSla}%</div></div>
-        <div class="sla-kpi"><div class="label">Среднее время ответа</div><div class="value">${avgResponseMin} мин</div></div>
+        <div class="sla-kpi"><div class="label">Среднее время ответа</div><div class="value">${periodMentions.length ? avgResponseMin + " мин" : "0"}</div></div>
         <div class="sla-kpi"><div class="label">Просроченные обращения</div><div class="value bad">${totalOverdue}</div></div>
         <div class="sla-kpi"><div class="label">Обращения в работе</div><div class="value risk">${inProgress}</div></div>
       `;
 
-      document.getElementById("slaTableBody").innerHTML = employees.map(e => `
+      if (!periodMentions.length) {
+        document.getElementById("slaTableBody").innerHTML = `<tr><td colspan="9" class="empty-state">Нет данных за выбранный период</td></tr>`;
+        return;
+      }
+
+      document.getElementById("slaTableBody").innerHTML = rows.map(e => `
         <tr>
           <td><strong>${e.name}</strong></td>
           <td>${e.role}</td>
@@ -2498,8 +2835,9 @@
       const employee = document.getElementById("filterEmployee").value;
       const keywordId = document.getElementById("filterKeyword")?.value || "";
       const search = document.getElementById("globalSearch").value.toLowerCase().trim();
+      const periodData = getMentionsByPeriod();
 
-      return mentions.filter(m => {
+      return periodData.filter(m => {
         if (source && m.source !== source) return false;
         if (sentiment && m.sentiment !== sentiment) return false;
         if (status && m.status !== status) return false;
@@ -2514,12 +2852,16 @@
     }
 
     function renderMentions() {
+      const periodData = getMentionsByPeriod();
       const filtered = getFilteredMentions();
       const tbody = document.getElementById("mentionsTableBody");
-      document.getElementById("mentionsCount").textContent = `Показано: ${filtered.length} из ${mentions.length}`;
+      document.getElementById("mentionsCount").textContent = `Показано: ${filtered.length} из ${periodData.length}`;
 
       if (!filtered.length) {
-        tbody.innerHTML = `<tr><td colspan="10" class="empty-state">Упоминания не найдены. Измените фильтры или поисковый запрос.</td></tr>`;
+        const msg = !periodData.length
+          ? "Нет данных за выбранный период"
+          : "Упоминания не найдены. Измените фильтры или поисковый запрос.";
+        tbody.innerHTML = `<tr><td colspan="10" class="empty-state">${msg}</td></tr>`;
         return;
       }
 
@@ -2553,8 +2895,13 @@
     }
 
     function renderDashboardMentions() {
-      const important = mentions.filter(m => m.importance === "Высокая" || m.sentiment === "Негатив").slice(0, 3);
-      document.getElementById("dashboardMentions").innerHTML = important.map(m => `
+      const important = getMentionsByPeriod().filter(m => m.importance === "Высокая" || m.sentiment === "Негатив").slice(0, 3);
+      const el = document.getElementById("dashboardMentions");
+      if (!important.length) {
+        el.innerHTML = `<div class="empty-state">Нет данных за выбранный период</div>`;
+        return;
+      }
+      el.innerHTML = important.map(m => `
         <div class="mention">
           <div class="avatar">${sourceAbbr(m.source)}</div>
           <div>
@@ -2567,14 +2914,14 @@
     }
 
     function renderAgentQueue() {
-      const queue = mentions.filter(m => ["Новый", "В работе", "На проверке"].includes(m.status)).slice(0, 4);
+      const queue = getMentionsByPeriod().filter(m => ["Новый", "В работе", "На проверке"].includes(m.status)).slice(0, 4);
       const container = document.getElementById("agentQueue");
       const countEl = document.getElementById("agentQueueCount");
-      const totalQueue = mentions.filter(m => ["Новый", "В работе", "На проверке"].includes(m.status)).length;
+      const totalQueue = getMentionsByPeriod().filter(m => ["Новый", "В работе", "На проверке"].includes(m.status)).length;
       if (countEl) countEl.textContent = totalQueue + " ожидают проверки";
 
       if (!queue.length) {
-        container.innerHTML = `<div class="empty-state">Очередь пуста — все обращения обработаны.</div>`;
+        container.innerHTML = `<div class="empty-state">${getMentionsByPeriod().length ? "Очередь пуста за выбранный период" : "Нет данных за выбранный период"}</div>`;
         return;
       }
 
@@ -2620,32 +2967,72 @@
       });
       document.getElementById("pageTitle").textContent = pages[page][0];
       document.getElementById("pageSubtitle").textContent = pages[page][1];
+      updatePeriodBarVisibility(page);
     }
 
     function generateReportSummary() {
-      const total = mentions.length;
-      const negative = mentions.filter(m => m.sentiment === "Негатив").length;
-      const processed = mentions.filter(m => m.status === "Обработан").length;
-      const overdue = mentions.filter(m => m.slaMinutes < 0).length;
-      const sources = [...new Set(mentions.map(m => m.source))].length;
+      const data = getMentionsByPeriod();
+      const total = data.length;
+      const negative = data.filter(m => m.sentiment === "Негатив").length;
+      const processed = data.filter(m => ["Обработан", "Ответ отправлен"].includes(m.status)).length;
+      const overdue = data.filter(m => m.slaMinutes < 0).length;
+      const sources = [...new Set(data.map(m => m.source))].length;
+      const periodText = getPeriodLabelText();
 
       document.getElementById("reportSummaryBody").innerHTML = `
-        <p style="color:var(--muted);font-size:13px;margin:0 0 16px">Краткая сводка за период 01.06 — 04.06.2026</p>
+        <p style="color:var(--muted);font-size:13px;margin:0 0 16px">Краткая сводка · ${periodText}</p>
         <div class="report-summary-grid">
           <div class="report-stat"><strong>${total}</strong><span>Всего упоминаний</span></div>
           <div class="report-stat"><strong>${negative}</strong><span>Негативных</span></div>
           <div class="report-stat"><strong>${processed}</strong><span>Обработано</span></div>
           <div class="report-stat"><strong>${overdue}</strong><span>Просрочено SLA</span></div>
           <div class="report-stat"><strong>${sources}</strong><span>Активных источников</span></div>
-          <div class="report-stat"><strong>${Math.round(processed / total * 100)}%</strong><span>Доля обработанных</span></div>
+          <div class="report-stat"><strong>${total ? Math.round(processed / total * 100) : 0}%</strong><span>Доля обработанных</span></div>
         </div>
-        <p style="font-size:13px;line-height:1.5;color:var(--text)">Основной риск: рост негатива по ключу «интернет не работает» в Telegram и X/Twitter. Рекомендуется усилить мониторинг вечерних часов.</p>
+        ${total ? `<p style="font-size:13px;line-height:1.5;color:var(--text)">Основной риск: рост негатива по ключу «интернет не работает» в Telegram и X/Twitter. Рекомендуется усилить мониторинг вечерних часов.</p>` : `<p style="font-size:13px;color:var(--muted)">Нет данных за выбранный период</p>`}
         <div class="modal-actions">
           <button class="btn secondary" data-close="modalReport">Закрыть</button>
           <button class="btn" data-action="export-report">Экспортировать</button>
         </div>
       `;
     }
+
+    document.getElementById("periodPreset").addEventListener("change", e => {
+      periodFilter.preset = e.target.value;
+      const customEl = document.getElementById("periodCustomRange");
+      if (e.target.value === "custom") {
+        customEl.classList.add("visible");
+        const now = new Date();
+        const weekAgo = new Date(now);
+        weekAgo.setDate(weekAgo.getDate() - 6);
+        document.getElementById("periodStart").value = weekAgo.toISOString().slice(0, 10);
+        document.getElementById("periodEnd").value = now.toISOString().slice(0, 10);
+      } else {
+        customEl.classList.remove("visible");
+        periodFilter.customStart = null;
+        periodFilter.customEnd = null;
+        applyPeriodFilter(true);
+      }
+    });
+
+    document.getElementById("periodApply").addEventListener("click", () => {
+      const start = document.getElementById("periodStart").value;
+      const end = document.getElementById("periodEnd").value;
+      if (!start || !end) {
+        showToast("Выберите дату начала и окончания", "warning");
+        return;
+      }
+      if (new Date(start) > new Date(end)) {
+        showToast("Дата начала не может быть позже даты окончания", "warning");
+        return;
+      }
+      periodFilter.preset = "custom";
+      periodFilter.customStart = start;
+      periodFilter.customEnd = end;
+      applyPeriodFilter(true);
+    });
+
+    document.getElementById("periodReset").addEventListener("click", resetPeriodFilter);
 
     document.querySelectorAll(".nav-item").forEach(button => {
       button.addEventListener("click", () => navigateTo(button.dataset.page));
@@ -2749,10 +3136,7 @@
           mention.slaMinutes = 0;
           delete agentReplies[id];
           showToast("Ответ отправлен", "success");
-          renderMentions();
-          renderAgentQueue();
-          renderSla();
-          renderDashboardMentions();
+          renderAll();
           break;
         }
         case "edit": {
@@ -2769,17 +3153,13 @@
         case "reject": {
           mention.status = "Отклонено";
           delete agentReplies[id];
-          renderMentions();
-          renderAgentQueue();
-          renderDashboardMentions();
+          renderAll();
           break;
         }
         case "transfer": {
           mention.status = "Передано оператору";
           showToast("Обращение передано оператору", "info");
-          renderMentions();
-          renderAgentQueue();
-          renderSla();
+          renderAll();
           break;
         }
       }
@@ -2915,12 +3295,9 @@
     populateEmployeeFilter();
     populateKeywordFilter();
     updateInstagramConnectionUI();
-    renderActionLog();
-    renderSla();
-    renderMentions();
-    renderKeywords();
-    renderDashboardMentions();
-    renderAgentQueue();
+    updatePeriodLabel();
+    updatePeriodBarVisibility("dashboard");
+    renderAll();
   </script>
 </body>
 </html>
