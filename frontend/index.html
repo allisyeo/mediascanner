@@ -1,0 +1,3458 @@
+
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>KT MediaScanner — Interface Mockup</title>
+  <style>
+    :root {
+      --bg: #f5f7fb;
+      --panel: #ffffff;
+      --text: #151923;
+      --muted: #697386;
+      --line: #e6eaf1;
+      --dark: #101828;
+      --accent: #2557d6;
+      --accent-soft: #eaf0ff;
+      --green: #0f9f6e;
+      --green-soft: #e8f8f2;
+      --red: #d92d20;
+      --red-soft: #fff0ef;
+      --yellow: #b7791f;
+      --yellow-soft: #fff7e6;
+      --purple: #6941c6;
+      --purple-soft: #f2edff;
+      --shadow: 0 16px 40px rgba(16, 24, 40, 0.08);
+      --radius: 18px;
+    }
+
+    * {
+      box-sizing: border-box;
+    }
+
+    body {
+      margin: 0;
+      font-family: Inter, -apple-system, BlinkMacSystemFont, "Segoe UI", Arial, sans-serif;
+      background: var(--bg);
+      color: var(--text);
+    }
+
+    .app {
+      display: grid;
+      grid-template-columns: 280px 1fr;
+      min-height: 100vh;
+    }
+
+    .sidebar {
+      background: #0f172a;
+      color: #fff;
+      padding: 24px 18px;
+      display: flex;
+      flex-direction: column;
+      gap: 24px;
+      position: sticky;
+      top: 0;
+      height: 100vh;
+    }
+
+    .brand {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      padding: 0 8px 12px;
+    }
+
+    .logo {
+      width: 42px;
+      height: 42px;
+      border-radius: 14px;
+      background: linear-gradient(135deg, #3b82f6, #8b5cf6);
+      display: grid;
+      place-items: center;
+      font-weight: 800;
+      letter-spacing: -0.04em;
+      box-shadow: 0 10px 25px rgba(59, 130, 246, 0.35);
+    }
+
+    .brand-title {
+      font-size: 18px;
+      font-weight: 750;
+      letter-spacing: -0.03em;
+    }
+
+    .brand-subtitle {
+      color: #94a3b8;
+      font-size: 12px;
+      margin-top: 2px;
+    }
+
+    .nav {
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+    }
+
+    .nav-item {
+      border: 0;
+      background: transparent;
+      color: #cbd5e1;
+      padding: 12px 14px;
+      border-radius: 14px;
+      text-align: left;
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      cursor: pointer;
+      font-size: 14px;
+      transition: 0.18s ease;
+    }
+
+    .nav-item:hover,
+    .nav-item.active {
+      color: #fff;
+      background: rgba(255, 255, 255, 0.1);
+    }
+
+    .nav-icon {
+      width: 22px;
+      display: inline-grid;
+      place-items: center;
+      opacity: 0.9;
+    }
+
+    .sidebar-bottom {
+      margin-top: auto;
+      padding: 16px;
+      border-radius: 18px;
+      background: rgba(255, 255, 255, 0.08);
+      border: 1px solid rgba(255, 255, 255, 0.08);
+    }
+
+    .sidebar-bottom h4 {
+      margin: 0 0 6px;
+      font-size: 14px;
+    }
+
+    .sidebar-bottom p {
+      margin: 0 0 12px;
+      font-size: 12px;
+      line-height: 1.45;
+      color: #cbd5e1;
+    }
+
+    .upgrade {
+      width: 100%;
+      border: 0;
+      background: #fff;
+      color: #0f172a;
+      padding: 10px 12px;
+      border-radius: 12px;
+      font-weight: 700;
+      cursor: pointer;
+    }
+
+    .main {
+      padding: 24px 28px 36px;
+      overflow: hidden;
+    }
+
+    .topbar {
+      background: rgba(255, 255, 255, 0.84);
+      backdrop-filter: blur(16px);
+      border: 1px solid var(--line);
+      border-radius: 22px;
+      padding: 16px 18px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      box-shadow: 0 10px 30px rgba(16, 24, 40, 0.04);
+      position: sticky;
+      top: 16px;
+      z-index: 5;
+    }
+
+    .title h1 {
+      margin: 0;
+      font-size: 24px;
+      letter-spacing: -0.04em;
+    }
+
+    .title p {
+      margin: 4px 0 0;
+      color: var(--muted);
+      font-size: 13px;
+    }
+
+    .top-actions {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .search {
+      width: 320px;
+      background: var(--bg);
+      border: 1px solid var(--line);
+      border-radius: 14px;
+      padding: 12px 14px;
+      outline: none;
+      font-size: 14px;
+    }
+
+    .btn {
+      border: 0;
+      border-radius: 14px;
+      padding: 12px 16px;
+      background: var(--accent);
+      color: white;
+      font-weight: 700;
+      cursor: pointer;
+      box-shadow: 0 8px 18px rgba(37, 87, 214, 0.18);
+    }
+
+    .btn.secondary {
+      background: #fff;
+      color: var(--text);
+      border: 1px solid var(--line);
+      box-shadow: none;
+    }
+
+    .content {
+      margin-top: 24px;
+    }
+
+    .page {
+      display: none;
+      animation: fade 0.2s ease;
+    }
+
+    .page.active {
+      display: block;
+    }
+
+    @keyframes fade {
+      from { opacity: 0; transform: translateY(6px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    .grid-kpis {
+      display: grid;
+      grid-template-columns: repeat(4, minmax(0, 1fr));
+      gap: 16px;
+    }
+
+    .card {
+      background: var(--panel);
+      border: 1px solid var(--line);
+      border-radius: var(--radius);
+      box-shadow: 0 10px 30px rgba(16, 24, 40, 0.04);
+    }
+
+    .kpi {
+      padding: 20px;
+    }
+
+    .kpi-label {
+      color: var(--muted);
+      font-size: 13px;
+      margin-bottom: 10px;
+    }
+
+    .kpi-value {
+      font-size: 30px;
+      font-weight: 800;
+      letter-spacing: -0.05em;
+      margin-bottom: 10px;
+    }
+
+    .kpi-change {
+      font-size: 12px;
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      padding: 6px 10px;
+      border-radius: 999px;
+      font-weight: 700;
+    }
+
+    .positive {
+      color: var(--green);
+      background: var(--green-soft);
+    }
+
+    .negative {
+      color: var(--red);
+      background: var(--red-soft);
+    }
+
+    .neutral {
+      color: var(--purple);
+      background: var(--purple-soft);
+    }
+
+    .dashboard-grid {
+      display: grid;
+      grid-template-columns: 1.45fr 0.85fr;
+      gap: 16px;
+      margin-top: 16px;
+    }
+
+    .section-card {
+      padding: 20px;
+    }
+
+    .card-head {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 18px;
+    }
+
+    .card-head h3 {
+      margin: 0;
+      font-size: 16px;
+      letter-spacing: -0.02em;
+    }
+
+    .card-head span {
+      color: var(--muted);
+      font-size: 12px;
+    }
+
+    .chart {
+      height: 250px;
+      display: flex;
+      align-items: end;
+      gap: 12px;
+      padding-top: 8px;
+    }
+
+    .bar-wrap {
+      flex: 1;
+      height: 100%;
+      display: flex;
+      flex-direction: column;
+      justify-content: end;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .bar {
+      width: 100%;
+      max-width: 38px;
+      border-radius: 12px 12px 6px 6px;
+      background: linear-gradient(180deg, #2557d6, #9eb6ff);
+      min-height: 20px;
+      position: relative;
+    }
+
+    .bar::after {
+      content: attr(data-value);
+      position: absolute;
+      top: -24px;
+      left: 50%;
+      transform: translateX(-50%);
+      font-size: 11px;
+      color: var(--muted);
+      opacity: 0;
+      transition: 0.15s ease;
+    }
+
+    .bar:hover::after {
+      opacity: 1;
+    }
+
+    .bar-label {
+      color: var(--muted);
+      font-size: 11px;
+    }
+
+    .source-list {
+      display: flex;
+      flex-direction: column;
+      gap: 14px;
+    }
+
+    .source-row {
+      display: grid;
+      grid-template-columns: 90px 1fr 46px;
+      align-items: center;
+      gap: 10px;
+      font-size: 13px;
+    }
+
+    .progress {
+      height: 10px;
+      border-radius: 999px;
+      background: var(--bg);
+      overflow: hidden;
+    }
+
+    .progress span {
+      display: block;
+      height: 100%;
+      border-radius: inherit;
+      background: var(--accent);
+    }
+
+    .split {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 16px;
+      margin-top: 16px;
+    }
+
+    .mention-list {
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+    }
+
+    .mention {
+      padding: 14px;
+      border: 1px solid var(--line);
+      border-radius: 16px;
+      display: grid;
+      grid-template-columns: 44px 1fr auto;
+      gap: 12px;
+      align-items: start;
+      background: #fff;
+    }
+
+    .avatar {
+      width: 44px;
+      height: 44px;
+      border-radius: 14px;
+      background: var(--accent-soft);
+      display: grid;
+      place-items: center;
+      color: var(--accent);
+      font-weight: 800;
+    }
+
+    .mention h4 {
+      margin: 0 0 4px;
+      font-size: 14px;
+    }
+
+    .mention p {
+      margin: 0;
+      color: var(--muted);
+      font-size: 13px;
+      line-height: 1.45;
+    }
+
+    .tag {
+      padding: 6px 10px;
+      border-radius: 999px;
+      font-size: 12px;
+      font-weight: 750;
+      white-space: nowrap;
+    }
+
+    .tag.red {
+      color: var(--red);
+      background: var(--red-soft);
+    }
+
+    .tag.green {
+      color: var(--green);
+      background: var(--green-soft);
+    }
+
+    .tag.yellow {
+      color: var(--yellow);
+      background: var(--yellow-soft);
+    }
+
+    .tag.blue {
+      color: var(--accent);
+      background: var(--accent-soft);
+    }
+
+    .table-card {
+      overflow: hidden;
+    }
+
+    .filters {
+      display: flex;
+      gap: 10px;
+      margin-bottom: 16px;
+      flex-wrap: wrap;
+    }
+
+    .select,
+    .input {
+      border: 1px solid var(--line);
+      background: #fff;
+      padding: 11px 12px;
+      border-radius: 13px;
+      color: var(--text);
+      outline: none;
+      font-size: 14px;
+    }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 13px;
+      background: #fff;
+    }
+
+    th {
+      text-align: left;
+      color: var(--muted);
+      font-weight: 750;
+      padding: 14px 16px;
+      border-bottom: 1px solid var(--line);
+      background: #fbfcfe;
+    }
+
+    td {
+      padding: 15px 16px;
+      border-bottom: 1px solid var(--line);
+      vertical-align: top;
+    }
+
+    tr:last-child td {
+      border-bottom: 0;
+    }
+
+    .text-cell {
+      max-width: 520px;
+      line-height: 1.45;
+    }
+
+    .page-title-row {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 16px;
+    }
+
+    .page-title-row h2 {
+      margin: 0;
+      font-size: 22px;
+      letter-spacing: -0.04em;
+    }
+
+    .keyword-grid {
+      display: grid;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: 16px;
+    }
+
+    .keyword-card {
+      padding: 18px;
+    }
+
+    .keyword-top {
+      display: flex;
+      align-items: start;
+      justify-content: space-between;
+      gap: 10px;
+      margin-bottom: 14px;
+    }
+
+    .keyword-top h3 {
+      margin: 0;
+      font-size: 16px;
+    }
+
+    .keyword-meta {
+      color: var(--muted);
+      font-size: 12px;
+      margin-bottom: 14px;
+    }
+
+    .keyword-stats {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 10px;
+    }
+
+    .keyword-card.inactive {
+      opacity: 0.72;
+      background: #fafbfc;
+    }
+
+    .keyword-card-actions {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      margin-top: 14px;
+      padding-top: 14px;
+      border-top: 1px solid var(--line);
+    }
+
+    .source-checkboxes {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 8px;
+    }
+
+    .source-checkboxes label {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      font-size: 13px;
+      cursor: pointer;
+      padding: 6px 0;
+    }
+
+    .source-checkboxes input {
+      width: auto;
+      accent-color: var(--accent);
+    }
+
+    .mini-stat {
+      padding: 12px;
+      border-radius: 14px;
+      background: var(--bg);
+    }
+
+    .mini-stat strong {
+      display: block;
+      font-size: 18px;
+      margin-bottom: 4px;
+    }
+
+    .mini-stat span {
+      color: var(--muted);
+      font-size: 12px;
+    }
+
+    .source-cards {
+      display: grid;
+      grid-template-columns: repeat(4, minmax(0, 1fr));
+      gap: 16px;
+    }
+
+    .source-card {
+      padding: 18px;
+    }
+
+    .source-icon {
+      width: 48px;
+      height: 48px;
+      border-radius: 16px;
+      display: grid;
+      place-items: center;
+      font-weight: 800;
+      margin-bottom: 14px;
+      background: var(--accent-soft);
+      color: var(--accent);
+    }
+
+    .source-card h3 {
+      margin: 0 0 6px;
+      font-size: 16px;
+    }
+
+    .source-card p {
+      margin: 0 0 14px;
+      color: var(--muted);
+      font-size: 13px;
+      line-height: 1.45;
+    }
+
+    .status-line {
+      display: flex;
+      justify-content: space-between;
+      font-size: 12px;
+      color: var(--muted);
+      padding-top: 12px;
+      border-top: 1px solid var(--line);
+    }
+
+    .agent-layout {
+      display: grid;
+      grid-template-columns: 0.9fr 1.1fr;
+      gap: 16px;
+    }
+
+    .agent-panel {
+      padding: 20px;
+    }
+
+    .agent-box {
+      background: #0f172a;
+      color: white;
+      border-radius: 20px;
+      padding: 22px;
+      min-height: 290px;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+    }
+
+    .agent-box h3 {
+      margin: 0 0 10px;
+      font-size: 22px;
+      letter-spacing: -0.04em;
+    }
+
+    .agent-box p {
+      margin: 0;
+      color: #cbd5e1;
+      line-height: 1.55;
+      font-size: 14px;
+    }
+
+    .mode-list {
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+      margin-top: 16px;
+    }
+
+    .mode {
+      padding: 14px;
+      border-radius: 16px;
+      border: 1px solid rgba(255, 255, 255, 0.12);
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .switch {
+      width: 44px;
+      height: 24px;
+      border-radius: 999px;
+      background: #334155;
+      padding: 3px;
+      display: flex;
+      justify-content: flex-start;
+    }
+
+    .switch.on {
+      background: #22c55e;
+      justify-content: flex-end;
+    }
+
+    .knob {
+      width: 18px;
+      height: 18px;
+      border-radius: 50%;
+      background: #fff;
+    }
+
+    .reply-card {
+      padding: 16px;
+      border: 1px solid var(--line);
+      border-radius: 16px;
+      margin-bottom: 12px;
+      background: #fff;
+    }
+
+    .reply-card h4 {
+      margin: 0 0 8px;
+      font-size: 14px;
+    }
+
+    .reply-card p {
+      margin: 0 0 12px;
+      color: var(--muted);
+      line-height: 1.45;
+      font-size: 13px;
+    }
+
+    .reply-text {
+      padding: 14px;
+      border-radius: 14px;
+      background: var(--bg);
+      color: var(--text) !important;
+      margin-bottom: 12px !important;
+    }
+
+    .small-actions {
+      display: flex;
+      gap: 8px;
+    }
+
+    .small-btn {
+      border: 1px solid var(--line);
+      background: #fff;
+      border-radius: 12px;
+      padding: 8px 11px;
+      font-size: 12px;
+      cursor: pointer;
+      font-weight: 750;
+    }
+
+    .small-btn.primary {
+      background: var(--accent);
+      border-color: var(--accent);
+      color: #fff;
+    }
+
+    .reports-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr 1fr;
+      gap: 16px;
+    }
+
+    .report-card {
+      padding: 20px;
+    }
+
+    .report-card h3 {
+      margin: 0 0 10px;
+    }
+
+    .report-card p {
+      margin: 0 0 18px;
+      color: var(--muted);
+      font-size: 13px;
+      line-height: 1.45;
+    }
+
+    @media (max-width: 1180px) {
+      .app {
+        grid-template-columns: 92px 1fr;
+      }
+
+      .brand-text,
+      .nav-text,
+      .sidebar-bottom {
+        display: none;
+      }
+
+      .sidebar {
+        align-items: center;
+      }
+
+      .nav-item {
+        justify-content: center;
+        padding: 14px;
+      }
+
+      .grid-kpis,
+      .source-cards,
+      .keyword-grid,
+      .reports-grid {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+      }
+
+      .dashboard-grid,
+      .split,
+      .agent-layout {
+        grid-template-columns: 1fr;
+      }
+    }
+
+    @media (max-width: 760px) {
+      .app {
+        grid-template-columns: 1fr;
+      }
+
+      .sidebar {
+        position: static;
+        height: auto;
+        flex-direction: row;
+        overflow-x: auto;
+        padding: 12px;
+      }
+
+      .brand {
+        display: none;
+      }
+
+      .nav {
+        flex-direction: row;
+      }
+
+      .main {
+        padding: 16px;
+      }
+
+      .topbar {
+        flex-direction: column;
+        align-items: stretch;
+        gap: 14px;
+      }
+
+      .top-actions {
+        flex-direction: column;
+        align-items: stretch;
+      }
+
+      .search {
+        width: 100%;
+      }
+
+      .grid-kpis,
+      .source-cards,
+      .keyword-grid,
+      .reports-grid {
+        grid-template-columns: 1fr;
+      }
+
+      table {
+        min-width: 760px;
+      }
+
+      .table-card {
+        overflow-x: auto;
+      }
+    }
+
+    /* SLA block */
+    .sla-kpis {
+      display: grid;
+      grid-template-columns: repeat(4, minmax(0, 1fr));
+      gap: 14px;
+      margin-bottom: 18px;
+    }
+
+    .sla-kpi {
+      padding: 16px 18px;
+      border-radius: 14px;
+      background: var(--bg);
+      border: 1px solid var(--line);
+    }
+
+    .sla-kpi .label {
+      font-size: 12px;
+      color: var(--muted);
+      margin-bottom: 6px;
+    }
+
+    .sla-kpi .value {
+      font-size: 22px;
+      font-weight: 800;
+      letter-spacing: -0.03em;
+    }
+
+    .sla-kpi .value.good { color: var(--green); }
+    .sla-kpi .value.risk { color: var(--yellow); }
+    .sla-kpi .value.bad { color: var(--red); }
+
+    .sla-status {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      padding: 5px 10px;
+      border-radius: 999px;
+      font-size: 12px;
+      font-weight: 700;
+    }
+
+    .sla-status.good { color: var(--green); background: var(--green-soft); }
+    .sla-status.risk { color: var(--yellow); background: var(--yellow-soft); }
+    .sla-status.overdue { color: var(--red); background: var(--red-soft); }
+
+    .sla-time {
+      font-weight: 700;
+      font-size: 12px;
+    }
+
+    .sla-time.ok { color: var(--green); }
+    .sla-time.warn { color: var(--yellow); }
+    .sla-time.over { color: var(--red); }
+
+    .importance-high { color: var(--red); font-weight: 700; }
+    .importance-medium { color: var(--yellow); font-weight: 700; }
+    .importance-low { color: var(--muted); }
+
+    tr.clickable { cursor: pointer; transition: background 0.12s; }
+    tr.clickable:hover { background: #f8fafc; }
+
+    /* Modals */
+    .modal-overlay {
+      display: none;
+      position: fixed;
+      inset: 0;
+      background: rgba(15, 23, 42, 0.45);
+      backdrop-filter: blur(4px);
+      z-index: 100;
+      align-items: center;
+      justify-content: center;
+      padding: 20px;
+    }
+
+    .modal-overlay.open { display: flex; }
+
+    .modal {
+      background: #fff;
+      border-radius: 20px;
+      border: 1px solid var(--line);
+      box-shadow: var(--shadow);
+      width: 100%;
+      max-width: 520px;
+      max-height: 90vh;
+      overflow-y: auto;
+      animation: modalIn 0.2s ease;
+    }
+
+    @keyframes modalIn {
+      from { opacity: 0; transform: scale(0.96) translateY(8px); }
+      to { opacity: 1; transform: scale(1) translateY(0); }
+    }
+
+    .modal-head {
+      padding: 22px 24px 0;
+      display: flex;
+      justify-content: space-between;
+      align-items: start;
+    }
+
+    .modal-head h3 {
+      margin: 0;
+      font-size: 18px;
+      letter-spacing: -0.03em;
+    }
+
+    .modal-close {
+      border: 0;
+      background: var(--bg);
+      width: 34px;
+      height: 34px;
+      border-radius: 10px;
+      cursor: pointer;
+      font-size: 18px;
+      color: var(--muted);
+      display: grid;
+      place-items: center;
+    }
+
+    .modal-body { padding: 18px 24px 24px; }
+
+    .form-group {
+      margin-bottom: 14px;
+    }
+
+    .form-group label {
+      display: block;
+      font-size: 13px;
+      font-weight: 600;
+      margin-bottom: 6px;
+      color: var(--text);
+    }
+
+    .form-group input,
+    .form-group select,
+    .form-group textarea {
+      width: 100%;
+      border: 1px solid var(--line);
+      border-radius: 12px;
+      padding: 11px 13px;
+      font-size: 14px;
+      outline: none;
+      font-family: inherit;
+    }
+
+    .form-group textarea { min-height: 90px; resize: vertical; }
+
+    .modal-actions {
+      display: flex;
+      gap: 10px;
+      justify-content: flex-end;
+      margin-top: 18px;
+    }
+
+    .source-options {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 10px;
+    }
+
+    .source-option {
+      border: 1px solid var(--line);
+      border-radius: 14px;
+      padding: 14px;
+      cursor: pointer;
+      text-align: center;
+      font-weight: 700;
+      font-size: 13px;
+      transition: 0.15s;
+      background: #fff;
+    }
+
+    .source-option:hover,
+    .source-option.selected {
+      border-color: var(--accent);
+      background: var(--accent-soft);
+      color: var(--accent);
+    }
+
+    .report-summary-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 12px;
+      margin-bottom: 16px;
+    }
+
+    .report-stat {
+      padding: 14px;
+      border-radius: 14px;
+      background: var(--bg);
+    }
+
+    .report-stat strong {
+      display: block;
+      font-size: 20px;
+      margin-bottom: 4px;
+    }
+
+    .report-stat span {
+      font-size: 12px;
+      color: var(--muted);
+    }
+
+    /* Toasts */
+    .toast-container {
+      position: fixed;
+      bottom: 24px;
+      right: 24px;
+      z-index: 200;
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+      pointer-events: none;
+    }
+
+    .toast {
+      background: var(--dark);
+      color: #fff;
+      padding: 14px 18px;
+      border-radius: 14px;
+      font-size: 14px;
+      font-weight: 600;
+      box-shadow: 0 12px 32px rgba(0, 0, 0, 0.2);
+      animation: toastIn 0.25s ease;
+      pointer-events: auto;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      max-width: 360px;
+    }
+
+    .toast.success { background: var(--green); }
+    .toast.info { background: var(--accent); }
+
+    @keyframes toastIn {
+      from { opacity: 0; transform: translateX(20px); }
+      to { opacity: 1; transform: translateX(0); }
+    }
+
+    @keyframes toastOut {
+      to { opacity: 0; transform: translateX(20px); }
+    }
+
+    .reply-textarea {
+      width: 100%;
+      border: 1px solid var(--accent);
+      border-radius: 14px;
+      padding: 14px;
+      font-size: 13px;
+      font-family: inherit;
+      line-height: 1.45;
+      min-height: 80px;
+      resize: vertical;
+      margin-bottom: 12px;
+    }
+
+    .empty-state {
+      text-align: center;
+      padding: 40px 20px;
+      color: var(--muted);
+      font-size: 14px;
+    }
+
+    /* Instagram type labels */
+    .ig-type {
+      display: inline-block;
+      padding: 4px 8px;
+      border-radius: 8px;
+      font-size: 11px;
+      font-weight: 700;
+      white-space: nowrap;
+      background: linear-gradient(135deg, #fdf497, #fd5949, #d6249f, #285aeb);
+      background-size: 200% 200%;
+      color: #fff;
+      text-shadow: 0 1px 2px rgba(0,0,0,0.2);
+    }
+
+    .ig-type.comment { background: #e1306c; }
+    .ig-type.mention { background: #833ab4; }
+    .ig-type.story { background: #f77737; }
+    .ig-type.dm { background: #405de6; }
+
+    .mention-actions {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 4px;
+      min-width: 240px;
+      max-width: 280px;
+    }
+
+    .mention-actions .small-btn {
+      padding: 5px 7px;
+      font-size: 10px;
+      line-height: 1.2;
+    }
+
+    .mention-actions .small-btn.ig {
+      background: linear-gradient(135deg, #833ab4, #fd1d1d, #fcb045);
+      border-color: transparent;
+      color: #fff;
+    }
+
+    .source-cell {
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+    }
+
+    /* Instagram integration block */
+    .integration-block {
+      padding: 22px;
+      margin-bottom: 16px;
+      border: 1px solid var(--line);
+      border-radius: var(--radius);
+      background: linear-gradient(135deg, #fff 0%, #faf5ff 100%);
+    }
+
+    .integration-block h3 {
+      margin: 0 0 6px;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .integration-meta {
+      color: var(--muted);
+      font-size: 13px;
+      margin-bottom: 14px;
+    }
+
+    .integration-status {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      padding: 6px 12px;
+      border-radius: 999px;
+      font-size: 12px;
+      font-weight: 700;
+      margin-bottom: 14px;
+    }
+
+    .integration-status.connected { background: var(--green-soft); color: var(--green); }
+    .integration-status.disconnected { background: var(--red-soft); color: var(--red); }
+    .integration-status.pending { background: var(--yellow-soft); color: var(--yellow); }
+
+    .integration-warning {
+      padding: 12px 14px;
+      border-radius: 12px;
+      background: var(--yellow-soft);
+      border: 1px solid #f0d090;
+      font-size: 12px;
+      line-height: 1.5;
+      color: #7a5c10;
+      margin-bottom: 14px;
+    }
+
+    .integration-actions {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+    }
+
+    .demo-banner {
+      padding: 10px 14px;
+      border-radius: 12px;
+      background: var(--accent-soft);
+      border: 1px solid #c7d7ff;
+      font-size: 12px;
+      color: var(--accent);
+      font-weight: 600;
+      margin-bottom: 14px;
+    }
+
+    .mention-preview {
+      padding: 12px 14px;
+      border-radius: 12px;
+      background: var(--bg);
+      border: 1px solid var(--line);
+      font-size: 13px;
+      line-height: 1.5;
+      margin-bottom: 14px;
+    }
+
+    .mention-preview .label {
+      font-size: 11px;
+      color: var(--muted);
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.04em;
+      margin-bottom: 4px;
+    }
+
+    .reply-history {
+      margin-top: 16px;
+      border-top: 1px solid var(--line);
+      padding-top: 14px;
+    }
+
+    .reply-history h4 {
+      margin: 0 0 10px;
+      font-size: 13px;
+    }
+
+    .history-item {
+      padding: 10px 12px;
+      border-radius: 12px;
+      background: var(--bg);
+      margin-bottom: 8px;
+      font-size: 12px;
+    }
+
+    .history-item .meta {
+      color: var(--muted);
+      margin-bottom: 4px;
+      display: flex;
+      justify-content: space-between;
+      gap: 8px;
+      flex-wrap: wrap;
+    }
+
+    .history-status {
+      font-weight: 700;
+      padding: 2px 8px;
+      border-radius: 999px;
+      font-size: 11px;
+    }
+
+    .history-status.demo_sent { background: var(--purple-soft); color: var(--purple); }
+    .history-status.sent { background: var(--green-soft); color: var(--green); }
+    .history-status.failed { background: var(--red-soft); color: var(--red); }
+
+    .action-log {
+      margin-top: 16px;
+      padding: 18px;
+    }
+
+    .action-log-list {
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+      max-height: 220px;
+      overflow-y: auto;
+    }
+
+    .log-entry {
+      padding: 10px 12px;
+      border-radius: 12px;
+      border: 1px solid var(--line);
+      font-size: 12px;
+      display: grid;
+      grid-template-columns: 130px 1fr;
+      gap: 10px;
+    }
+
+    .log-entry time {
+      color: var(--muted);
+      font-size: 11px;
+    }
+
+    .form-error {
+      color: var(--red);
+      font-size: 12px;
+      font-weight: 600;
+      margin-top: 6px;
+      display: none;
+    }
+
+    .form-error.visible { display: block; }
+
+    .toast.warning { background: var(--yellow); color: #fff; }
+    .toast.error { background: var(--red); }
+
+    .modal.modal-wide { max-width: 640px; }
+
+    /* Period filter */
+    .period-bar {
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+      margin-top: 16px;
+      padding: 14px 18px;
+      background: #fff;
+      border: 1px solid var(--line);
+      border-radius: 16px;
+      box-shadow: 0 6px 20px rgba(16, 24, 40, 0.04);
+    }
+
+    .period-bar.hidden { display: none; }
+
+    .period-controls {
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .period-controls label {
+      font-size: 13px;
+      font-weight: 700;
+      color: var(--muted);
+    }
+
+    .period-select {
+      border: 1px solid var(--line);
+      background: var(--bg);
+      padding: 10px 12px;
+      border-radius: 12px;
+      font-size: 13px;
+      outline: none;
+      min-width: 180px;
+    }
+
+    .period-custom {
+      display: none;
+      flex-wrap: wrap;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .period-custom.visible { display: flex; }
+
+    .period-custom input[type="date"] {
+      border: 1px solid var(--line);
+      border-radius: 12px;
+      padding: 9px 11px;
+      font-size: 13px;
+      outline: none;
+    }
+
+    .period-label {
+      font-size: 13px;
+      color: var(--accent);
+      font-weight: 700;
+      white-space: nowrap;
+    }
+
+    .btn.small {
+      padding: 9px 14px;
+      font-size: 12px;
+      border-radius: 12px;
+    }
+
+    .chart-empty {
+      height: 250px;
+      display: grid;
+      place-items: center;
+      color: var(--muted);
+      font-size: 14px;
+      background: var(--bg);
+      border-radius: 14px;
+    }
+
+    @media (max-width: 1180px) {
+      .sla-kpis { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+    }
+
+    @media (max-width: 760px) {
+      .sla-kpis { grid-template-columns: 1fr; }
+      .source-options { grid-template-columns: 1fr; }
+      .report-summary-grid { grid-template-columns: 1fr; }
+      .toast-container { left: 16px; right: 16px; bottom: 16px; }
+      .period-bar { flex-direction: column; align-items: stretch; }
+      .period-controls { flex-direction: column; align-items: stretch; }
+      .period-select { width: 100%; }
+      .period-label { text-align: center; white-space: normal; }
+    }
+  </style>
+</head>
+<body>
+  <div class="app">
+    <aside class="sidebar">
+      <div class="brand">
+        <div class="logo">MS</div>
+        <div class="brand-text">
+          <div class="brand-title">KT MediaScanner</div>
+          <div class="brand-subtitle">Social listening platform</div>
+        </div>
+      </div>
+
+      <nav class="nav">
+        <button class="nav-item active" data-page="dashboard"><span class="nav-icon">⌁</span><span class="nav-text">Dashboard</span></button>
+        <button class="nav-item" data-page="mentions"><span class="nav-icon">#</span><span class="nav-text">Упоминания</span></button>
+        <button class="nav-item" data-page="keywords"><span class="nav-icon">⌕</span><span class="nav-text">Ключевые слова</span></button>
+        <button class="nav-item" data-page="sources"><span class="nav-icon">◉</span><span class="nav-text">Источники</span></button>
+        <button class="nav-item" data-page="agent"><span class="nav-icon">✦</span><span class="nav-text">AI-агент</span></button>
+        <button class="nav-item" data-page="reports"><span class="nav-icon">▣</span><span class="nav-text">Отчёты</span></button>
+      </nav>
+
+      <div class="sidebar-bottom">
+        <h4>OpenClaw Agent</h4>
+        <p>AI-агент сейчас работает в режиме согласования: ответы не отправляются без подтверждения.</p>
+        <button class="upgrade">Настроить агента</button>
+      </div>
+    </aside>
+
+    <main class="main">
+      <header class="topbar">
+        <div class="title">
+          <h1 id="pageTitle">Dashboard</h1>
+          <p id="pageSubtitle">Мониторинг упоминаний, тональности и активности по источникам</p>
+        </div>
+        <div class="top-actions">
+          <input class="search" id="globalSearch" placeholder="Поиск по тексту упоминания..." />
+          <button class="btn secondary" id="btnExport">Экспорт</button>
+          <button class="btn" id="btnNewProject">+ Новый проект</button>
+        </div>
+      </header>
+
+      <div class="period-bar" id="periodBar">
+        <div class="period-controls">
+          <label for="periodPreset">Период</label>
+          <select class="period-select" id="periodPreset">
+            <option value="today">Сегодня</option>
+            <option value="yesterday">Вчера</option>
+            <option value="last7" selected>Последние 7 дней</option>
+            <option value="last30">Последние 30 дней</option>
+            <option value="currentMonth">Текущий месяц</option>
+            <option value="lastMonth">Прошлый месяц</option>
+            <option value="custom">Произвольный период</option>
+          </select>
+          <div class="period-custom" id="periodCustomRange">
+            <input type="date" id="periodStart" />
+            <span style="color:var(--muted);font-size:13px">—</span>
+            <input type="date" id="periodEnd" />
+            <button class="btn small" id="periodApply">Применить</button>
+          </div>
+          <button class="btn secondary small" id="periodReset">Сбросить период</button>
+        </div>
+        <div class="period-label" id="periodLabel">Период: последние 7 дней</div>
+      </div>
+
+      <section class="content">
+        <div class="page active" id="dashboard">
+          <div class="grid-kpis" id="dashboardKpis"></div>
+
+          <div class="dashboard-grid">
+            <div class="card section-card">
+              <div class="card-head">
+                <h3>Динамика упоминаний</h3>
+                <span id="chartPeriodLabel">Последние 7 дней</span>
+              </div>
+              <div class="chart" id="dashboardChart"></div>
+            </div>
+
+            <div class="card section-card">
+              <div class="card-head">
+                <h3>Источники</h3>
+                <span>Доля упоминаний</span>
+              </div>
+              <div class="source-list" id="dashboardSources"></div>
+            </div>
+          </div>
+
+          <div class="card section-card" style="margin-top:16px">
+            <div class="card-head">
+              <h3>SLA по сотрудникам</h3>
+              <span>Обновлено сегодня</span>
+            </div>
+            <div class="sla-kpis" id="slaSummaryKpis"></div>
+            <div class="table-card">
+              <table id="slaTable">
+                <thead>
+                  <tr>
+                    <th>Сотрудник</th>
+                    <th>Роль</th>
+                    <th>Назначено</th>
+                    <th>Обработано</th>
+                    <th>Ср. время ответа</th>
+                    <th>SLA target</th>
+                    <th>SLA fact</th>
+                    <th>Просрочено</th>
+                    <th>Статус</th>
+                  </tr>
+                </thead>
+                <tbody id="slaTableBody"></tbody>
+              </table>
+            </div>
+          </div>
+
+          <div class="split">
+            <div class="card section-card">
+              <div class="card-head">
+                <h3>Последние важные упоминания</h3>
+                <span>Новые</span>
+              </div>
+              <div class="mention-list" id="dashboardMentions"></div>
+            </div>
+
+            <div class="card section-card">
+              <div class="card-head">
+                <h3>AI-рекомендации</h3>
+                <span>OpenClaw queue</span>
+              </div>
+              <div class="reply-card">
+                <h4>Риск репутационного всплеска</h4>
+                <p>За последние 3 часа выросло количество негативных упоминаний по ключу “интернет не работает”.</p>
+                <div class="reply-text">Рекомендация: включить алерт, подготовить шаблон ответа и передать обращения оператору поддержки.</div>
+                <div class="small-actions">
+                  <button class="small-btn primary" data-action="accept-rec">Принять</button>
+                  <button class="small-btn" data-action="reject-rec">Отклонить</button>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="page" id="mentions">
+          <div class="page-title-row">
+            <h2>Упоминания</h2>
+            <span id="mentionsCount" style="color:var(--muted);font-size:13px"></span>
+          </div>
+          <div class="filters">
+            <select class="select" id="filterSource">
+              <option value="">Все источники</option>
+              <option>Telegram</option>
+              <option>Instagram</option>
+              <option>TikTok</option>
+              <option>YouTube</option>
+              <option>X/Twitter</option>
+              <option>Новости</option>
+            </select>
+            <select class="select" id="filterSentiment">
+              <option value="">Все тональности</option>
+              <option>Позитив</option>
+              <option>Негатив</option>
+              <option>Нейтрально</option>
+            </select>
+            <select class="select" id="filterStatus">
+              <option value="">Все статусы</option>
+              <option>Новый</option>
+              <option>В работе</option>
+              <option>На проверке</option>
+              <option>Обработан</option>
+              <option>Ответ отправлен</option>
+              <option>Отклонено</option>
+              <option>Передано оператору</option>
+            </select>
+            <select class="select" id="filterEmployee">
+              <option value="">Все сотрудники</option>
+            </select>
+            <select class="select" id="filterKeyword">
+              <option value="">Все ключевые слова</option>
+            </select>
+          </div>
+          <div class="card table-card">
+            <table>
+              <thead>
+                <tr>
+                  <th>Дата</th>
+                  <th>Источник</th>
+                  <th>Автор</th>
+                  <th>Текст</th>
+                  <th>Тональность</th>
+                  <th>Важность</th>
+                  <th>Статус</th>
+                  <th>Сотрудник</th>
+                  <th>SLA</th>
+                  <th>Действия</th>
+                </tr>
+              </thead>
+              <tbody id="mentionsTableBody"></tbody>
+            </table>
+          </div>
+
+          <div class="card action-log section-card">
+            <div class="card-head">
+              <h3>Журнал действий</h3>
+              <span>Instagram и ответы операторов</span>
+            </div>
+            <div class="action-log-list" id="actionLogList">
+              <div class="empty-state" style="padding:20px">Действий пока нет</div>
+            </div>
+          </div>
+        </div>
+
+        <div class="page" id="keywords">
+          <div class="page-title-row">
+            <h2>Ключевые слова</h2>
+            <button class="btn" id="btnAddKeyword">+ Добавить ключ</button>
+          </div>
+
+          <div class="keyword-grid" id="keywordGrid"></div>
+        </div>
+
+        <div class="page" id="sources">
+          <div class="page-title-row">
+            <h2>Источники</h2>
+            <button class="btn" id="btnConnectSource">+ Подключить источник</button>
+          </div>
+
+          <div class="card integration-block">
+            <h3>📷 Instagram Business Account</h3>
+            <p class="integration-meta">Интеграция для отправки ответов на комментарии, упоминания и DM через backend</p>
+            <div class="integration-status disconnected" id="instagramConnectionStatus">
+              <span>●</span> Не подключено
+            </div>
+            <div class="integration-warning">
+              Для реальной отправки ответов нужен backend, Instagram Graph API, business/creator account и безопасное хранение access token на сервере. Токены не хранятся во frontend.
+            </div>
+            <div class="integration-actions">
+              <button class="btn" id="btnConnectInstagram">Подключить Instagram</button>
+              <button class="btn secondary" id="btnCheckInstagram">Проверить соединение</button>
+            </div>
+          </div>
+
+          <div class="card section-card" style="margin-top:16px;margin-bottom:16px">
+            <div class="card-head">
+              <h3>Активность по источникам</h3>
+              <span id="sourcesActivityLabel">За выбранный период</span>
+            </div>
+            <div class="source-list" id="sourcesActivityList"></div>
+          </div>
+
+          <div class="source-cards">
+            <div class="card source-card">
+              <div class="source-icon">TG</div>
+              <h3>Telegram</h3>
+              <p>Открытые каналы, группы с ботом, мониторинг ключевых слов.</p>
+              <div class="status-line"><span>Статус</span><strong>Подключено</strong></div>
+            </div>
+            <div class="card source-card">
+              <div class="source-icon">IG</div>
+              <h3>Instagram</h3>
+              <p>Упоминания, комментарии, отметки бизнес/creator-аккаунта.</p>
+              <div class="status-line"><span>Статус</span><strong id="instagramSourceCardStatus">Требует API</strong></div>
+            </div>
+            <div class="card source-card">
+              <div class="source-icon">TT</div>
+              <h3>TikTok</h3>
+              <p>Публичные данные через доступные API и разрешённые источники.</p>
+              <div class="status-line"><span>Статус</span><strong>Не подключено</strong></div>
+            </div>
+            <div class="card source-card">
+              <div class="source-icon">YT</div>
+              <h3>YouTube</h3>
+              <p>Поиск видео, комментариев, каналов и упоминаний в описаниях.</p>
+              <div class="status-line"><span>Статус</span><strong>Подключено</strong></div>
+            </div>
+            <div class="card source-card">
+              <div class="source-icon">X</div>
+              <h3>X / Twitter</h3>
+              <p>Мониторинг постов, реплаев и упоминаний бренда в ленте.</p>
+              <div class="status-line"><span>Статус</span><strong id="xSourceStatus">Не подключено</strong></div>
+            </div>
+            <div class="card source-card">
+              <div class="source-icon">NW</div>
+              <h3>Новости</h3>
+              <p>Открытые новостные сайты, RSS и медиа-агрегаторы.</p>
+              <div class="status-line"><span>Статус</span><strong>Подключено</strong></div>
+            </div>
+          </div>
+        </div>
+
+        <div class="page" id="agent">
+          <div class="page-title-row">
+            <h2>AI-агент OpenClaw</h2>
+            <button class="btn">+ Новое правило</button>
+          </div>
+
+          <div class="agent-layout">
+            <div class="agent-box">
+              <div>
+                <h3>Режим агента</h3>
+                <p>Агент анализирует новые упоминания, готовит ответы и передаёт рискованные сообщения оператору. Автоотправка отключена.</p>
+              </div>
+              <div class="mode-list">
+                <div class="mode"><span>Генерировать ответы</span><div class="switch on"><div class="knob"></div></div></div>
+                <div class="mode"><span>Отправлять без проверки</span><div class="switch"><div class="knob"></div></div></div>
+                <div class="mode"><span>Блокировать конфликтные темы</span><div class="switch on"><div class="knob"></div></div></div>
+              </div>
+            </div>
+
+            <div class="card agent-panel">
+              <div class="card-head">
+                <h3>Очередь ответов</h3>
+                <span id="agentQueueCount">ожидают проверки</span>
+              </div>
+
+              <div id="agentQueue"></div>
+            </div>
+          </div>
+        </div>
+
+        <div class="page" id="reports">
+          <div class="page-title-row">
+            <h2>Отчёты</h2>
+            <button class="btn" id="btnGenerateReport">Сформировать отчёт</button>
+          </div>
+
+          <div class="reports-grid">
+            <div class="card report-card">
+              <h3>Ежедневный отчёт</h3>
+              <p>Краткая сводка по упоминаниям, негативу, росту тем и источникам.</p>
+              <button class="btn secondary" data-open-report>Открыть</button>
+            </div>
+            <div class="card report-card">
+              <h3>Конкурентный анализ</h3>
+              <p>Сравнение бренда с конкурентами по количеству упоминаний и тональности.</p>
+              <button class="btn secondary" data-open-report>Открыть</button>
+            </div>
+            <div class="card report-card">
+              <h3>Репутационный риск</h3>
+              <p>Отчёт по резким всплескам негатива, ключевым причинам и каналам.</p>
+              <button class="btn secondary" data-open-report>Открыть</button>
+            </div>
+          </div>
+        </div>
+      </section>
+    </main>
+  </div>
+
+  <div class="toast-container" id="toastContainer"></div>
+
+  <div class="modal-overlay" id="modalNewProject">
+    <div class="modal">
+      <div class="modal-head">
+        <h3>Новый проект</h3>
+        <button class="modal-close" data-close="modalNewProject">&times;</button>
+      </div>
+      <div class="modal-body">
+        <div class="form-group">
+          <label>Название проекта</label>
+          <input type="text" id="projectName" placeholder="Например: Мониторинг бренда Q2" />
+        </div>
+        <div class="form-group">
+          <label>Описание</label>
+          <textarea id="projectDesc" placeholder="Краткое описание целей мониторинга"></textarea>
+        </div>
+        <div class="modal-actions">
+          <button class="btn secondary" data-close="modalNewProject">Отмена</button>
+          <button class="btn" id="confirmNewProject">Создать проект</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="modal-overlay" id="modalAddKeyword">
+    <div class="modal">
+      <div class="modal-head">
+        <h3>Добавить ключевое слово</h3>
+        <button class="modal-close" data-close="modalAddKeyword">&times;</button>
+      </div>
+      <div class="modal-body">
+        <div class="form-group">
+          <label>Ключевое слово или фраза</label>
+          <input type="text" id="keywordInput" placeholder="Например: #тарифы" />
+          <div class="form-error" id="keywordFormError">Введите ключевое слово</div>
+        </div>
+        <div class="form-group">
+          <label>Тип</label>
+          <select id="keywordType">
+            <option value="бренд">Бренд</option>
+            <option value="продукт">Продукт</option>
+            <option value="конкурент">Конкурент</option>
+            <option value="персона">Персона</option>
+            <option value="тег">Тег</option>
+            <option value="проблема">Проблема</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <label>Источники</label>
+          <div class="source-checkboxes" id="keywordSources">
+            <label><input type="checkbox" value="Telegram" checked /> Telegram</label>
+            <label><input type="checkbox" value="Instagram" /> Instagram</label>
+            <label><input type="checkbox" value="TikTok" /> TikTok</label>
+            <label><input type="checkbox" value="YouTube" /> YouTube</label>
+            <label><input type="checkbox" value="X/Twitter" /> X/Twitter</label>
+            <label><input type="checkbox" value="Новости" /> Новости</label>
+          </div>
+        </div>
+        <div class="form-group">
+          <label>Статус</label>
+          <select id="keywordStatus">
+            <option value="active">Активен</option>
+            <option value="inactive">Выключен</option>
+          </select>
+        </div>
+        <div class="modal-actions">
+          <button class="btn secondary" data-close="modalAddKeyword">Отмена</button>
+          <button class="btn" id="confirmAddKeyword">Сохранить</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="modal-overlay" id="modalConnectSource">
+    <div class="modal">
+      <div class="modal-head">
+        <h3>Подключить источник</h3>
+        <button class="modal-close" data-close="modalConnectSource">&times;</button>
+      </div>
+      <div class="modal-body">
+        <p style="color:var(--muted);font-size:13px;margin:0 0 14px">Выберите платформу для подключения мониторинга</p>
+        <div class="source-options" id="sourceOptions">
+          <button type="button" class="source-option" data-source="Telegram">Telegram</button>
+          <button type="button" class="source-option" data-source="Instagram">Instagram</button>
+          <button type="button" class="source-option" data-source="TikTok">TikTok</button>
+          <button type="button" class="source-option" data-source="YouTube">YouTube</button>
+          <button type="button" class="source-option" data-source="X/Twitter">X / Twitter</button>
+          <button type="button" class="source-option" data-source="Новости">Новости</button>
+        </div>
+        <div class="modal-actions">
+          <button class="btn secondary" data-close="modalConnectSource">Отмена</button>
+          <button class="btn" id="confirmConnectSource">Подключить</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="modal-overlay" id="modalReport">
+    <div class="modal">
+      <div class="modal-head">
+        <h3>Сводка отчёта</h3>
+        <button class="modal-close" data-close="modalReport">&times;</button>
+      </div>
+      <div class="modal-body" id="reportSummaryBody"></div>
+    </div>
+  </div>
+
+  <div class="modal-overlay" id="modalReply">
+    <div class="modal modal-wide">
+      <div class="modal-head">
+        <h3>Ответ на упоминание</h3>
+        <button class="modal-close" data-close="modalReply">&times;</button>
+      </div>
+      <div class="modal-body">
+        <div class="demo-banner" id="replyDemoBanner">Demo mode: ответы не отправляются в Instagram, только имитируются локально.</div>
+        <div id="replyModalMeta"></div>
+        <div class="form-group">
+          <label>Текст ответа</label>
+          <textarea id="replyModalText" placeholder="Введите текст ответа..."></textarea>
+          <div class="form-error" id="replyModalError">Введите текст ответа</div>
+        </div>
+        <div class="reply-history" id="replyModalHistory"></div>
+        <div class="modal-actions">
+          <button class="btn secondary" data-close="modalReply">Закрыть</button>
+          <button class="btn secondary" id="btnModalGenerateReply">Сгенерировать ответ</button>
+          <button class="btn" id="btnModalSendReply">Отправить</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="modal-overlay" id="modalConnectInstagram">
+    <div class="modal">
+      <div class="modal-head">
+        <h3>Подключение Instagram</h3>
+        <button class="modal-close" data-close="modalConnectInstagram">&times;</button>
+      </div>
+      <div class="modal-body">
+        <div class="integration-warning">
+          OAuth и access token обрабатываются только на backend. Frontend инициирует подключение и получает статус.
+        </div>
+        <p style="font-size:13px;color:var(--muted);line-height:1.5;margin:0 0 14px">
+          В production здесь будет редирект на <code>/api/instagram/oauth/start</code> — сервер безопасно сохранит token.
+        </p>
+        <div class="modal-actions">
+          <button class="btn secondary" data-close="modalConnectInstagram">Отмена</button>
+          <button class="btn" id="confirmConnectInstagram">Подключить (demo)</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    const pages = {
+      dashboard: ["Dashboard", "Мониторинг упоминаний, тональности и активности по источникам"],
+      mentions: ["Упоминания", "Все найденные посты, комментарии, теги и отметки"],
+      keywords: ["Ключевые слова", "Настройка брендов, тегов, конкурентов и проблемных тем"],
+      sources: ["Источники", "Подключение соцсетей, мессенджеров и открытых источников"],
+      agent: ["AI-агент", "Очередь ответов, правила и режимы автоматизации"],
+      reports: ["Отчёты", "Экспорт аналитики и регулярные сводки"]
+    };
+
+    const AI_RESPONSES = {
+      negative: "Здравствуйте! Приносим извинения за неудобства. Напишите номер заявки или адрес в личные сообщения — мы проверим статус и оперативно поможем.",
+      positive: "Спасибо за обратную связь! Рады, что всё прошло успешно. Если понадобится помощь — мы всегда на связи.",
+      neutral: "Благодарим за упоминание. Мы следим за обратной связью и учитываем её при улучшении сервиса."
+    };
+
+    // Конфиг приложения — DEMO_MODE отключается при подключении backend
+    const APP_CONFIG = {
+      DEMO_MODE: true,
+      API_BASE: "" // например: "https://api.mediascanner.local"
+    };
+
+    const CURRENT_USER = "Ляззат Баймагамбетова";
+
+    const IG_TYPE_LABELS = {
+      instagram_comment: { label: "Instagram Comment", css: "comment" },
+      instagram_mention: { label: "Instagram Mention", css: "mention" },
+      instagram_story_mention: { label: "Instagram Story Mention", css: "story" },
+      instagram_dm: { label: "Instagram DM", css: "dm" }
+    };
+
+    const employees = [
+      { name: "Ляззат Баймагамбетова", role: "Старший оператор", assigned: 22, processed: 20, avgResponse: "14 мин", slaTarget: "95%", slaFact: "97%", overdue: 0, status: "good" },
+      { name: "Каракоз Сыздыкова", role: "Оператор", assigned: 19, processed: 16, avgResponse: "21 мин", slaTarget: "95%", slaFact: "88%", overdue: 2, status: "risk" },
+      { name: "Жансая Медеубаева", role: "Оператор", assigned: 18, processed: 12, avgResponse: "34 мин", slaTarget: "95%", slaFact: "72%", overdue: 4, status: "overdue" },
+      { name: "Альменбетова Айнур Мейрамбековна", role: "Модератор", assigned: 15, processed: 13, avgResponse: "16 мин", slaTarget: "90%", slaFact: "91%", overdue: 1, status: "risk" }
+    ];
+
+    let periodFilter = { preset: "last7", customStart: null, customEnd: null };
+    const PERIOD_PAGES = ["dashboard", "mentions", "agent", "reports", "sources"];
+
+    function startOfDay(d) {
+      const x = new Date(d);
+      x.setHours(0, 0, 0, 0);
+      return x;
+    }
+
+    function endOfDay(d) {
+      const x = new Date(d);
+      x.setHours(23, 59, 59, 999);
+      return x;
+    }
+
+    function formatRuDateTime(d) {
+      const pad = n => String(n).padStart(2, "0");
+      return `${pad(d.getDate())}.${pad(d.getMonth() + 1)}.${d.getFullYear()} ${pad(d.getHours())}:${pad(d.getMinutes())}`;
+    }
+
+    function formatRuDate(d) {
+      const pad = n => String(n).padStart(2, "0");
+      return `${pad(d.getDate())}.${pad(d.getMonth() + 1)}.${d.getFullYear()}`;
+    }
+
+    function makeDate(daysOffset, hours, minutes) {
+      const d = startOfDay(new Date());
+      d.setDate(d.getDate() + daysOffset);
+      d.setHours(hours, minutes, 0, 0);
+      return d;
+    }
+
+    function createMention(id, daysOffset, hours, minutes, data) {
+      const published = makeDate(daysOffset, hours, minutes);
+      const slaMinutes = data.slaMinutes ?? 60;
+      const slaDeadline = new Date(published.getTime() + slaMinutes * 60000);
+      const isProcessed = ["Обработан", "Ответ отправлен"].includes(data.status);
+      return {
+        id,
+        publishedAt: published.toISOString(),
+        createdAt: published.toISOString(),
+        updatedAt: published.toISOString(),
+        slaDeadline: slaDeadline.toISOString(),
+        repliedAt: isProcessed ? new Date(published.getTime() + 45 * 60000).toISOString() : null,
+        date: formatRuDateTime(published),
+        ...data
+      };
+    }
+
+    function buildDemoMentions() {
+      const t = [
+        [0, 9, 12, { source: "Telegram", author: "@almaty_chat", text: "Интернет опять не работает вечером, скорость падает после 20:00.", sentiment: "Негатив", importance: "Высокая", status: "Новый", employee: "Жансая Медеубаева", slaMinutes: -15, instagramSourceType: null, instagramCommentId: null, replyHistory: [] }],
+        [0, 8, 44, { source: "Instagram", author: "@client_kz", text: "Спасибо за быстрое подключение, мастер приехал вовремя.", sentiment: "Позитив", importance: "Низкая", status: "Обработан", employee: "Каракоз Сыздыкова", slaMinutes: 120, instagramSourceType: "instagram_comment", instagramCommentId: "ig_cmt_17823456789012", replyHistory: [{ author: "Каракоз Сыздыкова", date: "сегодня", text: "Спасибо за отзыв! Рады помочь.", status: "demo_sent" }] }],
+        [0, 8, 10, { source: "TikTok", author: "@internet_user", text: "Видео с жалобой на долгую обработку заявки — уже 3 дня жду.", sentiment: "Негатив", importance: "Высокая", status: "В работе", employee: "Ляззат Баймагамбетова", slaMinutes: 25, instagramSourceType: null, instagramCommentId: null, replyHistory: [] }],
+        [0, 7, 30, { source: "Instagram", author: "@help_me_kz", text: "Здравствуйте, не могу подключить роутер, напишите в директ.", sentiment: "Нейтрально", importance: "Средняя", status: "Новый", employee: "Альменбетова Айнур Мейрамбековна", slaMinutes: 42, instagramSourceType: "instagram_dm", instagramCommentId: "ig_dm_17823456789078", replyHistory: [] }],
+        [0, 6, 55, { source: "Instagram", author: "@angry_client", text: "Почему так долго отвечаете на комментарии? Уже второй день жду!", sentiment: "Негатив", importance: "Высокая", status: "Новый", employee: "Альменбетова Айнур Мейрамбековна", slaMinutes: 8, instagramSourceType: "instagram_comment", instagramCommentId: "ig_cmt_17823456789099", replyHistory: [] }],
+        [-1, 22, 18, { source: "YouTube", author: "Tech Review KZ", text: "В обзоре сравнили тарифы нескольких операторов и отдельно отметили цену пакета.", sentiment: "Нейтрально", importance: "Средняя", status: "На проверке", employee: "Альменбетова Айнур Мейрамбековна", slaMinutes: 45, instagramSourceType: null, instagramCommentId: null, replyHistory: [] }],
+        [-1, 19, 5, { source: "X/Twitter", author: "@kz_tech_news", text: "Пользователи жалуются на перебои связи в Алматы — тренд набирает обороты.", sentiment: "Негатив", importance: "Высокая", status: "Новый", employee: "Жансая Медеубаева", slaMinutes: -8, instagramSourceType: null, instagramCommentId: null, replyHistory: [] }],
+        [-1, 17, 31, { source: "Новости", author: "Tengrinews", text: "Статья: операторы связи Казахстана готовят новые тарифные планы на лето.", sentiment: "Нейтрально", importance: "Средняя", status: "Обработан", employee: "Каракоз Сыздыкова", slaMinutes: 90, instagramSourceType: null, instagramCommentId: null, replyHistory: [] }],
+        [-2, 15, 20, { source: "Telegram", author: "@astana_reviews", text: "Отметили бренд в положительном отзыве о скорости интернета.", sentiment: "Позитив", importance: "Низкая", status: "Обработан", employee: "Ляззат Баймагамбетова", slaMinutes: 60, instagramSourceType: null, instagramCommentId: null, replyHistory: [] }],
+        [-2, 14, 0, { source: "Instagram", author: "@user_kz", text: "Отметили бренд в сторис после подключения услуги — всё отлично!", sentiment: "Позитив", importance: "Низкая", status: "На проверке", employee: "Каракоз Сыздыкова", slaMinutes: 35, instagramSourceType: "instagram_story_mention", instagramCommentId: "ig_story_17823456789034", replyHistory: [] }],
+        [-3, 11, 45, { source: "TikTok", author: "@speedtest_kz", text: "Ролик с тестом скорости — результаты ниже заявленных.", sentiment: "Негатив", importance: "Средняя", status: "Передано оператору", employee: "Жансая Медеубаева", slaMinutes: 10, instagramSourceType: null, instagramCommentId: null, replyHistory: [] }],
+        [-4, 20, 30, { source: "YouTube", author: "Обзор тарифов", text: "В видео сравнивают тарифы операторов связи в Казахстане.", sentiment: "Нейтрально", importance: "Средняя", status: "Обработан", employee: "Альменбетова Айнур Мейрамбековна", slaMinutes: 55, instagramSourceType: null, instagramCommentId: null, replyHistory: [] }],
+        [-5, 18, 15, { source: "X/Twitter", author: "@support_needed", text: "Третий день без интернета, поддержка не отвечает на звонки.", sentiment: "Негатив", importance: "Высокая", status: "В работе", employee: "Жансая Медеубаева", slaMinutes: -22, instagramSourceType: null, instagramCommentId: null, replyHistory: [] }],
+        [-6, 16, 0, { source: "Новости", author: "Informburo", text: "Регулятор обсуждает новые требования к качеству интернет-услуг.", sentiment: "Нейтрально", importance: "Высокая", status: "Новый", employee: "Альменбетова Айнур Мейрамбековна", slaMinutes: 18, instagramSourceType: null, instagramCommentId: null, replyHistory: [] }],
+        [-6, 10, 22, { source: "Telegram", author: "@shymkent_chat", text: "Кто-нибудь сталкивался с обрывами связи в районе Абылай-хана?", sentiment: "Негатив", importance: "Средняя", status: "Отклонено", employee: "Ляззат Баймагамбетова", slaMinutes: 0, instagramSourceType: null, instagramCommentId: null, replyHistory: [] }],
+        [-10, 21, 0, { source: "Instagram", author: "@brand_lover", text: "Лучший оператор в городе, рекомендую всем друзьям!", sentiment: "Позитив", importance: "Низкая", status: "Обработан", employee: "Каракоз Сыздыкова", slaMinutes: 75, instagramSourceType: "instagram_mention", instagramCommentId: "ig_media_17823456789056", replyHistory: [] }],
+        [-12, 13, 40, { source: "Telegram", author: "@tariff_watch", text: "Обсуждают новые тарифы оператора в регионах.", sentiment: "Нейтрально", importance: "Средняя", status: "Обработан", employee: "Ляззат Баймагамбетова", slaMinutes: 30, instagramSourceType: null, instagramCommentId: null, replyHistory: [] }],
+        [-35, 12, 0, { source: "Новости", author: "Kursiv", text: "Аналитика рынка телекома за прошлый месяц.", sentiment: "Нейтрально", importance: "Средняя", status: "Обработан", employee: "Каракоз Сыздыкова", slaMinutes: 0, instagramSourceType: null, instagramCommentId: null, replyHistory: [] }],
+        [-38, 9, 30, { source: "YouTube", author: "Tech KZ", text: "Обзор скорости интернета в прошлом месяце.", sentiment: "Негатив", importance: "Высокая", status: "Обработан", employee: "Жансая Медеубаева", slaMinutes: 0, instagramSourceType: null, instagramCommentId: null, replyHistory: [] }],
+        [-42, 16, 20, { source: "TikTok", author: "@old_review", text: "Архивное видео с жалобами на связь.", sentiment: "Негатив", importance: "Средняя", status: "Обработан", employee: "Альменбетова Айнур Мейрамбековна", slaMinutes: 0, instagramSourceType: null, instagramCommentId: null, replyHistory: [] }]
+      ];
+      return t.map((row, i) => createMention(i + 1, row[0], row[1], row[2], row[3]));
+    }
+
+    let mentions = buildDemoMentions();
+
+    function getPeriodBounds() {
+      const now = new Date();
+      const todayStart = startOfDay(now);
+      const todayEnd = endOfDay(now);
+
+      switch (periodFilter.preset) {
+        case "today":
+          return [todayStart, todayEnd];
+        case "yesterday": {
+          const y = new Date(todayStart);
+          y.setDate(y.getDate() - 1);
+          return [y, endOfDay(y)];
+        }
+        case "last7": {
+          const s = new Date(todayStart);
+          s.setDate(s.getDate() - 6);
+          return [s, todayEnd];
+        }
+        case "last30": {
+          const s = new Date(todayStart);
+          s.setDate(s.getDate() - 29);
+          return [s, todayEnd];
+        }
+        case "currentMonth": {
+          const s = new Date(now.getFullYear(), now.getMonth(), 1);
+          return [startOfDay(s), todayEnd];
+        }
+        case "lastMonth": {
+          const s = new Date(now.getFullYear(), now.getMonth() - 1, 1);
+          const e = new Date(now.getFullYear(), now.getMonth(), 0);
+          return [startOfDay(s), endOfDay(e)];
+        }
+        case "custom": {
+          if (periodFilter.customStart && periodFilter.customEnd) {
+            return [startOfDay(new Date(periodFilter.customStart)), endOfDay(new Date(periodFilter.customEnd))];
+          }
+          return [todayStart, todayEnd];
+        }
+        default:
+          return [todayStart, todayEnd];
+      }
+    }
+
+    function isDateInPeriod(isoDate) {
+      const d = new Date(isoDate);
+      const [start, end] = getPeriodBounds();
+      return d >= start && d <= end;
+    }
+
+    function getMentionsByPeriod() {
+      return mentions.filter(m => isDateInPeriod(m.publishedAt));
+    }
+
+    function getPeriodLabelText() {
+      const labels = {
+        today: "сегодня",
+        yesterday: "вчера",
+        last7: "последние 7 дней",
+        last30: "последние 30 дней",
+        currentMonth: "текущий месяц",
+        lastMonth: "прошлый месяц"
+      };
+      if (periodFilter.preset === "custom" && periodFilter.customStart && periodFilter.customEnd) {
+        return `${formatRuDate(new Date(periodFilter.customStart))} — ${formatRuDate(new Date(periodFilter.customEnd))}`;
+      }
+      return labels[periodFilter.preset] || "последние 7 дней";
+    }
+
+    function updatePeriodLabel() {
+      const el = document.getElementById("periodLabel");
+      if (el) el.textContent = "Период: " + getPeriodLabelText();
+      const chartLbl = document.getElementById("chartPeriodLabel");
+      if (chartLbl) chartLbl.textContent = getPeriodLabelText();
+    }
+
+    function updatePeriodBarVisibility(page) {
+      const bar = document.getElementById("periodBar");
+      if (bar) bar.classList.toggle("hidden", !PERIOD_PAGES.includes(page));
+    }
+
+    function applyPeriodFilter(showToastMsg) {
+      updatePeriodLabel();
+      renderAll();
+      if (showToastMsg) showToast("Период применён", "success");
+    }
+
+    function resetPeriodFilter() {
+      periodFilter = { preset: "last7", customStart: null, customEnd: null };
+      document.getElementById("periodPreset").value = "last7";
+      document.getElementById("periodCustomRange").classList.remove("visible");
+      document.getElementById("periodStart").value = "";
+      document.getElementById("periodEnd").value = "";
+      updatePeriodLabel();
+      renderAll();
+      showToast("Период сброшен", "info");
+    }
+
+    function renderAll() {
+      renderDashboardKpis();
+      renderDashboardChart();
+      renderDashboardSources();
+      renderSla();
+      renderMentions();
+      renderDashboardMentions();
+      renderAgentQueue();
+      renderKeywords();
+      renderActionLog();
+      renderSourcesActivity();
+    }
+
+    function renderDashboardKpis() {
+      const data = getMentionsByPeriod();
+      const total = data.length;
+      const todayStart = startOfDay(new Date()).getTime();
+      const todayData = mentions.filter(m => startOfDay(new Date(m.publishedAt)).getTime() === todayStart);
+      const negative = data.filter(m => m.sentiment === "Негатив").length;
+      const queue = data.filter(m => ["Новый", "В работе", "На проверке"].includes(m.status)).length;
+
+      document.getElementById("dashboardKpis").innerHTML = `
+        <div class="card kpi"><div class="kpi-label">Всего упоминаний</div><div class="kpi-value">${total.toLocaleString("ru-RU")}</div><div class="kpi-change ${total ? "positive" : "neutral"}">${total ? "за период" : "нет данных"}</div></div>
+        <div class="card kpi"><div class="kpi-label">Упоминаний сегодня</div><div class="kpi-value">${todayData.length}</div><div class="kpi-change positive">${todayData.length ? "в текущем дне" : "0 сегодня"}</div></div>
+        <div class="card kpi"><div class="kpi-label">Негатив</div><div class="kpi-value">${negative}</div><div class="kpi-change ${negative > 5 ? "negative" : "neutral"}">${negative ? "за период" : "нет негатива"}</div></div>
+        <div class="card kpi"><div class="kpi-label">AI-ответы в очереди</div><div class="kpi-value">${queue}</div><div class="kpi-change neutral">${queue ? "требуют проверки" : "очередь пуста"}</div></div>
+      `;
+    }
+
+    function renderDashboardChart() {
+      const container = document.getElementById("dashboardChart");
+      const [start, end] = getPeriodBounds();
+      const data = getMentionsByPeriod();
+
+      if (!data.length) {
+        container.className = "chart-empty";
+        container.innerHTML = "Нет данных за выбранный период";
+        return;
+      }
+
+      container.className = "chart";
+      const days = [];
+      const d = startOfDay(new Date(start));
+      const endDay = startOfDay(new Date(end));
+      while (d <= endDay) {
+        days.push(new Date(d));
+        d.setDate(d.getDate() + 1);
+      }
+
+      const counts = days.map(day => {
+        const ds = startOfDay(day).getTime();
+        const de = endOfDay(day).getTime();
+        return data.filter(m => {
+          const t = new Date(m.publishedAt).getTime();
+          return t >= ds && t <= de;
+        }).length;
+      });
+
+      const max = Math.max(...counts, 1);
+      const dayNames = ["Вс", "Пн", "Вт", "Ср", "Чт", "Пт", "Сб"];
+
+      container.innerHTML = days.map((day, i) => {
+        const h = Math.max(8, Math.round((counts[i] / max) * 100));
+        const lbl = days.length <= 7 ? dayNames[day.getDay()] : formatRuDate(day).slice(0, 5);
+        return `<div class="bar-wrap"><div class="bar" data-value="${counts[i]}" style="height:${h}%"></div><div class="bar-label">${lbl}</div></div>`;
+      }).join("");
+    }
+
+    function renderSourceList(containerId, data) {
+      const el = document.getElementById(containerId);
+      if (!el) return;
+      const sources = ["Telegram", "Instagram", "TikTok", "YouTube", "X/Twitter", "Новости"];
+      if (!data.length) {
+        el.innerHTML = `<div class="empty-state" style="padding:20px">Нет данных за выбранный период</div>`;
+        return;
+      }
+      const total = data.length;
+      el.innerHTML = sources.map(src => {
+        const count = data.filter(m => m.source === src).length;
+        if (!count) return "";
+        const pct = Math.round((count / total) * 100);
+        return `<div class="source-row"><strong>${src}</strong><div class="progress"><span style="width:${pct}%"></span></div><span>${pct}%</span></div>`;
+      }).filter(Boolean).join("") || `<div class="empty-state" style="padding:20px">Нет данных за выбранный период</div>`;
+    }
+
+    function renderDashboardSources() {
+      renderSourceList("dashboardSources", getMentionsByPeriod());
+    }
+
+    function renderSourcesActivity() {
+      renderSourceList("sourcesActivityList", getMentionsByPeriod());
+    }
+
+    const agentReplies = {};
+    let selectedSource = "";
+    let mentionDrafts = {};
+    let actionLog = [];
+    let activeReplyMentionId = null;
+    let instagramConnected = false;
+
+    const KEYWORDS_STORAGE_KEY = "kt_mediascanner_keywords";
+
+    function getDefaultKeywords() {
+      return [
+        { id: "kw_1", text: "Казахтелеком", type: "бренд", sources: ["Telegram", "Instagram", "YouTube"], active: true, baselineMentions: 4820, baselineNegative: 11, secondaryLabel: "негатив" },
+        { id: "kw_2", text: "интернет не работает", type: "проблема", sources: ["Telegram", "TikTok"], active: true, baselineMentions: 1246, baselineNegative: 68, secondaryLabel: "негатив", isRisk: true },
+        { id: "kw_3", text: "#тарифы", type: "тег", sources: ["TikTok", "YouTube", "Новости"], active: true, baselineMentions: 914, baselineNegative: 7, secondaryLabel: "негатив" },
+        { id: "kw_4", text: "конкуренты", type: "конкурент", sources: ["Новости", "YouTube", "Telegram"], active: true, baselineMentions: 2112, baselineSecondary: 34, secondaryLabel: "рост", isObservation: true }
+      ];
+    }
+
+    let keywords = [];
+
+    function loadKeywords() {
+      try {
+        const stored = localStorage.getItem(KEYWORDS_STORAGE_KEY);
+        if (stored) {
+          keywords = JSON.parse(stored);
+          return;
+        }
+      } catch (e) {
+        console.warn("Не удалось прочитать keywords из localStorage:", e);
+      }
+      keywords = getDefaultKeywords();
+      saveKeywords();
+    }
+
+    function saveKeywords() {
+      try {
+        localStorage.setItem(KEYWORDS_STORAGE_KEY, JSON.stringify(keywords));
+      } catch (e) {
+        console.warn("Не удалось сохранить keywords в localStorage:", e);
+      }
+    }
+
+    function formatKeywordType(type) {
+      const map = { бренд: "Бренд", продукт: "Продукт", конкурент: "Конкурент", персона: "Персона", тег: "Тег", проблема: "Проблема" };
+      return map[type] || type;
+    }
+
+    function matchMentionsForKeyword(keyword) {
+      const needle = keyword.text.toLowerCase().replace(/^#/, "");
+      return getMentionsByPeriod().filter(m =>
+        keyword.sources.includes(m.source) &&
+        (m.text.toLowerCase().includes(needle) || m.text.toLowerCase().includes(keyword.text.toLowerCase()))
+      );
+    }
+
+    function computeKeywordStats(keyword) {
+      const matched = matchMentionsForKeyword(keyword);
+      if (!matched.length) {
+        return { count: 0, secondary: 0, secondaryLabel: keyword.secondaryLabel || "негатив" };
+      }
+      const negative = matched.filter(m => m.sentiment === "Негатив").length;
+      return {
+        count: matched.length,
+        secondary: Math.round((negative / matched.length) * 100),
+        secondaryLabel: "негатив"
+      };
+    }
+
+    function keywordStatusTag(keyword) {
+      if (!keyword.active) return `<span class="tag yellow">Выключен</span>`;
+      if (keyword.isRisk) return `<span class="tag red">Риск</span>`;
+      if (keyword.isObservation) return `<span class="tag yellow">Наблюдение</span>`;
+      const stats = computeKeywordStats(keyword);
+      if (stats.secondaryLabel === "негатив" && stats.secondary >= 50) return `<span class="tag red">Риск</span>`;
+      return `<span class="tag green">Активен</span>`;
+    }
+
+    function renderKeywords() {
+      const grid = document.getElementById("keywordGrid");
+      if (!grid) return;
+
+      if (!keywords.length) {
+        grid.innerHTML = `<div class="empty-state">Ключевых слов пока нет. Нажмите «+ Добавить ключ».</div>`;
+        return;
+      }
+
+      grid.innerHTML = keywords.map(kw => {
+        const stats = computeKeywordStats(kw);
+        const countStr = stats.count.toLocaleString("ru-RU");
+        return `
+          <div class="card keyword-card ${kw.active ? "" : "inactive"}" data-keyword-id="${kw.id}">
+            <div class="keyword-top">
+              <h3>${kw.text}</h3>
+              ${keywordStatusTag(kw)}
+            </div>
+            <div class="keyword-meta">${formatKeywordType(kw.type)} · ${kw.sources.join(", ")}</div>
+            <div class="keyword-stats">
+              <div class="mini-stat"><strong>${countStr}</strong><span>упоминаний</span></div>
+              <div class="mini-stat"><strong>${stats.secondary}%</strong><span>${stats.secondaryLabel}</span></div>
+            </div>
+            <div class="keyword-card-actions">
+              <button class="small-btn" data-keyword-action="toggle" data-id="${kw.id}">${kw.active ? "Отключить" : "Активировать"}</button>
+              <button class="small-btn" data-keyword-action="delete" data-id="${kw.id}">Удалить</button>
+            </div>
+          </div>
+        `;
+      }).join("");
+    }
+
+    function populateKeywordFilter() {
+      const select = document.getElementById("filterKeyword");
+      if (!select) return;
+      const current = select.value;
+      select.innerHTML = `<option value="">Все ключевые слова</option>`;
+      keywords.filter(k => k.active).forEach(kw => {
+        const opt = document.createElement("option");
+        opt.value = kw.id;
+        opt.textContent = kw.text;
+        select.appendChild(opt);
+      });
+      if ([...select.options].some(o => o.value === current)) select.value = current;
+    }
+
+    function resetKeywordForm() {
+      document.getElementById("keywordInput").value = "";
+      document.getElementById("keywordType").value = "бренд";
+      document.getElementById("keywordStatus").value = "active";
+      document.getElementById("keywordFormError").classList.remove("visible");
+      document.querySelectorAll("#keywordSources input[type=checkbox]").forEach((cb, i) => {
+        cb.checked = i === 0;
+      });
+    }
+
+    function getSelectedKeywordSources() {
+      return [...document.querySelectorAll("#keywordSources input:checked")].map(cb => cb.value);
+    }
+
+    function addKeywordFromForm() {
+      const text = document.getElementById("keywordInput").value.trim();
+      const errorEl = document.getElementById("keywordFormError");
+
+      if (!text) {
+        errorEl.classList.add("visible");
+        showToast("Введите ключевое слово", "error");
+        return;
+      }
+
+      const sources = getSelectedKeywordSources();
+      if (!sources.length) {
+        showToast("Выберите хотя бы один источник", "warning");
+        return;
+      }
+
+      errorEl.classList.remove("visible");
+
+      const keyword = {
+        id: "kw_" + Date.now(),
+        text,
+        type: document.getElementById("keywordType").value,
+        sources,
+        active: document.getElementById("keywordStatus").value === "active",
+        baselineMentions: 0,
+        baselineNegative: 0,
+        secondaryLabel: "негатив"
+      };
+
+      keywords.unshift(keyword);
+      saveKeywords();
+      renderKeywords();
+      populateKeywordFilter();
+      resetKeywordForm();
+      closeModal("modalAddKeyword");
+      showToast("Ключевое слово добавлено", "success");
+    }
+
+    function toggleKeyword(id) {
+      const kw = keywords.find(k => k.id === id);
+      if (!kw) return;
+      kw.active = !kw.active;
+      saveKeywords();
+      renderKeywords();
+      populateKeywordFilter();
+      showToast(kw.active ? "Ключевое слово активировано" : "Ключевое слово отключено", "success");
+    }
+
+    function deleteKeyword(id) {
+      keywords = keywords.filter(k => k.id !== id);
+      saveKeywords();
+      renderKeywords();
+      populateKeywordFilter();
+      showToast("Ключевое слово удалено", "success");
+    }
+
+    // sendInstagramReply() определена ниже в блоке Backend API Integration.
+    // Она использует /api/instagram/reply и падает gracefully на demo при недоступности backend.
+
+    function isInstagramMention(mention) {
+      return mention.source === "Instagram" && mention.instagramSourceType;
+    }
+
+    function getAiReplyText(mention) {
+      const key = mention.sentiment === "Позитив" ? "positive" : mention.sentiment === "Негатив" ? "negative" : "neutral";
+      return AI_RESPONSES[key];
+    }
+
+    function instagramTypeBadge(mention) {
+      if (!isInstagramMention(mention)) return "";
+      const info = IG_TYPE_LABELS[mention.instagramSourceType];
+      if (!info) return "";
+      return `<span class="ig-type ${info.css}">${info.label}</span>`;
+    }
+
+    function historyStatusLabel(status) {
+      const map = { demo_sent: "demo sent", sent: "sent", failed: "failed" };
+      return map[status] || status;
+    }
+
+    function addActionLog(entry) {
+      actionLog.unshift({
+        time: new Date().toLocaleString("ru-RU"),
+        timestamp: new Date().toISOString(),
+        ...entry
+      });
+      if (actionLog.length > 50) actionLog.pop();
+      renderActionLog();
+    }
+
+    function renderActionLog() {
+      const container = document.getElementById("actionLogList");
+      const filtered = actionLog.filter(log => !log.timestamp || isDateInPeriod(log.timestamp));
+      if (!filtered.length) {
+        container.innerHTML = `<div class="empty-state" style="padding:20px">${actionLog.length ? "Нет данных за выбранный период" : "Действий пока нет"}</div>`;
+        return;
+      }
+      container.innerHTML = filtered.map(log => `
+        <div class="log-entry">
+          <time>${log.time}</time>
+          <div><strong>${log.action}</strong> — ${log.detail}</div>
+        </div>
+      `).join("");
+    }
+
+    function updateEmployeeSla(employeeName, wasOverdue) {
+      const emp = employees.find(e => e.name === employeeName);
+      if (!emp) return;
+      emp.processed += 1;
+      if (wasOverdue && emp.overdue > 0) emp.overdue -= 1;
+      const fact = Math.min(100, Math.round((emp.processed / emp.assigned) * 100));
+      emp.slaFact = fact + "%";
+      if (fact >= 95) emp.status = "good";
+      else if (fact >= 85) emp.status = "risk";
+      else emp.status = "overdue";
+    }
+
+    function buildInstagramPayload(mention, replyText) {
+      return {
+        mentionId: String(mention.id),
+        instagramCommentId: mention.instagramCommentId || "",
+        recipientUsername: mention.author.replace(/^@/, ""),
+        replyText: replyText,
+        sourceType: mention.instagramSourceType
+      };
+    }
+
+    function appendReplyHistory(mention, text, status) {
+      if (!mention.replyHistory) mention.replyHistory = [];
+      mention.replyHistory.push({
+        author: CURRENT_USER,
+        date: new Date().toLocaleString("ru-RU"),
+        text,
+        status
+      });
+    }
+
+    function renderReplyHistory(mention) {
+      const container = document.getElementById("replyModalHistory");
+      if (!mention.replyHistory || !mention.replyHistory.length) {
+        container.innerHTML = `<div class="reply-history"><h4>История ответов</h4><p style="color:var(--muted);font-size:12px;margin:0">Ответов пока нет</p></div>`;
+        return;
+      }
+      container.innerHTML = `
+        <div class="reply-history">
+          <h4>История ответов (${mention.replyHistory.length})</h4>
+          ${mention.replyHistory.map(h => `
+            <div class="history-item">
+              <div class="meta">
+                <span>${h.author} · ${h.date}</span>
+                <span class="history-status ${h.status}">${historyStatusLabel(h.status)}</span>
+              </div>
+              <div>${h.text}</div>
+            </div>
+          `).join("")}
+        </div>
+      `;
+    }
+
+    function openReplyModal(mentionId) {
+      const mention = mentions.find(m => m.id === mentionId);
+      if (!mention) return;
+      activeReplyMentionId = mentionId;
+
+      const draft = mentionDrafts[mentionId] || "";
+      document.getElementById("replyModalText").value = draft;
+      document.getElementById("replyModalError").classList.remove("visible");
+      document.getElementById("replyDemoBanner").style.display = APP_CONFIG.DEMO_MODE ? "block" : "none";
+
+      document.getElementById("replyModalMeta").innerHTML = `
+        <div class="mention-preview">
+          <div class="label">Источник</div>
+          <div class="source-cell" style="flex-direction:row;align-items:center;gap:8px">
+            <strong>${mention.source}</strong>
+            ${instagramTypeBadge(mention)}
+          </div>
+        </div>
+        <div class="mention-preview">
+          <div class="label">Автор</div>
+          <div>${mention.author}</div>
+        </div>
+        <div class="mention-preview">
+          <div class="label">Текст упоминания</div>
+          <div>${mention.text}</div>
+        </div>
+      `;
+
+      renderReplyHistory(mention);
+      openModal("modalReply");
+    }
+
+    function validateReplyText(text) {
+      if (!text || !text.trim()) {
+        document.getElementById("replyModalError").classList.add("visible");
+        showToast("Введите текст ответа", "error");
+        return false;
+      }
+      document.getElementById("replyModalError").classList.remove("visible");
+      return true;
+    }
+
+    async function handleInstagramSend(mentionId, replyText) {
+      const mention = mentions.find(m => m.id === mentionId);
+      if (!mention) return;
+
+      if (!isInstagramMention(mention)) {
+        showToast("Отправка в Instagram доступна только для Instagram-упоминаний", "warning");
+        return;
+      }
+
+      if (!validateReplyText(replyText)) return;
+
+      if (APP_CONFIG.DEMO_MODE) {
+        showToast("Тестовая отправка (demo mode)", "info");
+      }
+
+      const payload = buildInstagramPayload(mention, replyText.trim());
+
+      try {
+        const result = await sendInstagramReply(payload);
+        const historyStatus = APP_CONFIG.DEMO_MODE ? "demo_sent" : "sent";
+        const wasOverdue = mention.slaMinutes < 0;
+
+        appendReplyHistory(mention, replyText.trim(), historyStatus);
+        mention.status = "Ответ отправлен";
+        mention.slaMinutes = 0;
+        delete mentionDrafts[mentionId];
+
+        updateEmployeeSla(mention.employee, wasOverdue);
+
+        addActionLog({
+          action: "Instagram reply",
+          detail: `${mention.author} · ${IG_TYPE_LABELS[mention.instagramSourceType]?.label || "Instagram"} · ${historyStatus}`
+        });
+
+        showToast("Ответ отправлен в Instagram demo mode", "success");
+
+        renderAll();
+        if (activeReplyMentionId === mentionId) {
+          renderReplyHistory(mention);
+          document.getElementById("replyModalText").value = "";
+        }
+
+        return result;
+      } catch (err) {
+        appendReplyHistory(mention, replyText.trim(), "failed");
+        addActionLog({ action: "Instagram reply failed", detail: err.message });
+        showToast("Ошибка отправки: " + err.message, "error");
+        if (activeReplyMentionId === mentionId) renderReplyHistory(mention);
+      }
+    }
+
+    function handleGenericSend(mentionId) {
+      const mention = mentions.find(m => m.id === mentionId);
+      if (!mention) return;
+      const text = document.getElementById("replyModalText").value;
+      if (!validateReplyText(text)) return;
+
+      mentionDrafts[mentionId] = text.trim();
+      appendReplyHistory(mention, text.trim(), APP_CONFIG.DEMO_MODE ? "demo_sent" : "sent");
+      mention.status = isInstagramMention(mention) ? "Ответ отправлен" : "Обработан";
+      const wasOverdue = mention.slaMinutes < 0;
+      mention.slaMinutes = 0;
+      updateEmployeeSla(mention.employee, wasOverdue);
+
+      addActionLog({ action: "Ответ сохранён", detail: `${mention.source} · ${mention.author}` });
+      showToast("Ответ отправлен", "success");
+
+      renderReplyHistory(mention);
+      closeModal("modalReply");
+      renderAll();
+    }
+
+    function updateInstagramConnectionUI() {
+      const el = document.getElementById("instagramConnectionStatus");
+      if (!el) return;
+      if (instagramConnected) {
+        el.className = "integration-status connected";
+        el.innerHTML = "<span>●</span> Подключено (demo)";
+      } else {
+        el.className = "integration-status disconnected";
+        el.innerHTML = "<span>●</span> Не подключено";
+      }
+    }
+
+    function initAgentReplies() {
+      mentions.filter(m => ["Новый", "В работе", "На проверке"].includes(m.status)).slice(0, 4).forEach(m => {
+        if (!agentReplies[m.id]) {
+          const key = m.sentiment === "Позитив" ? "positive" : m.sentiment === "Негатив" ? "negative" : "neutral";
+          agentReplies[m.id] = { text: AI_RESPONSES[key], editing: false };
+        }
+      });
+    }
+
+    function showToast(message, type = "default") {
+      const container = document.getElementById("toastContainer");
+      const toast = document.createElement("div");
+      toast.className = "toast" + (type !== "default" ? " " + type : "");
+      toast.textContent = message;
+      container.appendChild(toast);
+      setTimeout(() => {
+        toast.style.animation = "toastOut 0.25s ease forwards";
+        setTimeout(() => toast.remove(), 250);
+      }, 3200);
+    }
+
+    function openModal(id) {
+      document.getElementById(id).classList.add("open");
+    }
+
+    function closeModal(id) {
+      document.getElementById(id).classList.remove("open");
+    }
+
+    function sentimentTag(s) {
+      const map = { "Позитив": "green", "Негатив": "red", "Нейтрально": "yellow" };
+      return `<span class="tag ${map[s] || "blue"}">${s}</span>`;
+    }
+
+    function statusTag(s) {
+      const map = {
+        "Новый": "blue", "В работе": "yellow", "На проверке": "blue",
+        "Обработан": "green", "Ответ отправлен": "green", "Отклонено": "red", "Передано оператору": "yellow"
+      };
+      return `<span class="tag ${map[s] || "blue"}">${s}</span>`;
+    }
+
+    function slaStatusLabel(s) {
+      const map = { good: "Хорошо", risk: "Риск", overdue: "Просрочено" };
+      return map[s] || s;
+    }
+
+    function formatSla(minutes) {
+      if (minutes < 0) return `<span class="sla-time over">Просрочено ${Math.abs(minutes)} мин</span>`;
+      if (minutes <= 15) return `<span class="sla-time warn">${minutes} мин</span>`;
+      return `<span class="sla-time ok">${minutes} мин</span>`;
+    }
+
+    function sourceAbbr(source) {
+      const map = { "Telegram": "TG", "Instagram": "IG", "TikTok": "TT", "YouTube": "YT", "X/Twitter": "X", "Новости": "NW" };
+      return map[source] || source.slice(0, 2).toUpperCase();
+    }
+
+    function importanceClass(i) {
+      if (i === "Высокая") return "importance-high";
+      if (i === "Средняя") return "importance-medium";
+      return "importance-low";
+    }
+
+    function renderSla() {
+      const periodMentions = getMentionsByPeriod();
+      const inProgress = periodMentions.filter(m => ["Новый", "В работе", "На проверке", "Передано оператору"].includes(m.status)).length;
+      const totalOverdue = periodMentions.filter(m => m.slaMinutes < 0).length;
+
+      const rows = employees.map(emp => {
+        const empMentions = periodMentions.filter(m => m.employee === emp.name);
+        const assigned = empMentions.length;
+        const processed = empMentions.filter(m => ["Обработан", "Ответ отправлен"].includes(m.status)).length;
+        const overdue = empMentions.filter(m => m.slaMinutes < 0).length;
+        const slaFact = assigned ? Math.round((processed / assigned) * 100) : 0;
+        let status = slaFact >= 93 ? "good" : slaFact >= 85 ? "risk" : assigned ? "overdue" : emp.status;
+        if (!assigned) status = emp.status;
+        return { ...emp, assigned, processed, overdue, slaFact: slaFact + "%", status };
+      });
+
+      const avgSla = rows.length ? Math.round(rows.reduce((s, e) => s + parseInt(e.slaFact), 0) / rows.length) : 0;
+      const avgResponseMin = rows.length ? Math.round(rows.reduce((s, e) => s + parseInt(e.avgResponse), 0) / rows.length) : 0;
+
+      document.getElementById("slaSummaryKpis").innerHTML = `
+        <div class="sla-kpi"><div class="label">Общий SLA выполнения</div><div class="value ${avgSla >= 93 ? "good" : avgSla >= 85 ? "risk" : "bad"}">${avgSla}%</div></div>
+        <div class="sla-kpi"><div class="label">Среднее время ответа</div><div class="value">${periodMentions.length ? avgResponseMin + " мин" : "0"}</div></div>
+        <div class="sla-kpi"><div class="label">Просроченные обращения</div><div class="value bad">${totalOverdue}</div></div>
+        <div class="sla-kpi"><div class="label">Обращения в работе</div><div class="value risk">${inProgress}</div></div>
+      `;
+
+      if (!periodMentions.length) {
+        document.getElementById("slaTableBody").innerHTML = `<tr><td colspan="9" class="empty-state">Нет данных за выбранный период</td></tr>`;
+        return;
+      }
+
+      document.getElementById("slaTableBody").innerHTML = rows.map(e => `
+        <tr>
+          <td><strong>${e.name}</strong></td>
+          <td>${e.role}</td>
+          <td>${e.assigned}</td>
+          <td>${e.processed}</td>
+          <td>${e.avgResponse}</td>
+          <td>${e.slaTarget}</td>
+          <td>${e.slaFact}</td>
+          <td>${e.overdue}</td>
+          <td><span class="sla-status ${e.status}">${slaStatusLabel(e.status)}</span></td>
+        </tr>
+      `).join("");
+    }
+
+    function getFilteredMentions() {
+      const source = document.getElementById("filterSource").value;
+      const sentiment = document.getElementById("filterSentiment").value;
+      const status = document.getElementById("filterStatus").value;
+      const employee = document.getElementById("filterEmployee").value;
+      const keywordId = document.getElementById("filterKeyword")?.value || "";
+      const search = document.getElementById("globalSearch").value.toLowerCase().trim();
+      const periodData = getMentionsByPeriod();
+
+      return periodData.filter(m => {
+        if (source && m.source !== source) return false;
+        if (sentiment && m.sentiment !== sentiment) return false;
+        if (status && m.status !== status) return false;
+        if (employee && m.employee !== employee) return false;
+        if (keywordId) {
+          const kw = keywords.find(k => k.id === keywordId);
+          if (kw && !matchMentionsForKeyword(kw).some(x => x.id === m.id)) return false;
+        }
+        if (search && !m.text.toLowerCase().includes(search) && !m.author.toLowerCase().includes(search)) return false;
+        return true;
+      });
+    }
+
+    function renderMentions() {
+      const periodData = getMentionsByPeriod();
+      const filtered = getFilteredMentions();
+      const tbody = document.getElementById("mentionsTableBody");
+      document.getElementById("mentionsCount").textContent = `Показано: ${filtered.length} из ${periodData.length}`;
+
+      if (!filtered.length) {
+        const msg = !periodData.length
+          ? "Нет данных за выбранный период"
+          : "Упоминания не найдены. Измените фильтры или поисковый запрос.";
+        tbody.innerHTML = `<tr><td colspan="10" class="empty-state">${msg}</td></tr>`;
+        return;
+      }
+
+      tbody.innerHTML = filtered.map(m => `
+        <tr data-mention-id="${m.id}">
+          <td>${m.date}</td>
+          <td>
+            <div class="source-cell">
+              <span>${m.source}</span>
+              ${instagramTypeBadge(m)}
+            </div>
+          </td>
+          <td>${m.author}</td>
+          <td class="text-cell">${m.text}${m.replyHistory && m.replyHistory.length ? `<br><small style="color:var(--muted)">${m.replyHistory.length} ответ(ов) в истории</small>` : ""}</td>
+          <td>${sentimentTag(m.sentiment)}</td>
+          <td><span class="${importanceClass(m.importance)}">${m.importance}</span></td>
+          <td>${statusTag(m.status)}</td>
+          <td>${m.employee}</td>
+          <td>${formatSla(m.slaMinutes)}</td>
+          <td>
+            <div class="mention-actions">
+              <button class="small-btn primary" data-mention-action="reply" data-id="${m.id}">Ответить</button>
+              <button class="small-btn" data-mention-action="ai" data-id="${m.id}">Сгенерировать AI-ответ</button>
+              <button class="small-btn ig" data-mention-action="instagram" data-id="${m.id}">Отправить в Instagram</button>
+              <button class="small-btn" data-mention-action="edit" data-id="${m.id}">Редактировать</button>
+              <button class="small-btn" data-mention-action="cancel" data-id="${m.id}">Отменить</button>
+            </div>
+          </td>
+        </tr>
+      `).join("");
+    }
+
+    function renderDashboardMentions() {
+      const important = getMentionsByPeriod().filter(m => m.importance === "Высокая" || m.sentiment === "Негатив").slice(0, 3);
+      const el = document.getElementById("dashboardMentions");
+      if (!important.length) {
+        el.innerHTML = `<div class="empty-state">Нет данных за выбранный период</div>`;
+        return;
+      }
+      el.innerHTML = important.map(m => `
+        <div class="mention">
+          <div class="avatar">${sourceAbbr(m.source)}</div>
+          <div>
+            <h4>${m.author} · ${m.source}</h4>
+            <p>${m.text}</p>
+          </div>
+          ${sentimentTag(m.sentiment)}
+        </div>
+      `).join("");
+    }
+
+    function renderAgentQueue() {
+      const queue = getMentionsByPeriod().filter(m => ["Новый", "В работе", "На проверке"].includes(m.status)).slice(0, 4);
+      const container = document.getElementById("agentQueue");
+      const countEl = document.getElementById("agentQueueCount");
+      const totalQueue = getMentionsByPeriod().filter(m => ["Новый", "В работе", "На проверке"].includes(m.status)).length;
+      if (countEl) countEl.textContent = totalQueue + " ожидают проверки";
+
+      if (!queue.length) {
+        container.innerHTML = `<div class="empty-state">${getMentionsByPeriod().length ? "Очередь пуста за выбранный период" : "Нет данных за выбранный период"}</div>`;
+        return;
+      }
+
+      container.innerHTML = queue.map(m => {
+        const reply = agentReplies[m.id] || { text: "", editing: false };
+        const replyBlock = reply.editing
+          ? `<textarea class="reply-textarea" data-reply-id="${m.id}">${reply.text}</textarea>`
+          : `<p class="reply-text">${reply.text || "Ответ не сгенерирован. Нажмите «Сгенерировать AI-ответ»."}</p>`;
+
+        return `
+          <div class="reply-card" data-mention-id="${m.id}">
+            <h4>${m.sentiment} · ${m.source} · ${m.author}</h4>
+            <p>"${m.text}"</p>
+            ${replyBlock}
+            <div class="small-actions">
+              <button class="small-btn" data-action="generate" data-id="${m.id}">Сгенерировать AI-ответ</button>
+              <button class="small-btn primary" data-action="send" data-id="${m.id}">Отправить</button>
+              <button class="small-btn" data-action="edit" data-id="${m.id}">${reply.editing ? "Сохранить" : "Редактировать"}</button>
+              <button class="small-btn" data-action="transfer" data-id="${m.id}">Передать оператору</button>
+              <button class="small-btn" data-action="reject" data-id="${m.id}">Отклонить</button>
+            </div>
+          </div>
+        `;
+      }).join("");
+    }
+
+    function populateEmployeeFilter() {
+      const select = document.getElementById("filterEmployee");
+      employees.forEach(e => {
+        const opt = document.createElement("option");
+        opt.value = e.name;
+        opt.textContent = e.name;
+        select.appendChild(opt);
+      });
+    }
+
+    function navigateTo(page) {
+      document.querySelectorAll(".nav-item").forEach(item => {
+        item.classList.toggle("active", item.dataset.page === page);
+      });
+      document.querySelectorAll(".page").forEach(section => {
+        section.classList.toggle("active", section.id === page);
+      });
+      document.getElementById("pageTitle").textContent = pages[page][0];
+      document.getElementById("pageSubtitle").textContent = pages[page][1];
+      updatePeriodBarVisibility(page);
+    }
+
+    function generateReportSummary() {
+      const data = getMentionsByPeriod();
+      const total = data.length;
+      const negative = data.filter(m => m.sentiment === "Негатив").length;
+      const processed = data.filter(m => ["Обработан", "Ответ отправлен"].includes(m.status)).length;
+      const overdue = data.filter(m => m.slaMinutes < 0).length;
+      const sources = [...new Set(data.map(m => m.source))].length;
+      const periodText = getPeriodLabelText();
+
+      document.getElementById("reportSummaryBody").innerHTML = `
+        <p style="color:var(--muted);font-size:13px;margin:0 0 16px">Краткая сводка · ${periodText}</p>
+        <div class="report-summary-grid">
+          <div class="report-stat"><strong>${total}</strong><span>Всего упоминаний</span></div>
+          <div class="report-stat"><strong>${negative}</strong><span>Негативных</span></div>
+          <div class="report-stat"><strong>${processed}</strong><span>Обработано</span></div>
+          <div class="report-stat"><strong>${overdue}</strong><span>Просрочено SLA</span></div>
+          <div class="report-stat"><strong>${sources}</strong><span>Активных источников</span></div>
+          <div class="report-stat"><strong>${total ? Math.round(processed / total * 100) : 0}%</strong><span>Доля обработанных</span></div>
+        </div>
+        ${total ? `<p style="font-size:13px;line-height:1.5;color:var(--text)">Основной риск: рост негатива по ключу «интернет не работает» в Telegram и X/Twitter. Рекомендуется усилить мониторинг вечерних часов.</p>` : `<p style="font-size:13px;color:var(--muted)">Нет данных за выбранный период</p>`}
+        <div class="modal-actions">
+          <button class="btn secondary" data-close="modalReport">Закрыть</button>
+          <button class="btn" data-action="export-report">Экспортировать</button>
+        </div>
+      `;
+    }
+
+    document.getElementById("periodPreset").addEventListener("change", e => {
+      periodFilter.preset = e.target.value;
+      const customEl = document.getElementById("periodCustomRange");
+      if (e.target.value === "custom") {
+        customEl.classList.add("visible");
+        const now = new Date();
+        const weekAgo = new Date(now);
+        weekAgo.setDate(weekAgo.getDate() - 6);
+        document.getElementById("periodStart").value = weekAgo.toISOString().slice(0, 10);
+        document.getElementById("periodEnd").value = now.toISOString().slice(0, 10);
+      } else {
+        customEl.classList.remove("visible");
+        periodFilter.customStart = null;
+        periodFilter.customEnd = null;
+        applyPeriodFilter(true);
+      }
+    });
+
+    document.getElementById("periodApply").addEventListener("click", () => {
+      const start = document.getElementById("periodStart").value;
+      const end = document.getElementById("periodEnd").value;
+      if (!start || !end) {
+        showToast("Выберите дату начала и окончания", "warning");
+        return;
+      }
+      if (new Date(start) > new Date(end)) {
+        showToast("Дата начала не может быть позже даты окончания", "warning");
+        return;
+      }
+      periodFilter.preset = "custom";
+      periodFilter.customStart = start;
+      periodFilter.customEnd = end;
+      applyPeriodFilter(true);
+    });
+
+    document.getElementById("periodReset").addEventListener("click", resetPeriodFilter);
+
+    document.querySelectorAll(".nav-item").forEach(button => {
+      button.addEventListener("click", () => navigateTo(button.dataset.page));
+    });
+
+    document.getElementById("btnExport").addEventListener("click", () => {
+      showToast("Отчёт сформирован", "success");
+    });
+
+    document.getElementById("btnNewProject").addEventListener("click", () => openModal("modalNewProject"));
+    document.getElementById("btnAddKeyword").addEventListener("click", () => {
+      resetKeywordForm();
+      openModal("modalAddKeyword");
+    });
+    document.getElementById("btnConnectSource").addEventListener("click", () => openModal("modalConnectSource"));
+    document.getElementById("btnGenerateReport").addEventListener("click", () => {
+      generateReportSummary();
+      openModal("modalReport");
+    });
+
+    document.getElementById("confirmNewProject").addEventListener("click", () => {
+      closeModal("modalNewProject");
+      showToast("Проект «" + (document.getElementById("projectName").value || "Новый проект") + "» создан", "info");
+      document.getElementById("projectName").value = "";
+      document.getElementById("projectDesc").value = "";
+    });
+
+    document.getElementById("confirmAddKeyword").addEventListener("click", addKeywordFromForm);
+
+    document.getElementById("keywordGrid").addEventListener("click", e => {
+      const btn = e.target.closest("[data-keyword-action]");
+      if (!btn) return;
+      const id = btn.dataset.id;
+      if (btn.dataset.keywordAction === "toggle") toggleKeyword(id);
+      if (btn.dataset.keywordAction === "delete") deleteKeyword(id);
+    });
+
+    document.getElementById("confirmConnectSource").addEventListener("click", () => {
+      if (!selectedSource) { selectedSource = "TikTok"; }
+      closeModal("modalConnectSource");
+      showToast("Источник подключен", "success");
+      if (selectedSource === "X/Twitter") {
+        document.getElementById("xSourceStatus").textContent = "Подключено";
+      }
+      selectedSource = "";
+      document.querySelectorAll(".source-option").forEach(o => o.classList.remove("selected"));
+    });
+
+    document.querySelectorAll(".source-option").forEach(btn => {
+      btn.addEventListener("click", () => {
+        document.querySelectorAll(".source-option").forEach(o => o.classList.remove("selected"));
+        btn.classList.add("selected");
+        selectedSource = btn.dataset.source;
+      });
+    });
+
+    document.querySelectorAll("[data-close]").forEach(btn => {
+      btn.addEventListener("click", () => closeModal(btn.dataset.close));
+    });
+
+    document.querySelectorAll(".modal-overlay").forEach(overlay => {
+      overlay.addEventListener("click", e => {
+        if (e.target === overlay) closeModal(overlay.id);
+      });
+    });
+
+    ["filterSource", "filterSentiment", "filterStatus", "filterEmployee", "filterKeyword"].forEach(id => {
+      document.getElementById(id).addEventListener("change", renderMentions);
+    });
+
+    document.getElementById("globalSearch").addEventListener("input", () => {
+      renderMentions();
+      if (document.getElementById("globalSearch").value.trim()) {
+        navigateTo("mentions");
+      }
+    });
+
+    document.getElementById("agentQueue").addEventListener("click", e => {
+      const btn = e.target.closest("[data-action]");
+      if (!btn) return;
+      const id = parseInt(btn.dataset.id);
+      const mention = mentions.find(m => m.id === id);
+      if (!mention) return;
+
+      if (!agentReplies[id]) agentReplies[id] = { text: "", editing: false };
+
+      switch (btn.dataset.action) {
+        case "generate": {
+          const key = mention.sentiment === "Позитив" ? "positive" : mention.sentiment === "Негатив" ? "negative" : "neutral";
+          agentReplies[id].text = AI_RESPONSES[key];
+          agentReplies[id].editing = false;
+          renderAgentQueue();
+          break;
+        }
+        case "send": {
+          if (!agentReplies[id].text) {
+            const key = mention.sentiment === "Позитив" ? "positive" : mention.sentiment === "Негатив" ? "negative" : "neutral";
+            agentReplies[id].text = AI_RESPONSES[key];
+          }
+          mention.status = "Обработан";
+          mention.slaMinutes = 0;
+          delete agentReplies[id];
+          showToast("Ответ отправлен", "success");
+          renderAll();
+          break;
+        }
+        case "edit": {
+          if (agentReplies[id].editing) {
+            const textarea = document.querySelector(`textarea[data-reply-id="${id}"]`);
+            if (textarea) agentReplies[id].text = textarea.value;
+            agentReplies[id].editing = false;
+          } else {
+            agentReplies[id].editing = true;
+          }
+          renderAgentQueue();
+          break;
+        }
+        case "reject": {
+          mention.status = "Отклонено";
+          delete agentReplies[id];
+          renderAll();
+          break;
+        }
+        case "transfer": {
+          mention.status = "Передано оператору";
+          showToast("Обращение передано оператору", "info");
+          renderAll();
+          break;
+        }
+      }
+    });
+
+    document.getElementById("modalReport").addEventListener("click", e => {
+      if (e.target.dataset.action === "export-report") {
+        closeModal("modalReport");
+        showToast("Отчёт сформирован", "success");
+      }
+    });
+
+    document.getElementById("mentionsTableBody").addEventListener("click", e => {
+      const btn = e.target.closest("[data-mention-action]");
+      if (!btn) return;
+      e.stopPropagation();
+
+      const id = parseInt(btn.dataset.id);
+      const mention = mentions.find(m => m.id === id);
+      if (!mention) return;
+
+      switch (btn.dataset.mentionAction) {
+        case "reply":
+          openReplyModal(id);
+          break;
+        case "ai": {
+          const aiText = getAiReplyText(mention);
+          mentionDrafts[id] = aiText;
+          openReplyModal(id);
+          document.getElementById("replyModalText").value = aiText;
+          showToast("AI-ответ сгенерирован", "info");
+          break;
+        }
+        case "instagram": {
+          if (!isInstagramMention(mention)) {
+            showToast("Отправка в Instagram доступна только для Instagram-упоминаний", "warning");
+            return;
+          }
+          const draft = mentionDrafts[id] || "";
+          if (!draft.trim()) {
+            openReplyModal(id);
+            showToast("Введите или сгенерируйте текст ответа", "warning");
+            return;
+          }
+          handleInstagramSend(id, draft);
+          break;
+        }
+        case "edit":
+          openReplyModal(id);
+          setTimeout(() => document.getElementById("replyModalText").focus(), 100);
+          break;
+        case "cancel":
+          delete mentionDrafts[id];
+          if (activeReplyMentionId === id) {
+            document.getElementById("replyModalText").value = "";
+            closeModal("modalReply");
+          }
+          showToast("Черновик отменён", "info");
+          break;
+      }
+    });
+
+    document.getElementById("btnModalGenerateReply").addEventListener("click", () => {
+      const mention = mentions.find(m => m.id === activeReplyMentionId);
+      if (!mention) return;
+      const text = getAiReplyText(mention);
+      document.getElementById("replyModalText").value = text;
+      mentionDrafts[activeReplyMentionId] = text;
+      document.getElementById("replyModalError").classList.remove("visible");
+      showToast("AI-ответ сгенерирован", "info");
+    });
+
+    document.getElementById("btnModalSendReply").addEventListener("click", async () => {
+      const mention = mentions.find(m => m.id === activeReplyMentionId);
+      if (!mention) return;
+      const text = document.getElementById("replyModalText").value;
+
+      if (isInstagramMention(mention)) {
+        await handleInstagramSend(activeReplyMentionId, text);
+        if (text.trim()) closeModal("modalReply");
+      } else {
+        handleGenericSend(activeReplyMentionId);
+      }
+    });
+
+    document.getElementById("replyModalText").addEventListener("input", e => {
+      if (activeReplyMentionId) mentionDrafts[activeReplyMentionId] = e.target.value;
+    });
+
+    document.getElementById("btnConnectInstagram").addEventListener("click", () => openModal("modalConnectInstagram"));
+
+    document.getElementById("confirmConnectInstagram").addEventListener("click", () => {
+      // TODO: в production — window.location.href = `${APP_CONFIG.API_BASE}/api/instagram/oauth/start`;
+      instagramConnected = true;
+      updateInstagramConnectionUI();
+      const igCard = document.getElementById("instagramSourceCardStatus");
+      if (igCard) igCard.textContent = "Подключено (demo)";
+      closeModal("modalConnectInstagram");
+      showToast("Instagram подключён (demo). Token хранится на backend.", "success");
+      addActionLog({ action: "Instagram OAuth", detail: "Подключение выполнено в demo mode" });
+    });
+
+    document.getElementById("btnCheckInstagram").addEventListener("click", () => {
+      // TODO: fetch(`${APP_CONFIG.API_BASE}/api/instagram/status`)
+      if (instagramConnected) {
+        showToast("Соединение активно (demo mode)", "success");
+      } else {
+        showToast("Instagram не подключён. Нажмите «Подключить Instagram».", "warning");
+      }
+    });
+
+    document.querySelectorAll(".switch").forEach(sw => {
+      sw.addEventListener("click", () => sw.classList.toggle("on"));
+    });
+
+    document.querySelectorAll("[data-open-report]").forEach(btn => {
+      btn.addEventListener("click", () => {
+        generateReportSummary();
+        openModal("modalReport");
+      });
+    });
+
+    document.querySelectorAll("[data-action='accept-rec'], [data-action='reject-rec']").forEach(btn => {
+      btn.addEventListener("click", () => {
+        showToast(btn.dataset.action === "accept-rec" ? "Рекомендация принята" : "Рекомендация отклонена", "info");
+      });
+    });
+
+    document.querySelector(".upgrade")?.addEventListener("click", () => showToast("Настройки агента открыты", "info"));
+
+    // ─── Backend API Integration ────────────────────────────────────────────
+    // Если backend недоступен — все функции ниже возвращают null
+    // и интерфейс продолжает работу на demo-данных из index.html.
+
+    const API_BASE = ""; // Пустая строка = тот же хост (localhost:3000 в dev, VPS-домен в prod)
+
+    /**
+     * Универсальная обёртка для API-запросов.
+     * При любой ошибке (сеть, 4xx, 5xx) возвращает null — без краша UI.
+     */
+    async function apiRequest(url, options = {}) {
+      try {
+        const response = await fetch(API_BASE + url, {
+          headers: { "Content-Type": "application/json" },
+          ...options
+        });
+        if (!response.ok) {
+          throw new Error(`API error: ${response.status} ${response.statusText}`);
+        }
+        return await response.json();
+      } catch (error) {
+        console.warn("[API fallback]", url, "→", error.message);
+        return null;
+      }
+    }
+
+    /**
+     * Проверяет доступность backend.
+     * Возвращает true если сервер ответил на /api/health.
+     */
+    async function checkBackendHealth() {
+      const result = await apiRequest("/api/health");
+      return result && result.status === "ok";
+    }
+
+    /**
+     * Адаптер: преобразует упоминание из формата backend в формат frontend.
+     * Backend использует sentiment: "negative" / "positive" / "neutral",
+     * frontend ожидает "Негатив" / "Позитив" / "Нейтрально".
+     */
+    function adaptMentionFromApi(m) {
+      const sentimentMap = { negative: "Негатив", positive: "Позитив", neutral: "Нейтрально" };
+      const importanceMap = { high: "Высокая", medium: "Средняя", low: "Низкая" };
+      const published = new Date(m.createdAt || m.publishedAt || new Date());
+      const slaMin    = typeof m.slaMinutes === "number" ? m.slaMinutes : 60;
+      return {
+        id:                  m.id,
+        publishedAt:         published.toISOString(),
+        createdAt:           published.toISOString(),
+        updatedAt:           published.toISOString(),
+        slaDeadline:         new Date(published.getTime() + 60 * 60000).toISOString(),
+        repliedAt:           m.repliedAt || null,
+        date:                formatRuDateTime(published),
+        source:              m.source,
+        author:              m.author,
+        text:                m.text,
+        sentiment:           sentimentMap[m.sentiment] || m.sentiment || "Нейтрально",
+        importance:          importanceMap[m.importance] || m.importance || "Средняя",
+        status:              m.status || "Новый",
+        employee:            m.assignedTo || m.employee || "",
+        slaMinutes:          slaMin,
+        instagramSourceType: m.instagramSourceType || null,
+        instagramCommentId:  m.instagramCommentId  || null,
+        replyHistory:        Array.isArray(m.replyHistory) ? m.replyHistory : []
+      };
+    }
+
+    /**
+     * Адаптер: преобразует ключевое слово из формата backend в формат frontend.
+     */
+    function adaptKeywordFromApi(k) {
+      return {
+        id:               k.id,
+        text:             k.keyword || k.text,
+        type:             k.type || "бренд",
+        sources:          Array.isArray(k.sources) ? k.sources : ["Telegram"],
+        active:           k.status !== "inactive",
+        baselineMentions: 0,
+        baselineNegative: 0,
+        secondaryLabel:   "негатив"
+      };
+    }
+
+    /**
+     * Загружает данные с backend.
+     * Если backend недоступен или возвращает ошибку — оставляет demo-данные без изменений.
+     */
+    async function initFromApi() {
+      const isBackendUp = await checkBackendHealth();
+
+      if (!isBackendUp) {
+        console.info("[KT MediaScanner] Backend недоступен — работаем на demo-данных.");
+        return;
+      }
+
+      console.info("[KT MediaScanner] Backend доступен — загружаем данные из API.");
+      showToast("Подключено к backend API", "success");
+
+      // Загрузка упоминаний
+      const mentionsResult = await apiRequest("/api/mentions");
+      if (mentionsResult && mentionsResult.success && Array.isArray(mentionsResult.data)) {
+        mentions = mentionsResult.data.map(adaptMentionFromApi);
+        console.info(`[API] mentions: ${mentions.length} загружено`);
+      }
+
+      // Загрузка ключевых слов (приоритет — API, иначе localStorage)
+      const keywordsResult = await apiRequest("/api/keywords");
+      if (keywordsResult && keywordsResult.success && Array.isArray(keywordsResult.data)) {
+        keywords = keywordsResult.data.map(adaptKeywordFromApi);
+        console.info(`[API] keywords: ${keywords.length} загружено`);
+      }
+
+      // Загрузка сотрудников
+      const employeesResult = await apiRequest("/api/employees");
+      if (employeesResult && employeesResult.success && Array.isArray(employeesResult.data)) {
+        // Обновляем employee filter
+        const select = document.getElementById("filterEmployee");
+        if (select) {
+          select.innerHTML = `<option value="">Все сотрудники</option>`;
+          employeesResult.data.forEach(e => {
+            const opt = document.createElement("option");
+            opt.value = e.name;
+            opt.textContent = e.name;
+            select.appendChild(opt);
+          });
+        }
+        console.info(`[API] employees: ${employeesResult.data.length} загружено`);
+      }
+    }
+
+    /**
+     * Переопределяем sendInstagramReply — теперь использует backend /api/instagram/reply.
+     * Если backend недоступен — падает gracefully с тем же demo-ответом что и раньше.
+     */
+    async function sendInstagramReply(payload) {
+      const result = await apiRequest("/api/instagram/reply", {
+        method: "POST",
+        body: JSON.stringify(payload)
+      });
+
+      if (result && result.success) {
+        return result; // backend ответил успешно (demo или real)
+      }
+
+      // Fallback: backend недоступен — имитируем локально
+      if (APP_CONFIG.DEMO_MODE) {
+        await new Promise(resolve => setTimeout(resolve, 400));
+        return {
+          success:   true,
+          mode:      "demo_local",
+          messageId: "demo_local_ig_" + Date.now(),
+          payload
+        };
+      }
+
+      throw new Error("Backend API недоступен и DEMO_MODE отключён");
+    }
+
+    /**
+     * Отправляет Telegram-уведомление через backend.
+     * Используется при назначении упоминания сотруднику.
+     */
+    async function sendTelegramNotification(payload) {
+      const result = await apiRequest("/api/telegram/send-notification", {
+        method: "POST",
+        body: JSON.stringify(payload)
+      });
+      if (result && result.success) {
+        console.info("[Telegram]", result.message);
+      }
+    }
+
+    // ─── Инициализация ───────────────────────────────────────────────────────
+    // Сначала рендерим с demo-данными (мгновенно),
+    // затем пробуем загрузить с backend и перерендериваем.
+    initAgentReplies();
+    loadKeywords();         // localStorage или demo по умолчанию
+    populateEmployeeFilter();
+    populateKeywordFilter();
+    updateInstagramConnectionUI();
+    updatePeriodLabel();
+    updatePeriodBarVisibility("dashboard");
+    renderAll();            // ← первый рендер (demo-данные, не ждём API)
+
+    // Асинхронная попытка подключиться к backend
+    initFromApi().then(() => {
+      renderAll();          // ← перерендер с данными backend (если он доступен)
+      initAgentReplies();
+      populateKeywordFilter();
+    });
+  </script>
+</body>
+</html>
