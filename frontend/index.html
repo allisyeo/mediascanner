@@ -1505,6 +1505,9 @@
           <input class="search" id="globalSearch" placeholder="Поиск по тексту упоминания..." />
           <button class="btn secondary" id="btnExport">Экспорт</button>
           <button class="btn" id="btnNewProject">+ Новый проект</button>
+          <button class="btn secondary" id="btnLogout" style="border-color:var(--line);gap:6px;display:flex;align-items:center">
+            <span style="font-size:15px;line-height:1">⎋</span> Выйти
+          </button>
         </div>
       </header>
 
@@ -3271,14 +3274,24 @@
 
     /**
      * Универсальная обёртка для API-запросов.
-     * При любой ошибке (сеть, 4xx, 5xx) возвращает null — без краша UI.
+     * credentials:"include" — обязательно для передачи httpOnly cookie.
+     * При 401 — редирект на страницу входа.
+     * При любой другой ошибке — возвращает null (UI не ломается).
      */
     async function apiRequest(url, options = {}) {
       try {
         const response = await fetch(API_BASE + url, {
+          credentials: "include",
           headers: { "Content-Type": "application/json" },
           ...options
         });
+
+        if (response.status === 401) {
+          // Сессия истекла или не авторизован — на страницу входа
+          window.location.href = "/login.html";
+          return null;
+        }
+
         if (!response.ok) {
           throw new Error(`API error: ${response.status} ${response.statusText}`);
         }
@@ -3435,23 +3448,79 @@
       }
     }
 
-    // ─── Инициализация ───────────────────────────────────────────────────────
-    // Сначала рендерим с demo-данными (мгновенно),
-    // затем пробуем загрузить с backend и перерендериваем.
-    initAgentReplies();
-    loadKeywords();         // localStorage или demo по умолчанию
-    populateEmployeeFilter();
-    populateKeywordFilter();
-    updateInstagramConnectionUI();
-    updatePeriodLabel();
-    updatePeriodBarVisibility("dashboard");
-    renderAll();            // ← первый рендер (demo-данные, не ждём API)
+    // ─── Авторизация ─────────────────────────────────────────────────────────
+    // Скрываем приложение до проверки — показываем только после подтверждения сессии.
+    document.querySelector(".app").style.visibility = "hidden";
 
-    // Асинхронная попытка подключиться к backend
-    initFromApi().then(() => {
-      renderAll();          // ← перерендер с данными backend (если он доступен)
-      initAgentReplies();
-      populateKeywordFilter();
+    (async function initAuth() {
+      try {
+        const res = await fetch("/api/auth/me", {
+          credentials: "include",
+          headers: { "Content-Type": "application/json" }
+        });
+
+        if (!res.ok) {
+          // Не авторизован — на страницу входа
+          window.location.href = "/login.html";
+          return;
+        }
+
+        const data = await res.json();
+        if (!data.success) {
+          window.location.href = "/login.html";
+          return;
+        }
+
+        // Авторизован — показываем приложение
+        document.querySelector(".app").style.visibility = "visible";
+        console.info("[KT MediaScanner] Авторизован как:", data.user.name);
+
+        // ─── Инициализация приложения ───────────────────────────────────────
+        // Сначала рендерим с demo-данными (мгновенно),
+        // затем пробуем загрузить с backend и перерендериваем.
+        initAgentReplies();
+        loadKeywords();
+        populateEmployeeFilter();
+        populateKeywordFilter();
+        updateInstagramConnectionUI();
+        updatePeriodLabel();
+        updatePeriodBarVisibility("dashboard");
+        renderAll();
+
+        // Асинхронная загрузка данных с backend
+        initFromApi().then(() => {
+          renderAll();
+          initAgentReplies();
+          populateKeywordFilter();
+        });
+
+      } catch {
+        // Backend недоступен — работаем на demo-данных без авторизации
+        console.warn("[KT MediaScanner] Backend недоступен — demo-режим без авторизации.");
+        document.querySelector(".app").style.visibility = "visible";
+        initAgentReplies();
+        loadKeywords();
+        populateEmployeeFilter();
+        populateKeywordFilter();
+        updateInstagramConnectionUI();
+        updatePeriodLabel();
+        updatePeriodBarVisibility("dashboard");
+        renderAll();
+      }
+    })();
+
+    // ─── Кнопка «Выйти» ──────────────────────────────────────────────────────
+    document.getElementById("btnLogout").addEventListener("click", async () => {
+      try {
+        await fetch("/api/auth/logout", {
+          method:      "POST",
+          credentials: "include",
+          headers:     { "Content-Type": "application/json" }
+        });
+      } catch {
+        // игнорируем ошибку сети — всё равно редиректим
+      }
+      window.location.href = "/login.html";
     });
   </script>
 </body>
