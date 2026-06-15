@@ -1505,9 +1505,6 @@
           <input class="search" id="globalSearch" placeholder="Поиск по тексту упоминания..." />
           <button class="btn secondary" id="btnExport">Экспорт</button>
           <button class="btn" id="btnNewProject">+ Новый проект</button>
-          <button class="btn secondary" id="btnLogout" style="border-color:var(--line);gap:6px;display:flex;align-items:center">
-            <span style="font-size:15px;line-height:1">⎋</span> Выйти
-          </button>
         </div>
       </header>
 
@@ -1808,6 +1805,12 @@
               <p>Отчёт по резким всплескам негатива, ключевым причинам и каналам.</p>
               <button class="btn secondary" data-open-report>Открыть</button>
             </div>
+          </div>
+
+          <div style="margin-top:32px;padding-top:24px;border-top:1px solid var(--line);">
+            <button class="btn secondary" id="btnLogout" onclick="logoutUser()" style="border-color:var(--line);gap:6px;display:flex;align-items:center">
+              <span style="font-size:15px;line-height:1">⎋</span> Выйти
+            </button>
           </div>
         </div>
       </section>
@@ -3510,7 +3513,7 @@
     })();
 
     // ─── Кнопка «Выйти» ──────────────────────────────────────────────────────
-    document.getElementById("btnLogout").addEventListener("click", async () => {
+    async function logoutUser() {
       try {
         await fetch("/api/auth/logout", {
           method:      "POST",
@@ -3521,7 +3524,7 @@
         // игнорируем ошибку сети — всё равно редиректим
       }
       window.location.href = "/login.html";
-    });
+    }
   </script>
 </body>
 </html>
