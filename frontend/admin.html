@@ -1,0 +1,655 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Админ-панель — KT MediaScanner</title>
+  <style>
+    :root {
+      --bg:          #f5f7fb;
+      --panel:       #ffffff;
+      --text:        #151923;
+      --muted:       #697386;
+      --line:        #e6eaf1;
+      --dark:        #0f172a;
+      --accent:      #2557d6;
+      --accent-soft: #eaf0ff;
+      --green:       #0f9f6e;
+      --green-soft:  #e8f8f2;
+      --red:         #d92d20;
+      --red-soft:    #fff0ef;
+      --yellow:      #b45309;
+      --yellow-soft: #fef3c7;
+      --radius:      14px;
+      --shadow:      0 2px 12px rgba(16,24,40,0.07);
+    }
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      font-family: Inter, -apple-system, BlinkMacSystemFont, "Segoe UI", Arial, sans-serif;
+      background: var(--bg);
+      color: var(--text);
+      min-height: 100vh;
+    }
+
+    /* ── Шапка ── */
+    .topbar {
+      background: var(--panel);
+      border-bottom: 1px solid var(--line);
+      padding: 0 28px;
+      height: 60px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      position: sticky;
+      top: 0;
+      z-index: 100;
+    }
+    .topbar-left { display: flex; align-items: center; gap: 14px; }
+    .logo {
+      width: 36px; height: 36px;
+      border-radius: 10px;
+      background: linear-gradient(135deg, #3b82f6, #8b5cf6);
+      display: grid; place-items: center;
+      font-weight: 800; font-size: 13px; color: #fff;
+    }
+    .topbar-left h1 { font-size: 16px; font-weight: 700; letter-spacing: -0.03em; }
+    .topbar-left span { font-size: 12px; color: var(--muted); }
+    .topbar-right { display: flex; align-items: center; gap: 10px; }
+    .badge-admin {
+      background: var(--accent-soft);
+      color: var(--accent);
+      font-size: 11px; font-weight: 700;
+      padding: 3px 9px; border-radius: 20px;
+      text-transform: uppercase; letter-spacing: 0.05em;
+    }
+    .btn {
+      border: none; border-radius: 10px;
+      padding: 8px 16px; font-size: 13px; font-weight: 650;
+      cursor: pointer; font-family: inherit;
+      transition: background 0.15s, opacity 0.15s;
+    }
+    .btn-primary { background: var(--accent); color: #fff; }
+    .btn-primary:hover { background: #1d48c4; }
+    .btn-secondary { background: transparent; color: var(--text); border: 1px solid var(--line); }
+    .btn-secondary:hover { background: var(--bg); }
+    .btn-danger { background: var(--red-soft); color: var(--red); border: 1px solid #fecaca; }
+    .btn-danger:hover { background: #fee2e2; }
+    .btn-sm { padding: 5px 11px; font-size: 12px; border-radius: 8px; }
+
+    /* ── Основной контент ── */
+    .main { max-width: 960px; margin: 0 auto; padding: 28px 20px; }
+
+    /* ── Секции ── */
+    .section { margin-bottom: 28px; }
+    .section-title {
+      font-size: 13px; font-weight: 750;
+      text-transform: uppercase; letter-spacing: 0.06em;
+      color: var(--muted); margin-bottom: 14px;
+    }
+
+    /* ── Карточки статуса ── */
+    .status-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+      gap: 14px;
+    }
+    .stat-card {
+      background: var(--panel);
+      border: 1px solid var(--line);
+      border-radius: var(--radius);
+      padding: 20px;
+      box-shadow: var(--shadow);
+    }
+    .stat-label { font-size: 12px; color: var(--muted); font-weight: 600; margin-bottom: 8px; }
+    .stat-value { font-size: 26px; font-weight: 800; letter-spacing: -0.04em; }
+    .stat-sub { font-size: 12px; color: var(--muted); margin-top: 4px; }
+    .stat-dot {
+      display: inline-block; width: 8px; height: 8px;
+      border-radius: 50%; margin-right: 5px;
+    }
+    .dot-green { background: var(--green); }
+    .dot-red   { background: var(--red); }
+    .dot-yellow{ background: #f59e0b; }
+
+    /* ── Панели ── */
+    .card {
+      background: var(--panel);
+      border: 1px solid var(--line);
+      border-radius: var(--radius);
+      box-shadow: var(--shadow);
+      overflow: hidden;
+    }
+    .card-head {
+      padding: 16px 20px;
+      border-bottom: 1px solid var(--line);
+      display: flex; align-items: center; justify-content: space-between;
+    }
+    .card-head h3 { font-size: 14px; font-weight: 700; }
+    .card-body { padding: 20px; }
+
+    /* ── Таблица маршрутов ── */
+    .routes-table { width: 100%; border-collapse: collapse; font-size: 13px; }
+    .routes-table th {
+      text-align: left; padding: 8px 10px;
+      font-size: 11px; font-weight: 750; text-transform: uppercase;
+      letter-spacing: 0.05em; color: var(--muted);
+      border-bottom: 1px solid var(--line);
+    }
+    .routes-table td { padding: 10px 10px; border-bottom: 1px solid var(--line); }
+    .routes-table tr:last-child td { border-bottom: none; }
+    .method {
+      font-family: "SF Mono", "Fira Code", monospace;
+      font-size: 11px; font-weight: 700;
+      padding: 2px 7px; border-radius: 5px;
+    }
+    .method-get    { background: #dcfce7; color: #166534; }
+    .method-post   { background: #dbeafe; color: #1e40af; }
+    .method-patch  { background: #fef3c7; color: #92400e; }
+    .method-delete { background: #fee2e2; color: #991b1b; }
+    .route-path {
+      font-family: "SF Mono", "Fira Code", monospace;
+      font-size: 12px; color: var(--dark);
+    }
+    .lock-icon { font-size: 11px; color: var(--accent); }
+    .open-icon { font-size: 11px; color: var(--green); }
+
+    /* ── Пользователь ── */
+    .user-row {
+      display: flex; align-items: center; gap: 14px;
+      padding: 14px 0;
+      border-bottom: 1px solid var(--line);
+    }
+    .user-row:last-child { border-bottom: none; padding-bottom: 0; }
+    .user-avatar {
+      width: 40px; height: 40px; border-radius: 12px;
+      background: linear-gradient(135deg, #3b82f6, #8b5cf6);
+      display: grid; place-items: center;
+      font-weight: 800; font-size: 14px; color: #fff;
+      flex-shrink: 0;
+    }
+    .user-info { flex: 1; }
+    .user-name { font-size: 14px; font-weight: 700; }
+    .user-login { font-size: 12px; color: var(--muted); font-family: monospace; }
+    .user-role {
+      font-size: 11px; font-weight: 700;
+      padding: 2px 8px; border-radius: 20px;
+      text-transform: uppercase; letter-spacing: 0.04em;
+    }
+    .role-admin { background: var(--accent-soft); color: var(--accent); }
+
+    /* ── Конфиг ── */
+    .env-grid { display: grid; gap: 10px; }
+    .env-row {
+      display: flex; align-items: center;
+      padding: 10px 14px;
+      background: var(--bg);
+      border-radius: 10px; gap: 12px;
+    }
+    .env-key {
+      font-family: monospace; font-size: 12px; font-weight: 700;
+      color: var(--dark); min-width: 200px;
+    }
+    .env-val { font-size: 12px; color: var(--muted); flex: 1; }
+    .env-status {
+      font-size: 11px; font-weight: 700;
+      padding: 2px 8px; border-radius: 6px;
+    }
+    .env-ok   { background: var(--green-soft); color: var(--green); }
+    .env-warn { background: var(--yellow-soft); color: var(--yellow); }
+    .env-miss { background: var(--red-soft); color: var(--red); }
+
+    /* ── Лог ── */
+    .log-area {
+      background: #0f172a;
+      border-radius: 10px;
+      padding: 16px;
+      font-family: "SF Mono", "Fira Code", monospace;
+      font-size: 12px;
+      color: #94a3b8;
+      min-height: 160px;
+      max-height: 280px;
+      overflow-y: auto;
+      line-height: 1.7;
+    }
+    .log-line { display: block; }
+    .log-ts   { color: #475569; }
+    .log-ok   { color: #4ade80; }
+    .log-warn { color: #fbbf24; }
+    .log-err  { color: #f87171; }
+    .log-info { color: #60a5fa; }
+
+    /* ── Пинг-индикатор ── */
+    .ping-dot {
+      display: inline-block; width: 9px; height: 9px;
+      border-radius: 50%; background: #d1d5db;
+      margin-right: 6px; vertical-align: middle;
+      transition: background 0.3s;
+    }
+    .ping-dot.alive  { background: var(--green); box-shadow: 0 0 0 3px rgba(15,159,110,0.18); }
+    .ping-dot.dead   { background: var(--red); }
+
+    /* ── Ссылки назад ── */
+    .back-link {
+      display: inline-flex; align-items: center; gap: 6px;
+      font-size: 13px; color: var(--muted);
+      text-decoration: none;
+      padding: 6px 10px; border-radius: 8px;
+      transition: background 0.12s, color 0.12s;
+    }
+    .back-link:hover { background: var(--line); color: var(--text); }
+
+    /* ── Кнопка выйти ── */
+    #btnAdminLogout {
+      display: flex; align-items: center; gap: 6px;
+    }
+
+    @media (max-width: 600px) {
+      .status-grid { grid-template-columns: 1fr 1fr; }
+      .topbar { padding: 0 16px; }
+      .main { padding: 16px; }
+    }
+  </style>
+</head>
+<body>
+
+  <header class="topbar">
+    <div class="topbar-left">
+      <div class="logo">MS</div>
+      <div>
+        <h1>KT MediaScanner</h1>
+        <span>Панель администратора</span>
+      </div>
+    </div>
+    <div class="topbar-right">
+      <span class="badge-admin">Admin</span>
+      <a href="/" class="btn btn-secondary btn-sm">← Приложение</a>
+      <button class="btn btn-danger btn-sm" id="btnAdminLogout">
+        <span>⎋</span> Выйти
+      </button>
+    </div>
+  </header>
+
+  <main class="main">
+
+    <!-- Статус сервера -->
+    <div class="section">
+      <div class="section-title">Статус сервера</div>
+      <div class="status-grid">
+        <div class="stat-card">
+          <div class="stat-label">Backend API</div>
+          <div class="stat-value" id="statusServer">
+            <span class="ping-dot" id="pingDot"></span>
+            <span id="statusText">Проверка...</span>
+          </div>
+          <div class="stat-sub" id="statusMode">—</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-label">Режим данных</div>
+          <div class="stat-value" id="dataMode" style="font-size:18px;margin-top:4px">—</div>
+          <div class="stat-sub">In-memory / PostgreSQL</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-label">Авторизован как</div>
+          <div class="stat-value" id="currentUser" style="font-size:18px;margin-top:4px">—</div>
+          <div class="stat-sub" id="currentRole">—</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-label">Время на сервере</div>
+          <div class="stat-value" id="serverTime" style="font-size:16px;margin-top:4px">—</div>
+          <div class="stat-sub">UTC</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Пользователи -->
+    <div class="section">
+      <div class="section-title">Учётные записи</div>
+      <div class="card">
+        <div class="card-head">
+          <h3>Администраторы</h3>
+          <span style="font-size:12px;color:var(--muted)">Регистрация новых пользователей отключена</span>
+        </div>
+        <div class="card-body">
+          <div class="user-row">
+            <div class="user-avatar">A</div>
+            <div class="user-info">
+              <div class="user-name">Администратор</div>
+              <div class="user-login">allisyeo</div>
+            </div>
+            <span class="user-role role-admin">admin</span>
+            <div style="display:flex;gap:8px">
+              <button class="btn btn-secondary btn-sm" onclick="showChangePassword()">Сменить пароль</button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Смена пароля (скрыта по умолчанию) -->
+    <div class="section" id="changePasswordSection" style="display:none">
+      <div class="section-title">Смена пароля</div>
+      <div class="card">
+        <div class="card-body" style="display:grid;gap:14px;max-width:420px">
+          <div>
+            <label style="font-size:12px;font-weight:650;display:block;margin-bottom:6px">Новый пароль</label>
+            <input type="password" id="newPassword" placeholder="Минимум 8 символов"
+              style="width:100%;border:1px solid var(--line);border-radius:9px;padding:10px 13px;font-size:14px;outline:none;font-family:inherit;background:var(--bg)">
+          </div>
+          <div>
+            <label style="font-size:12px;font-weight:650;display:block;margin-bottom:6px">Повтор</label>
+            <input type="password" id="confirmPassword" placeholder="Повторите пароль"
+              style="width:100%;border:1px solid var(--line);border-radius:9px;padding:10px 13px;font-size:14px;outline:none;font-family:inherit;background:var(--bg)">
+          </div>
+          <div id="pwMsg" style="font-size:12px;display:none"></div>
+          <div style="display:flex;gap:8px">
+            <button class="btn btn-primary btn-sm" onclick="submitChangePassword()">Сохранить</button>
+            <button class="btn btn-secondary btn-sm" onclick="hideChangePassword()">Отмена</button>
+          </div>
+          <p style="font-size:11px;color:var(--muted);line-height:1.5">
+            После смены пароля необходимо обновить bcrypt hash в <code>backend/src/data/users.js</code> вручную.<br>
+            Команда: <code>node -e "require('bcryptjs').hash('НовыйПароль',12).then(console.log)"</code>
+          </p>
+        </div>
+      </div>
+    </div>
+
+    <!-- Конфигурация .env -->
+    <div class="section">
+      <div class="section-title">Конфигурация окружения</div>
+      <div class="card">
+        <div class="card-head">
+          <h3>Переменные .env</h3>
+          <span style="font-size:12px;color:var(--muted)">Секретные значения скрыты</span>
+        </div>
+        <div class="card-body">
+          <div class="env-grid" id="envGrid">
+            <div class="env-row">
+              <span class="env-key">PORT</span>
+              <span class="env-val">3000</span>
+              <span class="env-status env-ok">OK</span>
+            </div>
+            <div class="env-row">
+              <span class="env-key">NODE_ENV</span>
+              <span class="env-val" id="envNodeEnv">—</span>
+              <span class="env-status" id="envNodeEnvStatus">—</span>
+            </div>
+            <div class="env-row">
+              <span class="env-key">JWT_SECRET</span>
+              <span class="env-val">••••••••••••••••</span>
+              <span class="env-status" id="envJwtStatus">—</span>
+            </div>
+            <div class="env-row">
+              <span class="env-key">COOKIE_SECURE</span>
+              <span class="env-val" id="envCookieSecure">—</span>
+              <span class="env-status" id="envCookieSecureStatus">—</span>
+            </div>
+            <div class="env-row">
+              <span class="env-key">DATABASE_URL</span>
+              <span class="env-val" id="envDb">Не задан (demo-режим)</span>
+              <span class="env-status env-warn" id="envDbStatus">Demo</span>
+            </div>
+            <div class="env-row">
+              <span class="env-key">TELEGRAM_BOT_TOKEN</span>
+              <span class="env-val" id="envTg">Не задан</span>
+              <span class="env-status env-warn" id="envTgStatus">—</span>
+            </div>
+            <div class="env-row">
+              <span class="env-key">INSTAGRAM_ACCESS_TOKEN</span>
+              <span class="env-val" id="envIg">Не задан</span>
+              <span class="env-status env-warn" id="envIgStatus">—</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- API маршруты -->
+    <div class="section">
+      <div class="section-title">API маршруты</div>
+      <div class="card">
+        <div class="card-body" style="padding:0">
+          <table class="routes-table">
+            <thead>
+              <tr>
+                <th>Метод</th>
+                <th>Путь</th>
+                <th>Описание</th>
+                <th>Доступ</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr><td><span class="method method-get">GET</span></td><td class="route-path">/api/health</td><td>Статус сервера</td><td><span class="open-icon">🔓 Открытый</span></td></tr>
+              <tr><td><span class="method method-post">POST</span></td><td class="route-path">/api/auth/login</td><td>Вход (rate-limit 10/15min)</td><td><span class="open-icon">🔓 Открытый</span></td></tr>
+              <tr><td><span class="method method-get">GET</span></td><td class="route-path">/api/auth/me</td><td>Текущий пользователь</td><td><span class="open-icon">🔓 Открытый</span></td></tr>
+              <tr><td><span class="method method-post">POST</span></td><td class="route-path">/api/auth/logout</td><td>Выход, очистка cookie</td><td><span class="open-icon">🔓 Открытый</span></td></tr>
+              <tr><td><span class="method method-get">GET</span></td><td class="route-path">/api/mentions</td><td>Список упоминаний (с фильтрами)</td><td><span class="lock-icon">🔒 JWT</span></td></tr>
+              <tr><td><span class="method method-post">POST</span></td><td class="route-path">/api/mentions</td><td>Создать упоминание</td><td><span class="lock-icon">🔒 JWT</span></td></tr>
+              <tr><td><span class="method method-patch">PATCH</span></td><td class="route-path">/api/mentions/:id/status</td><td>Обновить статус</td><td><span class="lock-icon">🔒 JWT</span></td></tr>
+              <tr><td><span class="method method-get">GET</span></td><td class="route-path">/api/keywords</td><td>Ключевые слова</td><td><span class="lock-icon">🔒 JWT</span></td></tr>
+              <tr><td><span class="method method-post">POST</span></td><td class="route-path">/api/keywords</td><td>Добавить ключевое слово</td><td><span class="lock-icon">🔒 JWT</span></td></tr>
+              <tr><td><span class="method method-patch">PATCH</span></td><td class="route-path">/api/keywords/:id</td><td>Обновить ключевое слово</td><td><span class="lock-icon">🔒 JWT</span></td></tr>
+              <tr><td><span class="method method-delete">DELETE</span></td><td class="route-path">/api/keywords/:id</td><td>Удалить ключевое слово</td><td><span class="lock-icon">🔒 JWT</span></td></tr>
+              <tr><td><span class="method method-get">GET</span></td><td class="route-path">/api/employees</td><td>Список сотрудников</td><td><span class="lock-icon">🔒 JWT</span></td></tr>
+              <tr><td><span class="method method-get">GET</span></td><td class="route-path">/api/sla</td><td>SLA-статистика</td><td><span class="lock-icon">🔒 JWT</span></td></tr>
+              <tr><td><span class="method method-post">POST</span></td><td class="route-path">/api/telegram/send-notification</td><td>Отправить уведомление</td><td><span class="lock-icon">🔒 JWT</span></td></tr>
+              <tr><td><span class="method method-get">GET</span></td><td class="route-path">/api/telegram/status</td><td>Статус Telegram</td><td><span class="lock-icon">🔒 JWT</span></td></tr>
+              <tr><td><span class="method method-post">POST</span></td><td class="route-path">/api/instagram/reply</td><td>Ответить в Instagram</td><td><span class="lock-icon">🔒 JWT</span></td></tr>
+              <tr><td><span class="method method-get">GET</span></td><td class="route-path">/api/instagram/status</td><td>Статус Instagram</td><td><span class="lock-icon">🔒 JWT</span></td></tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+
+    <!-- Лог действий -->
+    <div class="section">
+      <div class="section-title">Лог этой сессии</div>
+      <div class="card">
+        <div class="card-head">
+          <h3>Активность</h3>
+          <button class="btn btn-secondary btn-sm" onclick="clearLog()">Очистить</button>
+        </div>
+        <div class="card-body" style="padding:0">
+          <div class="log-area" id="logArea"></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Быстрые действия -->
+    <div class="section">
+      <div class="section-title">Быстрые действия</div>
+      <div style="display:flex;gap:10px;flex-wrap:wrap">
+        <button class="btn btn-secondary" onclick="pingHealth()">Проверить /api/health</button>
+        <button class="btn btn-secondary" onclick="checkMe()">Проверить сессию</button>
+        <button class="btn btn-secondary" onclick="pingMentions()">Тест /api/mentions</button>
+        <button class="btn btn-danger" onclick="logoutUser()">Завершить сессию</button>
+      </div>
+    </div>
+
+  </main>
+
+  <script>
+    // ── Лог ──────────────────────────────────────────────────────────────────
+    function log(msg, type = "info") {
+      const area = document.getElementById("logArea");
+      const ts = new Date().toLocaleTimeString("ru-RU");
+      const cls = { ok: "log-ok", warn: "log-warn", err: "log-err", info: "log-info" }[type] || "log-info";
+      const line = document.createElement("span");
+      line.className = "log-line";
+      line.innerHTML = `<span class="log-ts">[${ts}]</span> <span class="${cls}">${msg}</span>`;
+      area.appendChild(line);
+      area.scrollTop = area.scrollHeight;
+    }
+    function clearLog() {
+      document.getElementById("logArea").innerHTML = "";
+      log("Лог очищен", "info");
+    }
+
+    // ── Проверка авторизации при загрузке ────────────────────────────────────
+    (async function init() {
+      log("Инициализация панели администратора...", "info");
+
+      try {
+        const res = await fetch("/api/auth/me", { credentials: "include" });
+        if (!res.ok) {
+          log("Не авторизован — редирект на /login.html", "err");
+          window.location.href = "/login.html";
+          return;
+        }
+        const data = await res.json();
+        if (!data.success || data.user.role !== "admin") {
+          log("Недостаточно прав", "err");
+          window.location.href = "/login.html";
+          return;
+        }
+        const u = data.user;
+        document.getElementById("currentUser").textContent = u.username;
+        document.getElementById("currentRole").textContent = u.name + " · " + u.role;
+        log(`Авторизован: ${u.name} (${u.username})`, "ok");
+      } catch {
+        log("Backend недоступен", "err");
+        document.getElementById("currentUser").textContent = "Offline";
+      }
+
+      await pingHealth();
+      loadEnvInfo();
+    })();
+
+    // ── Health-check ──────────────────────────────────────────────────────────
+    async function pingHealth() {
+      log("GET /api/health ...", "info");
+      try {
+        const res = await fetch("/api/health", { credentials: "include" });
+        const data = await res.json();
+
+        const dot  = document.getElementById("pingDot");
+        const text = document.getElementById("statusText");
+        const mode = document.getElementById("statusMode");
+
+        dot.className  = "ping-dot alive";
+        text.textContent = "Онлайн";
+        mode.textContent = `v${data.version || "1.0.0"} · ${data.mode || "demo"}`;
+        document.getElementById("dataMode").textContent = data.mode === "demo" ? "Demo (in-memory)" : "Production";
+        document.getElementById("serverTime").textContent =
+          new Date(data.timestamp).toLocaleTimeString("ru-RU") + " UTC";
+
+        log(`/api/health → OK (${data.status}, mode: ${data.mode})`, "ok");
+      } catch (e) {
+        document.getElementById("pingDot").className = "ping-dot dead";
+        document.getElementById("statusText").textContent = "Недоступен";
+        log(`/api/health → ОШИБКА: ${e.message}`, "err");
+      }
+    }
+
+    // ── Проверка сессии ───────────────────────────────────────────────────────
+    async function checkMe() {
+      log("GET /api/auth/me ...", "info");
+      try {
+        const res = await fetch("/api/auth/me", { credentials: "include" });
+        const data = await res.json();
+        if (data.success) {
+          log(`Сессия активна: ${JSON.stringify(data.user)}`, "ok");
+        } else {
+          log("Сессия не найдена", "warn");
+        }
+      } catch (e) {
+        log(`/api/auth/me → ОШИБКА: ${e.message}`, "err");
+      }
+    }
+
+    // ── Тест упоминаний ───────────────────────────────────────────────────────
+    async function pingMentions() {
+      log("GET /api/mentions ...", "info");
+      try {
+        const res = await fetch("/api/mentions", { credentials: "include" });
+        if (res.status === 401) { log("/api/mentions → 401 Не авторизован", "err"); return; }
+        const data = await res.json();
+        const count = data.data?.length ?? data.length ?? "?";
+        log(`/api/mentions → OK, записей: ${count}`, "ok");
+      } catch (e) {
+        log(`/api/mentions → ОШИБКА: ${e.message}`, "err");
+      }
+    }
+
+    // ── Env-информация (публичная часть через /api/health) ────────────────────
+    function loadEnvInfo() {
+      const nodeEnv = document.getElementById("envNodeEnv");
+      const nodeEnvStatus = document.getElementById("envNodeEnvStatus");
+      fetch("/api/health", { credentials: "include" })
+        .then(r => r.json())
+        .then(data => {
+          const env = data.env || "development";
+          nodeEnv.textContent = env;
+          if (env === "production") {
+            nodeEnvStatus.textContent = "Production";
+            nodeEnvStatus.className = "env-status env-ok";
+            document.getElementById("envCookieSecure").textContent = "true";
+            document.getElementById("envCookieSecureStatus").textContent = "OK";
+            document.getElementById("envCookieSecureStatus").className = "env-status env-ok";
+            document.getElementById("envJwtStatus").textContent = "Задан";
+            document.getElementById("envJwtStatus").className = "env-status env-ok";
+          } else {
+            nodeEnvStatus.textContent = "Development";
+            nodeEnvStatus.className = "env-status env-warn";
+            document.getElementById("envCookieSecure").textContent = "false (http)";
+            document.getElementById("envCookieSecureStatus").textContent = "Dev";
+            document.getElementById("envCookieSecureStatus").className = "env-status env-warn";
+            document.getElementById("envJwtStatus").textContent = "Dev fallback";
+            document.getElementById("envJwtStatus").className = "env-status env-warn";
+          }
+        })
+        .catch(() => {});
+    }
+
+    // ── Смена пароля (UI) ────────────────────────────────────────────────────
+    function showChangePassword() {
+      document.getElementById("changePasswordSection").style.display = "block";
+      document.getElementById("changePasswordSection").scrollIntoView({ behavior: "smooth" });
+    }
+    function hideChangePassword() {
+      document.getElementById("changePasswordSection").style.display = "none";
+      document.getElementById("newPassword").value = "";
+      document.getElementById("confirmPassword").value = "";
+      document.getElementById("pwMsg").style.display = "none";
+    }
+    function submitChangePassword() {
+      const p1 = document.getElementById("newPassword").value;
+      const p2 = document.getElementById("confirmPassword").value;
+      const msg = document.getElementById("pwMsg");
+      if (p1.length < 8) {
+        msg.style.display = "block";
+        msg.style.color = "var(--red)";
+        msg.textContent = "Пароль должен быть минимум 8 символов";
+        return;
+      }
+      if (p1 !== p2) {
+        msg.style.display = "block";
+        msg.style.color = "var(--red)";
+        msg.textContent = "Пароли не совпадают";
+        return;
+      }
+      msg.style.display = "block";
+      msg.style.color = "var(--yellow)";
+      msg.textContent = `Запустите в терминале: node -e "require('bcryptjs').hash('${p1}',12).then(console.log)" и вставьте hash в backend/src/data/users.js`;
+      log(`Запрос смены пароля — выполни хэширование в терминале`, "warn");
+    }
+
+    // ── Выход ─────────────────────────────────────────────────────────────────
+    async function logoutUser() {
+      log("POST /api/auth/logout ...", "info");
+      try {
+        await fetch("/api/auth/logout", {
+          method: "POST", credentials: "include",
+          headers: { "Content-Type": "application/json" }
+        });
+        log("Выход выполнен", "ok");
+      } catch {
+        log("Ошибка при logout, перенаправление...", "warn");
+      }
+      window.location.href = "/login.html";
+    }
+
+    document.getElementById("btnAdminLogout").addEventListener("click", logoutUser);
+  </script>
+</body>
+</html>
