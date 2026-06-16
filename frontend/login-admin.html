@@ -1,0 +1,303 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Вход — Панель администратора</title>
+  <style>
+    :root {
+      --bg:          #0f172a;
+      --panel:       #1e293b;
+      --panel2:      #263045;
+      --text:        #f1f5f9;
+      --muted:       #94a3b8;
+      --line:        #334155;
+      --accent:      #6366f1;
+      --accent-soft: rgba(99,102,241,0.15);
+      --red:         #f87171;
+      --red-soft:    rgba(248,113,113,0.12);
+      --shadow:      0 24px 60px rgba(0,0,0,0.5);
+      --radius:      18px;
+    }
+
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      font-family: Inter, -apple-system, BlinkMacSystemFont, "Segoe UI", Arial, sans-serif;
+      background: var(--bg);
+      color: var(--text);
+      min-height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 24px 20px;
+    }
+
+    body::before {
+      content: "";
+      position: fixed;
+      width: 700px; height: 700px;
+      top: -200px; left: 50%;
+      transform: translateX(-50%);
+      border-radius: 50%;
+      background: radial-gradient(circle, rgba(99,102,241,0.12) 0%, transparent 70%);
+      pointer-events: none; z-index: 0;
+    }
+
+    .wrapper {
+      position: relative; z-index: 1;
+      width: 100%; max-width: 420px;
+    }
+
+    /* Бренд */
+    .brand {
+      display: flex; align-items: center; gap: 14px;
+      justify-content: center; margin-bottom: 32px;
+    }
+    .logo {
+      width: 52px; height: 52px; border-radius: 16px;
+      background: linear-gradient(135deg, #6366f1, #8b5cf6);
+      display: grid; place-items: center;
+      font-weight: 800; font-size: 18px; color: #fff;
+      letter-spacing: -0.04em;
+      box-shadow: 0 12px 32px rgba(99,102,241,0.4);
+      flex-shrink: 0;
+    }
+    .brand-text h1 {
+      font-size: 20px; font-weight: 800;
+      letter-spacing: -0.04em; color: var(--text);
+    }
+    .brand-text p { font-size: 12px; color: var(--muted); margin-top: 3px; }
+
+    /* Карточка */
+    .card {
+      background: var(--panel);
+      border: 1px solid var(--line);
+      border-radius: var(--radius);
+      box-shadow: var(--shadow);
+      padding: 36px 36px 32px;
+    }
+
+    .card-header {
+      display: flex; align-items: center; gap: 10px;
+      margin-bottom: 6px;
+    }
+    .shield-icon {
+      width: 32px; height: 32px; border-radius: 9px;
+      background: var(--accent-soft);
+      display: grid; place-items: center;
+      font-size: 15px; flex-shrink: 0;
+    }
+    .card h2 { font-size: 19px; font-weight: 750; letter-spacing: -0.03em; }
+    .card .subtitle {
+      font-size: 13px; color: var(--muted);
+      margin-bottom: 28px; line-height: 1.5; margin-top: 6px;
+    }
+
+    /* Поля */
+    .form-group { margin-bottom: 16px; }
+    .form-group label {
+      display: block; font-size: 12px; font-weight: 650;
+      margin-bottom: 7px; color: var(--muted); text-transform: uppercase;
+      letter-spacing: 0.05em;
+    }
+    .form-group input {
+      width: 100%;
+      border: 1px solid var(--line);
+      border-radius: 12px;
+      padding: 13px 15px;
+      font-size: 14px; outline: none;
+      font-family: inherit;
+      color: var(--text);
+      background: var(--panel2);
+      transition: border-color 0.15s, box-shadow 0.15s;
+    }
+    .form-group input::placeholder { color: #475569; }
+    .form-group input:focus {
+      border-color: var(--accent);
+      box-shadow: 0 0 0 3px rgba(99,102,241,0.2);
+    }
+    .form-group input.error {
+      border-color: var(--red);
+      box-shadow: 0 0 0 3px rgba(248,113,113,0.15);
+    }
+
+    /* Кнопка */
+    .btn-submit {
+      width: 100%; border: none; border-radius: 13px; padding: 14px;
+      background: linear-gradient(135deg, #6366f1, #8b5cf6);
+      color: #fff; font-size: 15px; font-weight: 700;
+      cursor: pointer; margin-top: 8px;
+      box-shadow: 0 8px 24px rgba(99,102,241,0.35);
+      transition: opacity 0.15s, transform 0.1s;
+      display: flex; align-items: center; justify-content: center; gap: 8px;
+      font-family: inherit; letter-spacing: -0.01em;
+    }
+    .btn-submit:hover:not(:disabled) { opacity: 0.9; }
+    .btn-submit:active:not(:disabled) { transform: scale(0.98); }
+    .btn-submit:disabled { opacity: 0.6; cursor: not-allowed; }
+    .btn-submit .spinner {
+      width: 18px; height: 18px;
+      border: 2px solid rgba(255,255,255,0.35);
+      border-top-color: #fff; border-radius: 50%;
+      animation: spin 0.7s linear infinite; display: none;
+    }
+    .btn-submit.loading .spinner { display: block; }
+    .btn-submit.loading .btn-text { display: none; }
+    @keyframes spin { to { transform: rotate(360deg); } }
+
+    /* Ошибка */
+    .error-msg {
+      display: none; margin-top: 14px; padding: 12px 14px;
+      border-radius: 11px; background: var(--red-soft);
+      border: 1px solid rgba(248,113,113,0.25);
+      color: var(--red); font-size: 13px; font-weight: 600;
+      align-items: center; gap: 8px; line-height: 1.4;
+    }
+    .error-msg.visible { display: flex; }
+
+    /* Разделитель */
+    .divider {
+      margin-top: 24px; padding-top: 20px;
+      border-top: 1px solid var(--line);
+      text-align: center;
+    }
+    .divider a {
+      font-size: 13px; color: var(--muted); text-decoration: none;
+      transition: color 0.15s;
+    }
+    .divider a:hover { color: var(--accent); }
+    .divider a span { color: var(--accent); }
+
+    /* Подвал */
+    .footer {
+      text-align: center; margin-top: 20px;
+      font-size: 11px; color: #475569;
+    }
+
+    @media (max-width: 480px) {
+      .card { padding: 28px 20px 26px; }
+    }
+  </style>
+</head>
+<body>
+  <div class="wrapper">
+
+    <div class="brand">
+      <div class="logo">MS</div>
+      <div class="brand-text">
+        <h1>KT MediaScanner</h1>
+        <p>Панель администратора</p>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-header">
+        <div class="shield-icon">🛡️</div>
+        <h2>Вход для администратора</h2>
+      </div>
+      <p class="subtitle">Доступ ограничен. Только авторизованные администраторы.</p>
+
+      <form id="loginForm" autocomplete="on" novalidate>
+        <div class="form-group">
+          <label for="username">Логин</label>
+          <input type="text" id="username" name="username"
+            placeholder="Введите логин администратора"
+            autocomplete="username" spellcheck="false" />
+        </div>
+        <div class="form-group">
+          <label for="password">Пароль</label>
+          <input type="password" id="password" name="password"
+            placeholder="Введите пароль"
+            autocomplete="current-password" />
+        </div>
+
+        <button type="submit" class="btn-submit" id="loginBtn">
+          <div class="spinner"></div>
+          <span class="btn-text">🔐 Войти в панель</span>
+        </button>
+
+        <div class="error-msg" id="errorMsg">
+          <span>⚠</span>
+          <span id="errorText">Неверный логин или пароль</span>
+        </div>
+      </form>
+
+      <div class="divider">
+        <a href="/login.html">Войти в <span>KT MediaScanner</span> →</a>
+      </div>
+    </div>
+
+    <div class="footer">KT MediaScanner · защищённый административный доступ</div>
+  </div>
+
+  <script>
+    // Если уже авторизован как admin — сразу в панель
+    (async function() {
+      try {
+        const res = await fetch("/api/auth/me", { credentials: "include" });
+        if (res.ok) {
+          const data = await res.json();
+          if (data.success && data.user.role === "admin") {
+            window.location.href = "/admin.html";
+          }
+        }
+      } catch {}
+    })();
+
+    function showError(msg) {
+      document.getElementById("errorText").textContent = msg;
+      document.getElementById("errorMsg").classList.add("visible");
+      document.getElementById("username").classList.add("error");
+      document.getElementById("password").classList.add("error");
+    }
+    function hideError() {
+      document.getElementById("errorMsg").classList.remove("visible");
+      document.getElementById("username").classList.remove("error");
+      document.getElementById("password").classList.remove("error");
+    }
+
+    ["username", "password"].forEach(id =>
+      document.getElementById(id).addEventListener("input", hideError)
+    );
+
+    document.getElementById("loginForm").addEventListener("submit", async (e) => {
+      e.preventDefault();
+      hideError();
+
+      const username = document.getElementById("username").value.trim();
+      const password = document.getElementById("password").value;
+      if (!username || !password) { showError("Введите логин и пароль"); return; }
+
+      const btn = document.getElementById("loginBtn");
+      btn.classList.add("loading"); btn.disabled = true;
+
+      try {
+        const res = await fetch("/api/auth/login", {
+          method: "POST", credentials: "include",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ username, password })
+        });
+        const data = await res.json().catch(() => ({}));
+
+        if (res.ok && data.success) {
+          if (data.user.role !== "admin") {
+            showError("Доступ запрещён. Требуются права администратора.");
+            await fetch("/api/auth/logout", { method: "POST", credentials: "include" });
+            return;
+          }
+          window.location.href = "/admin.html";
+        } else if (res.status === 429) {
+          showError("Слишком много попыток. Подождите 15 минут.");
+        } else {
+          showError(data.message || "Неверный логин или пароль");
+        }
+      } catch {
+        showError("Сервер недоступен. Проверьте подключение.");
+      } finally {
+        btn.classList.remove("loading"); btn.disabled = false;
+      }
+    });
+  </script>
+</body>
+</html>

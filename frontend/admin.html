@@ -557,14 +557,14 @@
       try {
         const res = await fetch("/api/auth/me", { credentials: "include" });
         if (!res.ok) {
-          log("Не авторизован — редирект на /login.html", "err");
-          window.location.href = "/login.html";
+          log("Не авторизован — редирект на /login-admin.html", "err");
+          window.location.href = "/login-admin.html";
           return;
         }
         const data = await res.json();
         if (!data.success || data.user.role !== "admin") {
           log("Недостаточно прав", "err");
-          window.location.href = "/login.html";
+          window.location.href = "/login-admin.html";
           return;
         }
         const u = data.user;
@@ -818,7 +818,7 @@
       } catch {
         log("Ошибка при logout, перенаправление...", "warn");
       }
-      window.location.href = "/login.html";
+      window.location.href = "/login-admin.html";
     }
 
     document.getElementById("btnAdminLogout").addEventListener("click", logoutUser);
