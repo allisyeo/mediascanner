@@ -4,15 +4,33 @@ const { Router }       = require("express");
 const bcrypt           = require("bcryptjs");
 const jwt              = require("jsonwebtoken");
 const rateLimit        = require("express-rate-limit");
+const fs               = require("fs");
+const path             = require("path");
 const { findByUsername, publicUser } = require("../data/users");
 const { JWT_SECRET, COOKIE_NAME, requireAuth } = require("../middleware/auth");
 
+// ─── Хранилище заявок на регистрацию (JSON-файл) ───────────────────────────
+const PENDING_FILE = path.join(__dirname, "../data/pending.json");
+
+function loadPending() {
+  try {
+    if (fs.existsSync(PENDING_FILE)) {
+      return JSON.parse(fs.readFileSync(PENDING_FILE, "utf8"));
+    }
+  } catch {}
+  return [];
+}
+
+function savePending(list) {
+  fs.writeFileSync(PENDING_FILE, JSON.stringify(list, null, 2), "utf8");
+}
+
 const router = Router();
 
-// Rate limit: не более 10 попыток входа за 15 минут с одного IP
+// Rate limit: в dev — 100 попыток, в production — 10 за 15 минут
 const loginLimiter = rateLimit({
-  windowMs:         15 * 60 * 1000, // 15 минут
-  max:              10,
+  windowMs:         15 * 60 * 1000,
+  max:              process.env.NODE_ENV === "production" ? 10 : 100,
   standardHeaders:  true,
   legacyHeaders:    false,
   message: {
@@ -116,14 +134,9 @@ router.get("/me", (req, res) => {
 });
 
 // ─── POST /api/auth/register ────────────────────────────────────────────────
-// Принимает заявку на регистрацию. Сохраняет в pending-список (in-memory).
-// Пользователь НЕ получает доступ сразу — заявка ожидает активации администратором.
-const pendingRegistrations = [];
-
 router.post("/register", async (req, res) => {
   const { name, email, phone, password, method } = req.body;
 
-  // Базовая валидация
   if (!name || !password) {
     return res.status(400).json({ success: false, message: "Заполните все обязательные поля" });
   }
@@ -137,8 +150,9 @@ router.post("/register", async (req, res) => {
     return res.status(400).json({ success: false, message: "Пароль должен быть минимум 8 символов" });
   }
 
-  // Проверка дублей в pending-заявках
-  const duplicate = pendingRegistrations.find(r =>
+  const list = loadPending();
+
+  const duplicate = list.find(r =>
     (email && r.email === email) || (phone && r.phone === phone)
   );
   if (duplicate) {
@@ -147,7 +161,7 @@ router.post("/register", async (req, res) => {
 
   const passwordHash = await bcrypt.hash(password, 12);
 
-  pendingRegistrations.push({
+  const entry = {
     id:           `pending_${Date.now()}`,
     name:         name.trim(),
     email:        email?.trim() || null,
@@ -156,7 +170,10 @@ router.post("/register", async (req, res) => {
     passwordHash,
     status:       "pending",
     createdAt:    new Date().toISOString()
-  });
+  };
+
+  list.push(entry);
+  savePending(list);
 
   console.log(`[AUTH] Новая заявка на регистрацию: ${name} (${email || phone})`);
 
@@ -168,16 +185,18 @@ router.post("/register", async (req, res) => {
 
 // GET /api/auth/pending — список заявок (только для администраторов)
 router.get("/pending", requireAuth, (req, res) => {
-  const safe = pendingRegistrations.map(({ passwordHash: _, ...r }) => r);
+  const list = loadPending();
+  const safe = list.map(({ passwordHash: _, ...r }) => r);
   return res.json({ success: true, total: safe.length, data: safe });
 });
 
 // POST /api/auth/pending/:id/approve — одобрить заявку
 router.post("/pending/:id/approve", requireAuth, (req, res) => {
-  const idx = pendingRegistrations.findIndex(r => r.id === req.params.id);
+  const list = loadPending();
+  const idx  = list.findIndex(r => r.id === req.params.id);
   if (idx === -1) return res.status(404).json({ success: false, message: "Заявка не найдена" });
 
-  const pending = pendingRegistrations[idx];
+  const pending = list[idx];
   const { _addUser } = require("../data/users");
 
   const newUser = {
@@ -195,7 +214,8 @@ router.post("/pending/:id/approve", requireAuth, (req, res) => {
   };
 
   _addUser(newUser);
-  pendingRegistrations.splice(idx, 1);
+  list.splice(idx, 1);
+  savePending(list);
   console.log(`[AUTH] Заявка одобрена: ${pending.name}`);
 
   const { passwordHash: _, ...pub } = newUser;
@@ -204,11 +224,13 @@ router.post("/pending/:id/approve", requireAuth, (req, res) => {
 
 // POST /api/auth/pending/:id/reject — отклонить заявку
 router.post("/pending/:id/reject", requireAuth, (req, res) => {
-  const idx = pendingRegistrations.findIndex(r => r.id === req.params.id);
+  const list = loadPending();
+  const idx  = list.findIndex(r => r.id === req.params.id);
   if (idx === -1) return res.status(404).json({ success: false, message: "Заявка не найдена" });
 
-  const pending = pendingRegistrations[idx];
-  pendingRegistrations.splice(idx, 1);
+  const pending = list[idx];
+  list.splice(idx, 1);
+  savePending(list);
   console.log(`[AUTH] Заявка отклонена: ${pending.name}`);
 
   return res.json({ success: true, message: "Заявка отклонена" });
