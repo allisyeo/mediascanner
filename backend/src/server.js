@@ -16,6 +16,7 @@ const employeesRouter = require("./routes/employees");
 const slaRouter       = require("./routes/sla");
 const telegramRouter  = require("./routes/telegram");
 const instagramRouter = require("./routes/instagram");
+const usersRouter     = require("./routes/users");
 
 // ─── Middleware авторизации ─────────────────────────────────────────────────
 const { requireAuth } = require("./middleware/auth");
@@ -50,6 +51,7 @@ app.use("/api/employees", requireAuth, employeesRouter);
 app.use("/api/sla",       requireAuth, slaRouter);
 app.use("/api/telegram",  requireAuth, telegramRouter);
 app.use("/api/instagram", requireAuth, instagramRouter);
+app.use("/api/users",     requireAuth, usersRouter);
 
 // ─── Раздача frontend ────────────────────────────────────────────────────────
 // Express раздаёт файлы из папки frontend/ как статику.

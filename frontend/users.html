@@ -1,0 +1,486 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Пользователи — KT MediaScanner</title>
+  <style>
+    :root {
+      --bg:          #f5f7fb;
+      --panel:       #ffffff;
+      --text:        #151923;
+      --muted:       #697386;
+      --line:        #e6eaf1;
+      --dark:        #0f172a;
+      --accent:      #2557d6;
+      --accent-soft: #eaf0ff;
+      --green:       #0f9f6e;
+      --green-soft:  #e8f8f2;
+      --red:         #d92d20;
+      --red-soft:    #fff0ef;
+      --yellow:      #b45309;
+      --yellow-soft: #fef3c7;
+      --purple:      #7c3aed;
+      --purple-soft: #f3f0ff;
+      --radius:      14px;
+      --shadow:      0 2px 12px rgba(16,24,40,0.07);
+    }
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      font-family: Inter, -apple-system, BlinkMacSystemFont, "Segoe UI", Arial, sans-serif;
+      background: var(--bg);
+      color: var(--text);
+      min-height: 100vh;
+    }
+
+    /* ── Топбар ── */
+    .topbar {
+      background: var(--panel);
+      border-bottom: 1px solid var(--line);
+      padding: 0 28px;
+      height: 60px;
+      display: flex; align-items: center; justify-content: space-between;
+      position: sticky; top: 0; z-index: 100;
+    }
+    .topbar-left { display: flex; align-items: center; gap: 14px; }
+    .logo {
+      width: 36px; height: 36px; border-radius: 10px;
+      background: linear-gradient(135deg, #3b82f6, #8b5cf6);
+      display: grid; place-items: center;
+      font-weight: 800; font-size: 13px; color: #fff; flex-shrink: 0;
+    }
+    .topbar-left h1 { font-size: 16px; font-weight: 700; letter-spacing: -0.03em; }
+    .topbar-left span { font-size: 12px; color: var(--muted); }
+    .topbar-right { display: flex; align-items: center; gap: 10px; }
+
+    .btn {
+      border: none; border-radius: 10px;
+      padding: 8px 16px; font-size: 13px; font-weight: 650;
+      cursor: pointer; font-family: inherit;
+      transition: background 0.15s, opacity 0.15s;
+    }
+    .btn-secondary { background: transparent; color: var(--text); border: 1px solid var(--line); }
+    .btn-secondary:hover { background: var(--bg); }
+    .btn-danger { background: var(--red-soft); color: var(--red); border: 1px solid #fecaca; }
+    .btn-danger:hover { background: #fee2e2; }
+    .btn-sm { padding: 5px 11px; font-size: 12px; border-radius: 8px; }
+
+    /* ── Контент ── */
+    .main { max-width: 1100px; margin: 0 auto; padding: 28px 20px; }
+
+    /* ── Заголовок страницы ── */
+    .page-head {
+      display: flex; align-items: flex-start; justify-content: space-between;
+      margin-bottom: 24px; gap: 16px; flex-wrap: wrap;
+    }
+    .page-head h2 { font-size: 22px; font-weight: 800; letter-spacing: -0.04em; }
+    .page-head p  { font-size: 13px; color: var(--muted); margin-top: 4px; }
+
+    /* ── Фильтры ── */
+    .filters {
+      display: flex; gap: 10px; margin-bottom: 20px; flex-wrap: wrap; align-items: center;
+    }
+    .search-input {
+      flex: 1; min-width: 200px; max-width: 340px;
+      border: 1px solid var(--line); border-radius: 10px;
+      padding: 9px 14px; font-size: 13px; font-family: inherit;
+      background: var(--panel); color: var(--text); outline: none;
+      transition: border-color 0.15s, box-shadow 0.15s;
+    }
+    .search-input:focus {
+      border-color: var(--accent);
+      box-shadow: 0 0 0 3px rgba(37,87,214,0.10);
+    }
+    .filter-select {
+      border: 1px solid var(--line); border-radius: 10px;
+      padding: 9px 12px; font-size: 13px; font-family: inherit;
+      background: var(--panel); color: var(--text); outline: none; cursor: pointer;
+    }
+    .filter-count {
+      margin-left: auto;
+      font-size: 13px; color: var(--muted);
+    }
+
+    /* ── Статистика ── */
+    .stats-row {
+      display: flex; gap: 14px; margin-bottom: 24px; flex-wrap: wrap;
+    }
+    .stat-chip {
+      background: var(--panel);
+      border: 1px solid var(--line);
+      border-radius: 12px;
+      padding: 14px 20px;
+      display: flex; align-items: center; gap: 12px;
+      box-shadow: var(--shadow);
+      flex: 1; min-width: 150px;
+    }
+    .stat-icon {
+      width: 38px; height: 38px; border-radius: 10px;
+      display: grid; place-items: center; font-size: 17px; flex-shrink: 0;
+    }
+    .stat-icon-purple { background: var(--purple-soft); }
+    .stat-icon-green  { background: var(--green-soft); }
+    .stat-icon-blue   { background: var(--accent-soft); }
+    .stat-icon-yellow { background: var(--yellow-soft); }
+    .stat-num  { font-size: 22px; font-weight: 800; letter-spacing: -0.04em; line-height: 1; }
+    .stat-lbl  { font-size: 12px; color: var(--muted); margin-top: 2px; }
+
+    /* ── Таблица ── */
+    .table-wrap {
+      background: var(--panel);
+      border: 1px solid var(--line);
+      border-radius: var(--radius);
+      box-shadow: var(--shadow);
+      overflow: hidden;
+    }
+    table {
+      width: 100%; border-collapse: collapse; font-size: 13px;
+    }
+    thead th {
+      text-align: left; padding: 11px 16px;
+      font-size: 11px; font-weight: 750; text-transform: uppercase;
+      letter-spacing: 0.05em; color: var(--muted);
+      background: var(--bg); border-bottom: 1px solid var(--line);
+      white-space: nowrap;
+    }
+    tbody tr {
+      border-bottom: 1px solid var(--line);
+      transition: background 0.1s;
+    }
+    tbody tr:last-child { border-bottom: none; }
+    tbody tr:hover { background: #f8fafd; }
+    td { padding: 14px 16px; vertical-align: middle; }
+
+    /* ── Аватар + имя ── */
+    .user-cell { display: flex; align-items: center; gap: 12px; }
+    .avatar {
+      width: 38px; height: 38px; border-radius: 11px;
+      display: grid; place-items: center;
+      font-weight: 800; font-size: 14px; color: #fff;
+      flex-shrink: 0;
+    }
+    .user-name-text { font-weight: 700; font-size: 14px; }
+    .user-login-text { font-size: 11px; color: var(--muted); font-family: monospace; margin-top: 1px; }
+
+    /* ── Статусы ── */
+    .status-badge {
+      display: inline-flex; align-items: center; gap: 5px;
+      padding: 4px 10px; border-radius: 20px;
+      font-size: 11px; font-weight: 750;
+      white-space: nowrap;
+    }
+    .status-admin   { background: var(--purple-soft); color: var(--purple); }
+    .status-lead    { background: var(--accent-soft); color: var(--accent); }
+    .status-manager { background: var(--green-soft);  color: var(--green); }
+
+    /* ── Активность ── */
+    .active-badge {
+      display: inline-flex; align-items: center; gap: 5px;
+      padding: 3px 9px; border-radius: 20px;
+      font-size: 11px; font-weight: 700;
+    }
+    .active-yes { background: var(--green-soft); color: var(--green); }
+    .active-no  { background: var(--line); color: var(--muted); }
+    .dot { width: 6px; height: 6px; border-radius: 50%; }
+    .dot-green  { background: var(--green); }
+    .dot-grey   { background: #9ca3af; }
+
+    /* ── Контакт ── */
+    .contact-cell a { color: var(--accent); text-decoration: none; font-size: 13px; }
+    .contact-cell a:hover { text-decoration: underline; }
+    .contact-cell div { margin-bottom: 3px; }
+
+    /* ── Дата ── */
+    .date-cell { font-size: 12px; color: var(--muted); white-space: nowrap; }
+
+    /* ── Пустое состояние ── */
+    .empty-state {
+      padding: 60px 20px; text-align: center;
+      display: none;
+    }
+    .empty-state.visible { display: block; }
+    .empty-icon { font-size: 40px; margin-bottom: 12px; }
+    .empty-state p { color: var(--muted); font-size: 14px; }
+
+    /* ── Skeleton loader ── */
+    .skeleton {
+      background: linear-gradient(90deg, #f0f3f8 25%, #e8ecf4 50%, #f0f3f8 75%);
+      background-size: 200% 100%;
+      animation: shimmer 1.2s infinite;
+      border-radius: 6px; height: 14px;
+    }
+    @keyframes shimmer { 0% { background-position: 200% 0; } 100% { background-position: -200% 0; } }
+
+    @media (max-width: 768px) {
+      .topbar { padding: 0 16px; }
+      .main { padding: 16px; }
+      .stats-row { gap: 10px; }
+      td:nth-child(4), th:nth-child(4),
+      td:nth-child(5), th:nth-child(5) { display: none; }
+    }
+  </style>
+</head>
+<body>
+
+  <header class="topbar">
+    <div class="topbar-left">
+      <div class="logo">MS</div>
+      <div>
+        <h1>KT MediaScanner</h1>
+        <span>Управление пользователями</span>
+      </div>
+    </div>
+    <div class="topbar-right">
+      <a href="/admin.html" class="btn btn-secondary btn-sm">← Админ-панель</a>
+      <a href="/" class="btn btn-secondary btn-sm">Приложение</a>
+      <button class="btn btn-danger btn-sm" onclick="logoutUser()">⎋ Выйти</button>
+    </div>
+  </header>
+
+  <main class="main">
+
+    <div class="page-head">
+      <div>
+        <h2>Пользователи</h2>
+        <p>Все зарегистрированные учётные записи системы</p>
+      </div>
+    </div>
+
+    <!-- Статистика -->
+    <div class="stats-row" id="statsRow">
+      <div class="stat-chip">
+        <div class="stat-icon stat-icon-purple">👥</div>
+        <div>
+          <div class="stat-num" id="statTotal">—</div>
+          <div class="stat-lbl">Всего</div>
+        </div>
+      </div>
+      <div class="stat-chip">
+        <div class="stat-icon stat-icon-green">✅</div>
+        <div>
+          <div class="stat-num" id="statActive">—</div>
+          <div class="stat-lbl">Активных</div>
+        </div>
+      </div>
+      <div class="stat-chip">
+        <div class="stat-icon stat-icon-blue">🛡️</div>
+        <div>
+          <div class="stat-num" id="statAdmin">—</div>
+          <div class="stat-lbl">Администраторов</div>
+        </div>
+      </div>
+      <div class="stat-chip">
+        <div class="stat-icon stat-icon-yellow">👔</div>
+        <div>
+          <div class="stat-num" id="statLead">—</div>
+          <div class="stat-lbl">Руководителей</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Фильтры -->
+    <div class="filters">
+      <input
+        type="text"
+        class="search-input"
+        id="searchInput"
+        placeholder="Поиск по имени, email, телефону..."
+      />
+      <select class="filter-select" id="filterStatus">
+        <option value="">Все статусы</option>
+        <option value="Администратор сайта">Администратор сайта</option>
+        <option value="Руководитель">Руководитель</option>
+        <option value="Менеджер">Менеджер</option>
+      </select>
+      <select class="filter-select" id="filterActive">
+        <option value="">Все</option>
+        <option value="true">Активные</option>
+        <option value="false">Неактивные</option>
+      </select>
+      <span class="filter-count" id="filterCount"></span>
+    </div>
+
+    <!-- Таблица -->
+    <div class="table-wrap">
+      <table>
+        <thead>
+          <tr>
+            <th>Пользователь</th>
+            <th>Контакты</th>
+            <th>Статус</th>
+            <th>Активность</th>
+            <th>Последний вход</th>
+            <th>Дата регистрации</th>
+          </tr>
+        </thead>
+        <tbody id="usersBody">
+          <!-- skeleton -->
+          <tr><td colspan="6" style="padding:20px 16px">
+            <div class="skeleton" style="width:60%;margin-bottom:10px"></div>
+            <div class="skeleton" style="width:40%"></div>
+          </td></tr>
+        </tbody>
+      </table>
+      <div class="empty-state" id="emptyState">
+        <div class="empty-icon">🔍</div>
+        <p>Пользователи не найдены.<br>Попробуйте изменить фильтры.</p>
+      </div>
+    </div>
+
+  </main>
+
+  <script>
+    let allUsers = [];
+
+    // ── Цвета аватаров ───────────────────────────────────────────────────────
+    const AVATAR_COLORS = [
+      "linear-gradient(135deg,#3b82f6,#8b5cf6)",
+      "linear-gradient(135deg,#0f9f6e,#10b981)",
+      "linear-gradient(135deg,#f59e0b,#ef4444)",
+      "linear-gradient(135deg,#6366f1,#ec4899)",
+      "linear-gradient(135deg,#14b8a6,#3b82f6)",
+    ];
+    function avatarColor(id) {
+      const n = parseInt(id.replace(/\D/g, "")) || 0;
+      return AVATAR_COLORS[n % AVATAR_COLORS.length];
+    }
+
+    // ── Бейдж статуса ────────────────────────────────────────────────────────
+    function statusBadge(status) {
+      const map = {
+        "Администратор сайта": { cls: "status-admin",   icon: "🛡️" },
+        "Руководитель":        { cls: "status-lead",    icon: "👔" },
+        "Менеджер":            { cls: "status-manager", icon: "👤" },
+      };
+      const s = map[status] || { cls: "status-manager", icon: "👤" };
+      return `<span class="status-badge ${s.cls}">${s.icon} ${status}</span>`;
+    }
+
+    // ── Форматирование даты ───────────────────────────────────────────────────
+    function fmtDate(iso) {
+      if (!iso) return "—";
+      return new Date(iso).toLocaleDateString("ru-RU", {
+        day: "2-digit", month: "2-digit", year: "numeric"
+      });
+    }
+    function fmtDateTime(iso) {
+      if (!iso) return "—";
+      const d = new Date(iso);
+      return d.toLocaleDateString("ru-RU", { day:"2-digit", month:"2-digit", year:"numeric" })
+        + " " + d.toLocaleTimeString("ru-RU", { hour:"2-digit", minute:"2-digit" });
+    }
+
+    // ── Рендер таблицы ───────────────────────────────────────────────────────
+    function renderTable(users) {
+      const tbody = document.getElementById("usersBody");
+      const empty = document.getElementById("emptyState");
+      document.getElementById("filterCount").textContent =
+        `Показано: ${users.length} из ${allUsers.length}`;
+
+      if (users.length === 0) {
+        tbody.innerHTML = "";
+        empty.classList.add("visible");
+        return;
+      }
+      empty.classList.remove("visible");
+
+      tbody.innerHTML = users.map(u => {
+        const initials = u.name.split(" ").map(w => w[0]).join("").slice(0,2).toUpperCase();
+        return `
+        <tr>
+          <td>
+            <div class="user-cell">
+              <div class="avatar" style="background:${avatarColor(u.id)}">${initials}</div>
+              <div>
+                <div class="user-name-text">${u.name}</div>
+                <div class="user-login-text">@${u.username}</div>
+              </div>
+            </div>
+          </td>
+          <td class="contact-cell">
+            <div><a href="mailto:${u.email}">${u.email}</a></div>
+            <div style="color:var(--muted);font-size:12px">${u.phone}</div>
+          </td>
+          <td>${statusBadge(u.status)}</td>
+          <td>
+            <span class="active-badge ${u.active ? "active-yes" : "active-no"}">
+              <span class="dot ${u.active ? "dot-green" : "dot-grey"}"></span>
+              ${u.active ? "Активен" : "Неактивен"}
+            </span>
+          </td>
+          <td class="date-cell">${fmtDateTime(u.lastLogin)}</td>
+          <td class="date-cell">${fmtDate(u.createdAt)}</td>
+        </tr>`;
+      }).join("");
+    }
+
+    // ── Фильтрация ───────────────────────────────────────────────────────────
+    function applyFilters() {
+      const search = document.getElementById("searchInput").value.toLowerCase().trim();
+      const status = document.getElementById("filterStatus").value;
+      const active = document.getElementById("filterActive").value;
+
+      let filtered = allUsers.filter(u => {
+        const matchSearch = !search || [u.name, u.email, u.username, u.phone]
+          .some(v => v.toLowerCase().includes(search));
+        const matchStatus = !status || u.status === status;
+        const matchActive = active === "" || String(u.active) === active;
+        return matchSearch && matchStatus && matchActive;
+      });
+
+      renderTable(filtered);
+    }
+
+    // ── Статистика ───────────────────────────────────────────────────────────
+    function renderStats(users) {
+      document.getElementById("statTotal").textContent  = users.length;
+      document.getElementById("statActive").textContent = users.filter(u => u.active).length;
+      document.getElementById("statAdmin").textContent  = users.filter(u => u.status === "Администратор сайта").length;
+      document.getElementById("statLead").textContent   = users.filter(u => u.status === "Руководитель").length;
+    }
+
+    // ── Загрузка данных ───────────────────────────────────────────────────────
+    async function loadUsers() {
+      try {
+        const res = await fetch("/api/users", { credentials: "include" });
+        if (res.status === 401) { window.location.href = "/login.html"; return; }
+        const data = await res.json();
+        allUsers = data.data || [];
+        renderStats(allUsers);
+        applyFilters();
+      } catch {
+        document.getElementById("usersBody").innerHTML =
+          `<tr><td colspan="6" style="padding:24px 16px;color:var(--red);font-size:13px">
+            Не удалось загрузить пользователей. Проверьте подключение к backend.
+          </td></tr>`;
+      }
+    }
+
+    // ── Выход ─────────────────────────────────────────────────────────────────
+    async function logoutUser() {
+      try {
+        await fetch("/api/auth/logout", { method:"POST", credentials:"include",
+          headers:{"Content-Type":"application/json"} });
+      } catch {}
+      window.location.href = "/login.html";
+    }
+
+    // ── Инициализация ─────────────────────────────────────────────────────────
+    (async function init() {
+      try {
+        const res = await fetch("/api/auth/me", { credentials: "include" });
+        if (!res.ok) { window.location.href = "/login.html"; return; }
+        const data = await res.json();
+        if (!data.success) { window.location.href = "/login.html"; return; }
+      } catch {
+        window.location.href = "/login.html"; return;
+      }
+      await loadUsers();
+    })();
+
+    document.getElementById("searchInput").addEventListener("input",  applyFilters);
+    document.getElementById("filterStatus").addEventListener("change", applyFilters);
+    document.getElementById("filterActive").addEventListener("change", applyFilters);
+  </script>
+</body>
+</html>
