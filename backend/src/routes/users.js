@@ -40,7 +40,7 @@ router.patch("/:id", (req, res) => {
   const user = findById(req.params.id);
   if (!user) return res.status(404).json({ success: false, message: "Пользователь не найден" });
 
-  const allowed = ["role", "status", "active"];
+  const allowed = ["name", "role", "status", "active"];
   const updates = {};
   for (const key of allowed) {
     if (key in req.body) updates[key] = req.body[key];

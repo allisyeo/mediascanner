@@ -385,7 +385,7 @@
       empty.classList.remove("visible");
 
       tbody.innerHTML = users.map(u => {
-        const initials = u.name.split(" ").map(w => w[0]).join("").slice(0,2).toUpperCase();
+        const initials = (u.name || u.username || "?").split(" ").map(w => w[0]).join("").slice(0,2).toUpperCase();
         return `
         <tr>
           <td>

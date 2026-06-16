@@ -6,7 +6,7 @@ const jwt              = require("jsonwebtoken");
 const rateLimit        = require("express-rate-limit");
 const fs               = require("fs");
 const path             = require("path");
-const { findByUsername, publicUser } = require("../data/users");
+const { findByUsername, findById, publicUser } = require("../data/users");
 const { JWT_SECRET, COOKIE_NAME, requireAuth } = require("../middleware/auth");
 
 // ─── Хранилище заявок на регистрацию (JSON-файл) ───────────────────────────
@@ -115,15 +115,12 @@ router.get("/me", (req, res) => {
 
   try {
     const payload = jwt_lib.verify(token, JWT_SECRET);
-    return res.json({
-      success: true,
-      user: {
-        id:       payload.id,
-        username: payload.username,
-        name:     payload.name,
-        role:     payload.role
-      }
-    });
+    // Читаем актуальные данные из хранилища, а не из JWT
+    const user = findById(payload.id);
+    if (!user) {
+      return res.status(401).json({ success: false, message: "Пользователь не найден", code: "USER_NOT_FOUND" });
+    }
+    return res.json({ success: true, user: publicUser(user) });
   } catch {
     return res.status(401).json({
       success: false,
