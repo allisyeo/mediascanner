@@ -32,10 +32,9 @@
       display: flex;
       align-items: center;
       justify-content: center;
-      padding: 20px;
+      padding: 24px 20px;
     }
 
-    /* Фоновые декоративные круги */
     body::before, body::after {
       content: "";
       position: fixed;
@@ -54,85 +53,108 @@
       background: radial-gradient(circle, rgba(105,65,198,0.07) 0%, transparent 70%);
     }
 
-    .login-wrapper {
+    .wrapper {
       position: relative;
       z-index: 1;
       width: 100%;
-      max-width: 440px;
+      max-width: 460px;
     }
 
-    /* Логотип + название */
     .brand {
       display: flex;
       align-items: center;
       gap: 14px;
       justify-content: center;
-      margin-bottom: 32px;
+      margin-bottom: 28px;
     }
-
     .logo {
       width: 52px; height: 52px;
       border-radius: 16px;
       background: linear-gradient(135deg, #3b82f6, #8b5cf6);
-      display: grid;
-      place-items: center;
-      font-weight: 800;
-      font-size: 18px;
-      color: #fff;
+      display: grid; place-items: center;
+      font-weight: 800; font-size: 18px; color: #fff;
       letter-spacing: -0.04em;
       box-shadow: 0 12px 28px rgba(59,130,246,0.35);
       flex-shrink: 0;
     }
+    .brand-text h1 { font-size: 22px; font-weight: 800; letter-spacing: -0.04em; color: var(--dark); }
+    .brand-text p  { font-size: 13px; color: var(--muted); margin-top: 2px; }
 
-    .brand-text h1 {
-      font-size: 22px;
-      font-weight: 800;
-      letter-spacing: -0.04em;
-      color: var(--dark);
-    }
-
-    .brand-text p {
-      font-size: 13px;
-      color: var(--muted);
-      margin-top: 2px;
-    }
-
-    /* Карточка формы */
-    .login-card {
+    /* Карточка */
+    .card {
       background: var(--panel);
       border: 1px solid var(--line);
       border-radius: var(--radius);
       box-shadow: var(--shadow);
       padding: 36px 36px 32px;
     }
-
-    .login-card h2 {
-      font-size: 20px;
-      font-weight: 750;
-      letter-spacing: -0.03em;
-      margin-bottom: 6px;
+    .card h2 {
+      font-size: 20px; font-weight: 750; letter-spacing: -0.03em; margin-bottom: 6px;
+    }
+    .card .subtitle {
+      font-size: 13px; color: var(--muted); margin-bottom: 24px; line-height: 1.5;
     }
 
-    .login-card .subtitle {
-      font-size: 13px;
-      color: var(--muted);
-      margin-bottom: 28px;
-      line-height: 1.5;
+    /* Переключатель вход/регистрация */
+    .tab-switch {
+      display: flex;
+      background: var(--bg);
+      border-radius: 12px;
+      padding: 4px;
+      margin-bottom: 24px;
+      gap: 4px;
     }
-
-    /* Поля формы */
-    .form-group {
-      margin-bottom: 16px;
-    }
-
-    .form-group label {
-      display: block;
+    .tab-btn {
+      flex: 1;
+      border: none;
+      background: transparent;
+      border-radius: 9px;
+      padding: 9px 12px;
       font-size: 13px;
       font-weight: 650;
-      margin-bottom: 7px;
+      color: var(--muted);
+      cursor: pointer;
+      font-family: inherit;
+      transition: background 0.15s, color 0.15s;
+    }
+    .tab-btn.active {
+      background: var(--panel);
       color: var(--text);
+      box-shadow: 0 1px 4px rgba(16,24,40,0.08);
     }
 
+    /* Переключатель телефон/email в регистрации */
+    .reg-method-switch {
+      display: flex;
+      gap: 8px;
+      margin-bottom: 16px;
+    }
+    .method-btn {
+      flex: 1;
+      border: 1px solid var(--line);
+      background: var(--bg);
+      border-radius: 10px;
+      padding: 9px 10px;
+      font-size: 13px; font-weight: 650;
+      color: var(--muted);
+      cursor: pointer;
+      font-family: inherit;
+      transition: border-color 0.15s, color 0.15s, background 0.15s;
+      display: flex; align-items: center; justify-content: center; gap: 6px;
+    }
+    .method-btn.active {
+      border-color: var(--accent);
+      background: var(--accent-soft);
+      color: var(--accent);
+    }
+
+    /* Поля */
+    .form-group { margin-bottom: 14px; }
+    .form-group label {
+      display: block;
+      font-size: 13px; font-weight: 650;
+      margin-bottom: 7px; color: var(--text);
+    }
     .form-group input {
       width: 100%;
       border: 1px solid var(--line);
@@ -145,54 +167,56 @@
       background: var(--bg);
       transition: border-color 0.15s, box-shadow 0.15s;
     }
-
     .form-group input:focus {
       border-color: var(--accent);
       background: #fff;
       box-shadow: 0 0 0 3px rgba(37,87,214,0.12);
     }
-
     .form-group input.error {
       border-color: var(--red);
       box-shadow: 0 0 0 3px rgba(217,45,32,0.10);
     }
+    .field-hint {
+      font-size: 11px; color: var(--muted); margin-top: 5px; display: none;
+    }
+    .field-hint.visible { display: block; }
+    .field-hint.err { color: var(--red); }
 
-    /* Кнопка входа */
-    .btn-login {
+    /* Индикатор надёжности пароля */
+    .pw-strength {
+      margin-top: 7px; display: none;
+    }
+    .pw-strength.visible { display: block; }
+    .pw-bar {
+      height: 4px; border-radius: 3px;
+      background: var(--line); overflow: hidden; margin-bottom: 4px;
+    }
+    .pw-bar-fill {
+      height: 100%; border-radius: 3px;
+      transition: width 0.25s, background 0.25s;
+      width: 0%;
+    }
+    .pw-label { font-size: 11px; color: var(--muted); }
+
+    /* Кнопка */
+    .btn-submit {
       width: 100%;
-      border: none;
-      border-radius: 14px;
-      padding: 14px;
-      background: var(--accent);
-      color: #fff;
-      font-size: 15px;
-      font-weight: 700;
-      cursor: pointer;
-      margin-top: 8px;
+      border: none; border-radius: 14px; padding: 14px;
+      background: var(--accent); color: #fff;
+      font-size: 15px; font-weight: 700;
+      cursor: pointer; margin-top: 8px;
       box-shadow: 0 8px 20px rgba(37,87,214,0.22);
       transition: background 0.15s, transform 0.1s, box-shadow 0.15s;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      gap: 8px;
-      letter-spacing: -0.01em;
+      display: flex; align-items: center; justify-content: center; gap: 8px;
+      letter-spacing: -0.01em; font-family: inherit;
     }
-
-    .btn-login:hover:not(:disabled) {
+    .btn-submit:hover:not(:disabled) {
       background: #1d48c4;
       box-shadow: 0 10px 24px rgba(37,87,214,0.30);
     }
-
-    .btn-login:active:not(:disabled) {
-      transform: scale(0.98);
-    }
-
-    .btn-login:disabled {
-      opacity: 0.7;
-      cursor: not-allowed;
-    }
-
-    .btn-login .spinner {
+    .btn-submit:active:not(:disabled) { transform: scale(0.98); }
+    .btn-submit:disabled { opacity: 0.7; cursor: not-allowed; }
+    .btn-submit .spinner {
       width: 18px; height: 18px;
       border: 2px solid rgba(255,255,255,0.4);
       border-top-color: #fff;
@@ -200,106 +224,45 @@
       animation: spin 0.7s linear infinite;
       display: none;
     }
+    .btn-submit.loading .spinner { display: block; }
+    .btn-submit.loading .btn-text { display: none; }
+    @keyframes spin { to { transform: rotate(360deg); } }
 
-    .btn-login.loading .spinner { display: block; }
-    .btn-login.loading .btn-text { display: none; }
-
-    @keyframes spin {
-      to { transform: rotate(360deg); }
-    }
-
-    /* Сообщение об ошибке */
-    .error-msg {
+    /* Сообщения */
+    .msg-box {
       display: none;
       margin-top: 14px;
       padding: 12px 15px;
       border-radius: 12px;
-      background: var(--red-soft);
-      border: 1px solid #fecaca;
-      color: var(--red);
-      font-size: 13px;
-      font-weight: 600;
-      line-height: 1.4;
-      align-items: center;
-      gap: 8px;
+      font-size: 13px; font-weight: 600; line-height: 1.4;
+      align-items: center; gap: 8px;
+    }
+    .msg-box.visible { display: flex; }
+    .msg-box.err  { background: var(--red-soft);   border: 1px solid #fecaca; color: var(--red); }
+    .msg-box.ok   { background: var(--green-soft);  border: 1px solid #a7f3d0; color: var(--green); }
+
+    /* Разделитель */
+    .divider {
+      display: flex; align-items: center; gap: 10px;
+      margin: 20px 0 0;
+      font-size: 12px; color: var(--muted);
+    }
+    .divider::before, .divider::after {
+      content: ""; flex: 1; height: 1px; background: var(--line);
     }
 
-    .error-msg.visible {
-      display: flex;
+    .footer {
+      text-align: center; margin-top: 22px; font-size: 12px; color: var(--muted);
     }
 
-    .error-icon {
-      font-size: 16px;
-      flex-shrink: 0;
-    }
-
-    /* Demo-подсказка */
-    .demo-hint {
-      margin-top: 20px;
-      padding: 14px 16px;
-      border-radius: 13px;
-      background: var(--accent-soft);
-      border: 1px solid #c7d7ff;
-    }
-
-    .demo-hint .demo-label {
-      font-size: 11px;
-      font-weight: 750;
-      text-transform: uppercase;
-      letter-spacing: 0.06em;
-      color: var(--accent);
-      margin-bottom: 8px;
-    }
-
-    .demo-hint .demo-row {
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      font-size: 13px;
-      color: #374151;
-      padding: 3px 0;
-    }
-
-    .demo-hint .demo-row strong {
-      font-weight: 700;
-      color: var(--dark);
-      font-family: "SF Mono", "Fira Code", monospace;
-      font-size: 13px;
-    }
-
-    .demo-hint .copy-btn {
-      border: none;
-      background: rgba(37,87,214,0.10);
-      color: var(--accent);
-      border-radius: 7px;
-      padding: 3px 8px;
-      font-size: 11px;
-      font-weight: 700;
-      cursor: pointer;
-      transition: background 0.12s;
-    }
-
-    .demo-hint .copy-btn:hover {
-      background: rgba(37,87,214,0.18);
-    }
-
-    /* Подвал */
-    .login-footer {
-      text-align: center;
-      margin-top: 24px;
-      font-size: 12px;
-      color: var(--muted);
-    }
-
-    /* Адаптив */
     @media (max-width: 480px) {
-      .login-card { padding: 28px 22px 26px; }
+      .card { padding: 28px 20px 26px; }
       .brand-text h1 { font-size: 19px; }
     }
   </style>
 </head>
 <body>
-  <div class="login-wrapper">
+  <div class="wrapper">
 
     <div class="brand">
       <div class="logo">MS</div>
@@ -309,150 +272,373 @@
       </div>
     </div>
 
-    <div class="login-card">
-      <h2>Вход в систему</h2>
-      <p class="subtitle">Мониторинг упоминаний, тональности и активности по источникам</p>
+    <div class="card">
 
-      <form id="loginForm" autocomplete="on" novalidate>
-        <div class="form-group">
-          <label for="username">Логин</label>
-          <input
-            type="text"
-            id="username"
-            name="username"
-            placeholder="Введите логин"
-            autocomplete="username"
-            spellcheck="false"
-          />
-        </div>
-
-        <div class="form-group">
-          <label for="password">Пароль</label>
-          <input
-            type="password"
-            id="password"
-            name="password"
-            placeholder="Введите пароль"
-            autocomplete="current-password"
-          />
-        </div>
-
-        <button type="submit" class="btn-login" id="loginBtn">
-          <div class="spinner"></div>
-          <span class="btn-text">Войти</span>
-        </button>
-
-        <div class="error-msg" id="errorMsg">
-          <span class="error-icon">⚠</span>
-          <span id="errorText">Неверный логин или пароль</span>
-        </div>
-      </form>
-
-      <div class="demo-hint">
-        <div class="demo-label">Demo-доступ</div>
-        <div class="demo-row">
-          <span>Логин</span>
-          <span><strong id="demoUser">allisyeo</strong></span>
-          <button class="copy-btn" onclick="fillField('username','allisyeo')">Вставить</button>
-        </div>
-        <div class="demo-row" style="margin-top:4px">
-          <span>Пароль</span>
-          <span><strong>45aseFUG@</strong></span>
-          <button class="copy-btn" onclick="fillField('password','45aseFUG@')">Вставить</button>
-        </div>
+      <!-- Переключатель вход / регистрация -->
+      <div class="tab-switch">
+        <button class="tab-btn active" id="tabLogin"  onclick="showTab('login')">Вход</button>
+        <button class="tab-btn"        id="tabReg"    onclick="showTab('register')">Регистрация</button>
       </div>
+
+      <!-- ══ ФОРМА ВХОДА ══════════════════════════════════════════════════════ -->
+      <div id="loginSection">
+        <h2>Вход в систему</h2>
+        <p class="subtitle">Введите логин и пароль для доступа к платформе</p>
+
+        <form id="loginForm" autocomplete="on" novalidate>
+          <div class="form-group">
+            <label for="loginUsername">Логин</label>
+            <input type="text" id="loginUsername" name="username"
+              placeholder="Введите логин" autocomplete="username" spellcheck="false" />
+          </div>
+          <div class="form-group">
+            <label for="loginPassword">Пароль</label>
+            <input type="password" id="loginPassword" name="password"
+              placeholder="Введите пароль" autocomplete="current-password" />
+          </div>
+
+          <button type="submit" class="btn-submit" id="loginBtn">
+            <div class="spinner"></div>
+            <span class="btn-text">Войти</span>
+          </button>
+
+          <div class="msg-box err" id="loginError">
+            <span>⚠</span>
+            <span id="loginErrorText">Неверный логин или пароль</span>
+          </div>
+        </form>
+      </div>
+
+      <!-- ══ ФОРМА РЕГИСТРАЦИИ ════════════════════════════════════════════════ -->
+      <div id="registerSection" style="display:none">
+        <h2>Регистрация</h2>
+        <p class="subtitle">Заполните все поля для создания учётной записи</p>
+
+        <!-- Выбор способа регистрации -->
+        <div class="reg-method-switch">
+          <button class="method-btn active" id="methodPhone" type="button" onclick="setMethod('phone')">
+            📱 По номеру телефона
+          </button>
+          <button class="method-btn" id="methodEmail" type="button" onclick="setMethod('email')">
+            ✉️ По почте
+          </button>
+        </div>
+
+        <form id="registerForm" autocomplete="off" novalidate>
+
+          <!-- ФИО -->
+          <div class="form-group">
+            <label for="regName">ФИО <span style="color:var(--red)">*</span></label>
+            <input type="text" id="regName" placeholder="Фамилия Имя Отчество"
+              autocomplete="name" spellcheck="false" />
+            <div class="field-hint err" id="hintName"></div>
+          </div>
+
+          <!-- Email (скрывается при методе "телефон") -->
+          <div class="form-group" id="fieldEmail" style="display:none">
+            <label for="regEmail">Email <span style="color:var(--red)">*</span></label>
+            <input type="email" id="regEmail" placeholder="example@company.kz"
+              autocomplete="email" />
+            <div class="field-hint err" id="hintEmail"></div>
+          </div>
+
+          <!-- Телефон (скрывается при методе "email") -->
+          <div class="form-group" id="fieldPhone" style="display:none">
+            <label for="regPhone">Номер телефона <span style="color:var(--red)">*</span></label>
+            <input type="tel" id="regPhone" placeholder="+7 700 000 00 00"
+              autocomplete="tel" />
+            <div class="field-hint err" id="hintPhone"></div>
+          </div>
+
+          <!-- Пароль -->
+          <div class="form-group">
+            <label for="regPassword">Пароль <span style="color:var(--red)">*</span></label>
+            <input type="password" id="regPassword" placeholder="Минимум 8 символов"
+              autocomplete="new-password" oninput="checkStrength(this.value)" />
+            <div class="pw-strength" id="pwStrength">
+              <div class="pw-bar"><div class="pw-bar-fill" id="pwBarFill"></div></div>
+              <div class="pw-label" id="pwLabel"></div>
+            </div>
+            <div class="field-hint err" id="hintPassword"></div>
+          </div>
+
+          <!-- Подтверждение пароля -->
+          <div class="form-group">
+            <label for="regConfirm">Подтверждение пароля <span style="color:var(--red)">*</span></label>
+            <input type="password" id="regConfirm" placeholder="Повторите пароль"
+              autocomplete="new-password" />
+            <div class="field-hint err" id="hintConfirm"></div>
+          </div>
+
+          <button type="submit" class="btn-submit" id="registerBtn">
+            <div class="spinner"></div>
+            <span class="btn-text">Зарегистрироваться</span>
+          </button>
+
+          <div class="msg-box err" id="registerError">
+            <span>⚠</span>
+            <span id="registerErrorText"></span>
+          </div>
+          <div class="msg-box ok" id="registerSuccess">
+            <span>✓</span>
+            <span id="registerSuccessText"></span>
+          </div>
+        </form>
+      </div>
+
     </div>
 
-    <div class="login-footer">
-      KT MediaScanner &nbsp;·&nbsp; защищённый вход
-    </div>
+    <div class="footer">KT MediaScanner &nbsp;·&nbsp; защищённый вход</div>
   </div>
 
   <script>
-    // Если уже авторизован — сразу на главную
-    (async function checkAlreadyLoggedIn() {
+    // ── Проверка сессии ───────────────────────────────────────────────────────
+    (async function() {
       try {
         const res = await fetch("/api/auth/me", { credentials: "include" });
-        if (res.ok) {
-          window.location.href = "/";
-        }
-      } catch {
-        // backend недоступен — остаёмся на странице входа
-      }
+        if (res.ok) window.location.href = "/";
+      } catch {}
     })();
 
-    // Вставить demo-значение в поле
-    function fillField(fieldId, value) {
-      document.getElementById(fieldId).value = value;
-      document.getElementById(fieldId).focus();
+    // ── Переключение вкладок ──────────────────────────────────────────────────
+    function showTab(tab) {
+      const isLogin = tab === "login";
+      document.getElementById("loginSection").style.display    = isLogin ? "" : "none";
+      document.getElementById("registerSection").style.display = isLogin ? "none" : "";
+      document.getElementById("tabLogin").classList.toggle("active", isLogin);
+      document.getElementById("tabReg").classList.toggle("active", !isLogin);
+      clearAll();
     }
 
-    // Показать / скрыть ошибку
-    function showError(msg) {
-      const el   = document.getElementById("errorMsg");
-      const text = document.getElementById("errorText");
-      text.textContent = msg || "Неверный логин или пароль";
-      el.classList.add("visible");
-      document.getElementById("username").classList.add("error");
-      document.getElementById("password").classList.add("error");
+    // ── Метод регистрации ─────────────────────────────────────────────────────
+    let regMethod = "phone";
+    function setMethod(m) {
+      regMethod = m;
+      document.getElementById("methodPhone").classList.toggle("active", m === "phone");
+      document.getElementById("methodEmail").classList.toggle("active", m === "email");
+      // Показываем только нужное поле
+      document.getElementById("fieldPhone").style.display = m === "phone" ? "" : "none";
+      document.getElementById("fieldEmail").style.display = m === "email" ? "" : "none";
+      // Сбрасываем ошибки скрытого поля
+      if (m === "phone") { setFieldError("regEmail", "hintEmail", ""); }
+      else               { setFieldError("regPhone", "hintPhone", ""); }
+    }
+    // Инициализация — показать поле телефона по умолчанию
+    setMethod("phone");
+
+    // ── Утилиты ошибок ────────────────────────────────────────────────────────
+    function setFieldError(inputId, hintId, msg) {
+      const el = document.getElementById(inputId);
+      const hint = document.getElementById(hintId);
+      el.classList.toggle("error", !!msg);
+      hint.textContent = msg || "";
+      hint.classList.toggle("visible", !!msg);
+    }
+    function clearAll() {
+      ["regName","regEmail","regPhone","regPassword","regConfirm"].forEach(id => {
+        const el = document.getElementById(id);
+        if (el) { el.classList.remove("error"); el.value = ""; }
+      });
+      ["hintName","hintEmail","hintPhone","hintPassword","hintConfirm"].forEach(id => {
+        const el = document.getElementById(id);
+        if (el) { el.classList.remove("visible"); el.textContent = ""; }
+      });
+      ["loginError","registerError","registerSuccess"].forEach(id => {
+        document.getElementById(id)?.classList.remove("visible");
+      });
+      document.getElementById("loginUsername").value = "";
+      document.getElementById("loginPassword").value = "";
+      document.getElementById("pwStrength")?.classList.remove("visible");
     }
 
-    function hideError() {
-      document.getElementById("errorMsg").classList.remove("visible");
-      document.getElementById("username").classList.remove("error");
-      document.getElementById("password").classList.remove("error");
+    // ── Надёжность пароля ─────────────────────────────────────────────────────
+    function checkStrength(val) {
+      const bar   = document.getElementById("pwBarFill");
+      const label = document.getElementById("pwLabel");
+      const wrap  = document.getElementById("pwStrength");
+      if (!val) { wrap.classList.remove("visible"); return; }
+      wrap.classList.add("visible");
+
+      let score = 0;
+      if (val.length >= 8)  score++;
+      if (val.length >= 12) score++;
+      if (/[A-Z]/.test(val)) score++;
+      if (/[0-9]/.test(val)) score++;
+      if (/[^A-Za-z0-9]/.test(val)) score++;
+
+      const levels = [
+        { pct:"20%", color:"#ef4444", text:"Очень слабый" },
+        { pct:"40%", color:"#f97316", text:"Слабый" },
+        { pct:"60%", color:"#eab308", text:"Средний" },
+        { pct:"80%", color:"#84cc16", text:"Хороший" },
+        { pct:"100%",color:"#22c55e", text:"Надёжный" },
+      ];
+      const lvl = levels[Math.min(score, 4)];
+      bar.style.width      = lvl.pct;
+      bar.style.background = lvl.color;
+      label.textContent    = lvl.text;
+      label.style.color    = lvl.color;
     }
 
-    // Кнопка: loading state
-    function setLoading(on) {
-      const btn = document.getElementById("loginBtn");
-      btn.classList.toggle("loading", on);
-      btn.disabled = on;
+    // ── Валидация формы входа ─────────────────────────────────────────────────
+    function showLoginError(msg) {
+      document.getElementById("loginErrorText").textContent = msg;
+      document.getElementById("loginError").classList.add("visible");
+      document.getElementById("loginUsername").classList.add("error");
+      document.getElementById("loginPassword").classList.add("error");
     }
+    function hideLoginError() {
+      document.getElementById("loginError").classList.remove("visible");
+      document.getElementById("loginUsername").classList.remove("error");
+      document.getElementById("loginPassword").classList.remove("error");
+    }
+    ["loginUsername","loginPassword"].forEach(id =>
+      document.getElementById(id).addEventListener("input", hideLoginError)
+    );
 
-    // Сброс ошибки при вводе
-    ["username", "password"].forEach(id => {
-      document.getElementById(id).addEventListener("input", hideError);
-    });
-
-    // Отправка формы
+    // ── Отправка формы входа ──────────────────────────────────────────────────
     document.getElementById("loginForm").addEventListener("submit", async (e) => {
       e.preventDefault();
-      hideError();
+      hideLoginError();
+      const username = document.getElementById("loginUsername").value.trim();
+      const password = document.getElementById("loginPassword").value;
+      if (!username || !password) { showLoginError("Введите логин и пароль"); return; }
 
-      const username = document.getElementById("username").value.trim();
-      const password = document.getElementById("password").value;
-
-      if (!username || !password) {
-        showError("Введите логин и пароль");
-        return;
-      }
-
-      setLoading(true);
-
+      const btn = document.getElementById("loginBtn");
+      btn.classList.add("loading"); btn.disabled = true;
       try {
         const res = await fetch("/api/auth/login", {
-          method:      "POST",
-          credentials: "include",             // важно: отправляем/получаем cookie
-          headers:     { "Content-Type": "application/json" },
-          body:        JSON.stringify({ username, password })
+          method: "POST", credentials: "include",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ username, password })
         });
+        const data = await res.json().catch(() => ({}));
+        if (res.ok && data.success) {
+          window.location.href = "/";
+        } else if (res.status === 429) {
+          showLoginError("Слишком много попыток. Подождите 15 минут.");
+        } else {
+          showLoginError(data.message || "Неверный логин или пароль");
+        }
+      } catch {
+        showLoginError("Сервер недоступен. Проверьте подключение.");
+      } finally {
+        btn.classList.remove("loading"); btn.disabled = false;
+      }
+    });
 
+    // ── Валидация регистрации ─────────────────────────────────────────────────
+    function validateRegister() {
+      let ok = true;
+
+      const name = document.getElementById("regName").value.trim();
+      const words = name.trim().split(/\s+/);
+      if (!name) {
+        setFieldError("regName", "hintName", "Введите ФИО"); ok = false;
+      } else if (words.length < 2) {
+        setFieldError("regName", "hintName", "Укажите как минимум имя и фамилию"); ok = false;
+      } else {
+        setFieldError("regName", "hintName", "");
+      }
+
+      if (regMethod === "email") {
+        const email = document.getElementById("regEmail").value.trim();
+        const emailRe = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+        if (!email) {
+          setFieldError("regEmail", "hintEmail", "Введите email"); ok = false;
+        } else if (!emailRe.test(email)) {
+          setFieldError("regEmail", "hintEmail", "Некорректный формат email"); ok = false;
+        } else {
+          setFieldError("regEmail", "hintEmail", "");
+        }
+      }
+
+      if (regMethod === "phone") {
+        const phone = document.getElementById("regPhone").value.trim();
+        const phoneDigits = phone.replace(/\D/g, "");
+        if (!phone) {
+          setFieldError("regPhone", "hintPhone", "Введите номер телефона"); ok = false;
+        } else if (phoneDigits.length < 10 || phoneDigits.length > 12) {
+          setFieldError("regPhone", "hintPhone", "Введите корректный номер (+7 700 000 00 00)"); ok = false;
+        } else {
+          setFieldError("regPhone", "hintPhone", "");
+        }
+      }
+
+      const password = document.getElementById("regPassword").value;
+      if (!password) {
+        setFieldError("regPassword", "hintPassword", "Введите пароль"); ok = false;
+      } else if (password.length < 8) {
+        setFieldError("regPassword", "hintPassword", "Минимум 8 символов"); ok = false;
+      } else {
+        setFieldError("regPassword", "hintPassword", "");
+      }
+
+      const confirm = document.getElementById("regConfirm").value;
+      if (!confirm) {
+        setFieldError("regConfirm", "hintConfirm", "Повторите пароль"); ok = false;
+      } else if (confirm !== password) {
+        setFieldError("regConfirm", "hintConfirm", "Пароли не совпадают"); ok = false;
+      } else {
+        setFieldError("regConfirm", "hintConfirm", "");
+      }
+
+      return ok;
+    }
+
+    // ── Отправка формы регистрации ────────────────────────────────────────────
+    document.getElementById("registerForm").addEventListener("submit", async (e) => {
+      e.preventDefault();
+      document.getElementById("registerError").classList.remove("visible");
+      document.getElementById("registerSuccess").classList.remove("visible");
+
+      if (!validateRegister()) return;
+
+      const btn = document.getElementById("registerBtn");
+      btn.classList.add("loading"); btn.disabled = true;
+
+      const payload = {
+        name:     document.getElementById("regName").value.trim(),
+        email:    document.getElementById("regEmail").value.trim(),
+        phone:    document.getElementById("regPhone").value.trim(),
+        password: document.getElementById("regPassword").value,
+        method:   regMethod
+      };
+
+      try {
+        const res = await fetch("/api/auth/register", {
+          method: "POST", credentials: "include",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify(payload)
+        });
         const data = await res.json().catch(() => ({}));
 
         if (res.ok && data.success) {
-          // Успешный вход — переход на главную страницу
-          window.location.href = "/";
-        } else if (res.status === 429) {
-          showError("Слишком много попыток. Подождите 15 минут.");
+          document.getElementById("registerSuccessText").textContent =
+            "Заявка на регистрацию отправлена. Администратор активирует вашу учётную запись.";
+          document.getElementById("registerSuccess").classList.add("visible");
+          document.getElementById("registerForm").reset();
+          document.getElementById("pwStrength").classList.remove("visible");
         } else {
-          showError(data.message || "Неверный логин или пароль");
+          document.getElementById("registerErrorText").textContent =
+            data.message || "Ошибка регистрации. Попробуйте ещё раз.";
+          document.getElementById("registerError").classList.add("visible");
         }
       } catch {
-        showError("Сервер недоступен. Проверьте подключение.");
+        document.getElementById("registerErrorText").textContent =
+          "Сервер недоступен. Проверьте подключение.";
+        document.getElementById("registerError").classList.add("visible");
       } finally {
-        setLoading(false);
+        btn.classList.remove("loading"); btn.disabled = false;
       }
+    });
+
+    // Снятие ошибки при вводе
+    ["regName","regEmail","regPhone","regPassword","regConfirm"].forEach(id => {
+      const el = document.getElementById(id);
+      if (!el) return;
+      const hintId = "hint" + id.charAt(3).toUpperCase() + id.slice(4);
+      el.addEventListener("input", () => setFieldError(id, hintId, ""));
     });
   </script>
 </body>
