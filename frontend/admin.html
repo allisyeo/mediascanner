@@ -243,6 +243,42 @@
       display: flex; align-items: center; gap: 6px;
     }
 
+    /* ── Заявки на регистрацию ── */
+    .pending-table { width: 100%; border-collapse: collapse; font-size: 13px; }
+    .pending-table th {
+      text-align: left; padding: 10px 14px;
+      font-size: 11px; font-weight: 750; text-transform: uppercase;
+      letter-spacing: 0.05em; color: var(--muted);
+      background: var(--bg); border-bottom: 1px solid var(--line);
+    }
+    .pending-table td { padding: 13px 14px; border-bottom: 1px solid var(--line); vertical-align: middle; }
+    .pending-table tr:last-child td { border-bottom: none; }
+    .pending-table tr:hover td { background: #f8fafd; }
+    .pending-name { font-weight: 700; font-size: 14px; }
+    .pending-contact { font-size: 12px; color: var(--muted); margin-top: 2px; }
+    .method-badge {
+      display: inline-block; padding: 2px 8px; border-radius: 20px;
+      font-size: 11px; font-weight: 700;
+    }
+    .method-phone { background: #e0f2fe; color: #0369a1; }
+    .method-email { background: #f3e8ff; color: #7c3aed; }
+    .pending-date { font-size: 12px; color: var(--muted); white-space: nowrap; }
+    .btn-approve { background: var(--green-soft); color: var(--green); border: 1px solid #a7f3d0; }
+    .btn-approve:hover { background: #d1fae5; }
+    .btn-reject  { background: var(--red-soft); color: var(--red); border: 1px solid #fecaca; }
+    .btn-reject:hover { background: #fee2e2; }
+    .empty-pending {
+      padding: 32px; text-align: center;
+      color: var(--muted); font-size: 13px;
+    }
+    .badge-count {
+      display: inline-flex; align-items: center; justify-content: center;
+      width: 20px; height: 20px; border-radius: 50%;
+      background: var(--red); color: #fff;
+      font-size: 11px; font-weight: 800;
+      margin-left: 6px;
+    }
+
     @media (max-width: 600px) {
       .status-grid { grid-template-columns: 1fr 1fr; }
       .topbar { padding: 0 16px; }
@@ -321,6 +357,35 @@
               <button class="btn btn-secondary btn-sm" onclick="showChangePassword()">Сменить пароль</button>
             </div>
           </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Заявки на регистрацию -->
+    <div class="section">
+      <div class="section-title">
+        Заявки на регистрацию
+        <span class="badge-count" id="pendingCount" style="display:none">0</span>
+      </div>
+      <div class="card">
+        <div class="card-head">
+          <h3>Ожидают активации</h3>
+          <button class="btn btn-secondary btn-sm" onclick="loadPending()">Обновить</button>
+        </div>
+        <div id="pendingWrap">
+          <div class="empty-pending" id="pendingEmpty">Нет новых заявок</div>
+          <table class="pending-table" id="pendingTable" style="display:none">
+            <thead>
+              <tr>
+                <th>Пользователь</th>
+                <th>Контакт</th>
+                <th>Метод</th>
+                <th>Дата заявки</th>
+                <th>Действие</th>
+              </tr>
+            </thead>
+            <tbody id="pendingBody"></tbody>
+          </table>
         </div>
       </div>
     </div>
@@ -513,6 +578,7 @@
 
       await pingHealth();
       loadEnvInfo();
+      await loadPending();
     })();
 
     // ── Health-check ──────────────────────────────────────────────────────────
@@ -632,6 +698,112 @@
       msg.style.color = "var(--yellow)";
       msg.textContent = `Запустите в терминале: node -e "require('bcryptjs').hash('${p1}',12).then(console.log)" и вставьте hash в backend/src/data/users.js`;
       log(`Запрос смены пароля — выполни хэширование в терминале`, "warn");
+    }
+
+    // ── Заявки на регистрацию ─────────────────────────────────────────────────
+    async function loadPending() {
+      try {
+        const res = await fetch("/api/auth/pending", { credentials: "include" });
+        if (!res.ok) { log("Ошибка загрузки заявок", "err"); return; }
+        const data = await res.json();
+        const list = data.data || [];
+
+        const countEl = document.getElementById("pendingCount");
+        const empty   = document.getElementById("pendingEmpty");
+        const table   = document.getElementById("pendingTable");
+        const body    = document.getElementById("pendingBody");
+
+        if (list.length === 0) {
+          countEl.style.display = "none";
+          empty.style.display   = "block";
+          table.style.display   = "none";
+          log("Заявок на регистрацию нет", "info");
+          return;
+        }
+
+        countEl.textContent   = list.length;
+        countEl.style.display = "inline-flex";
+        empty.style.display   = "none";
+        table.style.display   = "table";
+
+        body.innerHTML = list.map(r => {
+          const initials = r.name.split(" ").map(w => w[0]).join("").slice(0,2).toUpperCase();
+          const contact  = r.method === "phone" ? r.phone : r.email;
+          const date     = new Date(r.createdAt).toLocaleString("ru-RU", {
+            day:"2-digit", month:"2-digit", year:"numeric",
+            hour:"2-digit", minute:"2-digit"
+          });
+          return `
+          <tr id="row-${r.id}">
+            <td>
+              <div style="display:flex;align-items:center;gap:10px">
+                <div style="width:34px;height:34px;border-radius:10px;background:linear-gradient(135deg,#3b82f6,#8b5cf6);display:grid;place-items:center;font-weight:800;font-size:12px;color:#fff;flex-shrink:0">${initials}</div>
+                <div>
+                  <div class="pending-name">${r.name}</div>
+                  <div class="pending-contact">ID: ${r.id}</div>
+                </div>
+              </div>
+            </td>
+            <td style="font-size:13px">${contact || "—"}</td>
+            <td>
+              <span class="method-badge ${r.method === "phone" ? "method-phone" : "method-email"}">
+                ${r.method === "phone" ? "📱 Телефон" : "✉️ Email"}
+              </span>
+            </td>
+            <td class="pending-date">${date}</td>
+            <td>
+              <div style="display:flex;gap:6px">
+                <button class="btn btn-approve btn-sm" onclick="approveUser('${r.id}', '${r.name}')">✓ Одобрить</button>
+                <button class="btn btn-reject btn-sm"  onclick="rejectUser('${r.id}',  '${r.name}')">✕ Отклонить</button>
+              </div>
+            </td>
+          </tr>`;
+        }).join("");
+
+        log(`Загружено заявок: ${list.length}`, "ok");
+      } catch (e) {
+        log(`Ошибка загрузки заявок: ${e.message}`, "err");
+      }
+    }
+
+    async function approveUser(id, name) {
+      if (!confirm(`Одобрить заявку от "${name}"?`)) return;
+      try {
+        const res = await fetch(`/api/auth/pending/${id}/approve`, {
+          method: "POST", credentials: "include",
+          headers: { "Content-Type": "application/json" }
+        });
+        const data = await res.json().catch(() => ({}));
+        if (res.ok && data.success) {
+          document.getElementById(`row-${id}`)?.remove();
+          log(`Заявка одобрена: ${name}`, "ok");
+          await loadPending();
+        } else {
+          log(`Ошибка одобрения: ${data.message || res.status}`, "err");
+        }
+      } catch (e) {
+        log(`Ошибка: ${e.message}`, "err");
+      }
+    }
+
+    async function rejectUser(id, name) {
+      if (!confirm(`Отклонить заявку от "${name}"?`)) return;
+      try {
+        const res = await fetch(`/api/auth/pending/${id}/reject`, {
+          method: "POST", credentials: "include",
+          headers: { "Content-Type": "application/json" }
+        });
+        const data = await res.json().catch(() => ({}));
+        if (res.ok && data.success) {
+          document.getElementById(`row-${id}`)?.remove();
+          log(`Заявка отклонена: ${name}`, "warn");
+          await loadPending();
+        } else {
+          log(`Ошибка отклонения: ${data.message || res.status}`, "err");
+        }
+      } catch (e) {
+        log(`Ошибка: ${e.message}`, "err");
+      }
     }
 
     // ── Выход ─────────────────────────────────────────────────────────────────

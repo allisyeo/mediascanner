@@ -94,4 +94,8 @@ function allPublicUsers() {
   return users.map(publicUser);
 }
 
-module.exports = { findByUsername, findById, publicUser, allPublicUsers };
+function _addUser(user) {
+  users.push(user);
+}
+
+module.exports = { findByUsername, findById, publicUser, allPublicUsers, _addUser };

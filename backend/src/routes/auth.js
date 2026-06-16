@@ -172,6 +172,48 @@ router.get("/pending", requireAuth, (req, res) => {
   return res.json({ success: true, total: safe.length, data: safe });
 });
 
+// POST /api/auth/pending/:id/approve — одобрить заявку
+router.post("/pending/:id/approve", requireAuth, (req, res) => {
+  const idx = pendingRegistrations.findIndex(r => r.id === req.params.id);
+  if (idx === -1) return res.status(404).json({ success: false, message: "Заявка не найдена" });
+
+  const pending = pendingRegistrations[idx];
+  const { _addUser } = require("../data/users");
+
+  const newUser = {
+    id:           pending.id.replace("pending_", "user_"),
+    username:     (pending.email || pending.phone || pending.id).replace(/[^a-z0-9]/gi, ".").toLowerCase().slice(0, 20),
+    name:         pending.name,
+    role:         "manager",
+    status:       "Менеджер",
+    email:        pending.email || null,
+    phone:        pending.phone || null,
+    createdAt:    pending.createdAt,
+    lastLogin:    null,
+    active:       true,
+    passwordHash: pending.passwordHash
+  };
+
+  _addUser(newUser);
+  pendingRegistrations.splice(idx, 1);
+  console.log(`[AUTH] Заявка одобрена: ${pending.name}`);
+
+  const { passwordHash: _, ...pub } = newUser;
+  return res.json({ success: true, message: "Пользователь активирован", user: pub });
+});
+
+// POST /api/auth/pending/:id/reject — отклонить заявку
+router.post("/pending/:id/reject", requireAuth, (req, res) => {
+  const idx = pendingRegistrations.findIndex(r => r.id === req.params.id);
+  if (idx === -1) return res.status(404).json({ success: false, message: "Заявка не найдена" });
+
+  const pending = pendingRegistrations[idx];
+  pendingRegistrations.splice(idx, 1);
+  console.log(`[AUTH] Заявка отклонена: ${pending.name}`);
+
+  return res.json({ success: true, message: "Заявка отклонена" });
+});
+
 // ─── POST /api/auth/logout ──────────────────────────────────────────────────
 // Очищает auth cookie.
 router.post("/logout", (req, res) => {
