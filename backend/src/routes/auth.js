@@ -5,7 +5,7 @@ const bcrypt           = require("bcryptjs");
 const jwt              = require("jsonwebtoken");
 const rateLimit        = require("express-rate-limit");
 const { findByUsername, publicUser } = require("../data/users");
-const { JWT_SECRET, COOKIE_NAME }    = require("../middleware/auth");
+const { JWT_SECRET, COOKIE_NAME, requireAuth } = require("../middleware/auth");
 
 const router = Router();
 
@@ -113,6 +113,63 @@ router.get("/me", (req, res) => {
       code:    "INVALID_TOKEN"
     });
   }
+});
+
+// ─── POST /api/auth/register ────────────────────────────────────────────────
+// Принимает заявку на регистрацию. Сохраняет в pending-список (in-memory).
+// Пользователь НЕ получает доступ сразу — заявка ожидает активации администратором.
+const pendingRegistrations = [];
+
+router.post("/register", async (req, res) => {
+  const { name, email, phone, password, method } = req.body;
+
+  // Базовая валидация
+  if (!name || !password) {
+    return res.status(400).json({ success: false, message: "Заполните все обязательные поля" });
+  }
+  if (method === "email" && !email) {
+    return res.status(400).json({ success: false, message: "Введите email" });
+  }
+  if (method === "phone" && !phone) {
+    return res.status(400).json({ success: false, message: "Введите номер телефона" });
+  }
+  if (password.length < 8) {
+    return res.status(400).json({ success: false, message: "Пароль должен быть минимум 8 символов" });
+  }
+
+  // Проверка дублей в pending-заявках
+  const duplicate = pendingRegistrations.find(r =>
+    (email && r.email === email) || (phone && r.phone === phone)
+  );
+  if (duplicate) {
+    return res.status(409).json({ success: false, message: "Заявка с такими данными уже существует" });
+  }
+
+  const passwordHash = await bcrypt.hash(password, 12);
+
+  pendingRegistrations.push({
+    id:           `pending_${Date.now()}`,
+    name:         name.trim(),
+    email:        email?.trim() || null,
+    phone:        phone?.trim() || null,
+    method:       method || "phone",
+    passwordHash,
+    status:       "pending",
+    createdAt:    new Date().toISOString()
+  });
+
+  console.log(`[AUTH] Новая заявка на регистрацию: ${name} (${email || phone})`);
+
+  return res.json({
+    success: true,
+    message: "Заявка принята. Администратор активирует вашу учётную запись."
+  });
+});
+
+// GET /api/auth/pending — список заявок (только для администраторов)
+router.get("/pending", requireAuth, (req, res) => {
+  const safe = pendingRegistrations.map(({ passwordHash: _, ...r }) => r);
+  return res.json({ success: true, total: safe.length, data: safe });
 });
 
 // ─── POST /api/auth/logout ──────────────────────────────────────────────────
