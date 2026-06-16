@@ -1,15 +1,20 @@
 "use strict";
 
 // ─── Пользователи KT MediaScanner ──────────────────────────────────────────
-// passwordHash для admin сгенерирован через bcrypt.hashSync("45aseFUG@", 12).
-// Открытый пароль НИГДЕ в коде не хранится.
+// Данные хранятся в users.json (рядом с этим файлом).
+// При первом запуске, если файл отсутствует, создаётся из SEED-данных.
 //
 // TODO (production):
 //   - Перенести пользователей в таблицу users в PostgreSQL
-//   - Сменить пароль через: node -e "require('bcryptjs').hash('NewPass',12).then(console.log)"
 //   - Задать надёжный JWT_SECRET в .env (обязательно для production)
 
-const users = [
+const fs   = require("fs");
+const path = require("path");
+
+const USERS_FILE = path.join(__dirname, "users.json");
+
+// ─── Начальные данные (используются только если users.json не существует) ──
+const SEED = [
   {
     id:           "admin_001",
     username:     "allisyeo",
@@ -77,6 +82,32 @@ const users = [
   }
 ];
 
+// ─── Загрузка / инициализация ───────────────────────────────────────────────
+function loadUsers() {
+  try {
+    if (fs.existsSync(USERS_FILE)) {
+      return JSON.parse(fs.readFileSync(USERS_FILE, "utf8"));
+    }
+  } catch (e) {
+    console.error("[USERS] Ошибка чтения users.json, использую seed-данные:", e.message);
+  }
+  // Первый запуск — сохраняем seed в файл
+  saveUsers(SEED);
+  return SEED.map(u => ({ ...u }));
+}
+
+function saveUsers(list) {
+  try {
+    fs.writeFileSync(USERS_FILE, JSON.stringify(list, null, 2), "utf8");
+  } catch (e) {
+    console.error("[USERS] Ошибка сохранения users.json:", e.message);
+  }
+}
+
+// Рабочий массив — загружается при старте сервера
+const users = loadUsers();
+
+// ─── Публичные функции ──────────────────────────────────────────────────────
 function findByUsername(username) {
   return users.find(u => u.username === username);
 }
@@ -96,16 +127,23 @@ function allPublicUsers() {
 
 function _addUser(user) {
   users.push(user);
+  saveUsers(users);
 }
 
 function _updateUserPassword(id, newHash) {
   const user = users.find(u => u.id === id);
-  if (user) user.passwordHash = newHash;
+  if (user) {
+    user.passwordHash = newHash;
+    saveUsers(users);
+  }
 }
 
 function _updateUser(id, fields) {
   const user = users.find(u => u.id === id);
-  if (user) Object.assign(user, fields);
+  if (user) {
+    Object.assign(user, fields);
+    saveUsers(users);
+  }
   return user;
 }
 

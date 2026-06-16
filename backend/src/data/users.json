@@ -1,0 +1,67 @@
+[
+  {
+    "id": "admin_001",
+    "username": "allisyeo",
+    "name": "Алишер Аудун",
+    "role": "admin",
+    "status": "Администратор сайта",
+    "email": "allisyeo@kazakhtelecom.kz",
+    "phone": "+7 701 000 0001",
+    "createdAt": "2024-01-15T09:00:00.000Z",
+    "lastLogin": "2026-06-16T07:41:14.861Z",
+    "active": true,
+    "passwordHash": "$2b$12$exMp9h6U1y5jNyG.D7G/M.yaRaRjkLl8N5./jJYYy79tQqUB4UgP2"
+  },
+  {
+    "id": "user_002",
+    "username": "d.seitkali",
+    "name": "Дильназ Сейткали",
+    "role": "manager",
+    "status": "Руководитель",
+    "email": "d.seitkali@kazakhtelecom.kz",
+    "phone": "+7 702 123 4567",
+    "createdAt": "2024-02-10T10:30:00.000Z",
+    "lastLogin": "2026-06-14T08:22:00.000Z",
+    "active": true,
+    "passwordHash": ""
+  },
+  {
+    "id": "user_003",
+    "username": "k.sydykova",
+    "name": "Каракоз Сыздыкова",
+    "role": "manager",
+    "status": "Менеджер",
+    "email": "k.sydykova@kazakhtelecom.kz",
+    "phone": "+7 705 234 5678",
+    "createdAt": "2024-03-05T08:15:00.000Z",
+    "lastLogin": "2026-06-15T11:45:00.000Z",
+    "active": true,
+    "passwordHash": ""
+  },
+  {
+    "id": "user_004",
+    "username": "a.bekova",
+    "name": "Айгерим Бекова",
+    "role": "manager",
+    "status": "Менеджер",
+    "email": "a.bekova@kazakhtelecom.kz",
+    "phone": "+7 707 345 6789",
+    "createdAt": "2024-04-20T14:00:00.000Z",
+    "lastLogin": "2026-06-13T16:10:00.000Z",
+    "active": true,
+    "passwordHash": ""
+  },
+  {
+    "id": "user_005",
+    "username": "r.nurmagambetov",
+    "name": "Рустем Нурмагамбетов",
+    "role": "manager",
+    "status": "Руководитель",
+    "email": "r.nurmagambetov@kazakhtelecom.kz",
+    "phone": "+7 771 456 7890",
+    "createdAt": "2024-05-12T09:45:00.000Z",
+    "lastLogin": "2026-06-10T09:00:00.000Z",
+    "active": false,
+    "passwordHash": ""
+  }
+]
