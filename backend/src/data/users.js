@@ -98,4 +98,15 @@ function _addUser(user) {
   users.push(user);
 }
 
-module.exports = { findByUsername, findById, publicUser, allPublicUsers, _addUser };
+function _updateUserPassword(id, newHash) {
+  const user = users.find(u => u.id === id);
+  if (user) user.passwordHash = newHash;
+}
+
+function _updateUser(id, fields) {
+  const user = users.find(u => u.id === id);
+  if (user) Object.assign(user, fields);
+  return user;
+}
+
+module.exports = { findByUsername, findById, publicUser, allPublicUsers, _addUser, _updateUserPassword, _updateUser };

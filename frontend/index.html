@@ -152,6 +152,174 @@
       cursor: pointer;
     }
 
+    /* ── Профиль пользователя в сайдбаре ── */
+    .user-profile-wrap {
+      margin-top: 8px;
+      position: relative;
+    }
+
+    .user-profile-btn {
+      margin-top: 0;
+      display: flex;
+      align-items: center;
+      gap: 11px;
+      padding: 12px 14px;
+      border-radius: 16px;
+      background: rgba(255, 255, 255, 0.07);
+      border: 1px solid rgba(255, 255, 255, 0.1);
+      cursor: pointer;
+      transition: background 0.15s;
+      text-align: left;
+      width: 100%;
+      color: #fff;
+      position: relative;
+    }
+
+    .user-profile-btn:hover {
+      background: rgba(255, 255, 255, 0.13);
+    }
+
+    .user-avatar {
+      width: 38px;
+      height: 38px;
+      border-radius: 12px;
+      background: linear-gradient(135deg, #3b82f6, #8b5cf6);
+      display: grid;
+      place-items: center;
+      font-weight: 800;
+      font-size: 14px;
+      color: #fff;
+      flex-shrink: 0;
+    }
+
+    .user-info {
+      flex: 1;
+      min-width: 0;
+    }
+
+    .user-info-name {
+      font-size: 13px;
+      font-weight: 700;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      color: #f1f5f9;
+    }
+
+    .user-info-role {
+      font-size: 11px;
+      color: #94a3b8;
+      margin-top: 2px;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+
+    .user-chevron {
+      font-size: 12px;
+      color: #64748b;
+      flex-shrink: 0;
+    }
+
+    /* ── Попап профиля ── */
+    .user-popup {
+      display: none;
+      position: absolute;
+      bottom: calc(100% + 10px);
+      left: 0;
+      right: 0;
+      background: #1e293b;
+      border: 1px solid #334155;
+      border-radius: 18px;
+      box-shadow: 0 24px 60px rgba(0, 0, 0, 0.5);
+      z-index: 50;
+      overflow: hidden;
+    }
+
+    .user-popup.open { display: block; }
+
+    .user-popup-head {
+      padding: 18px 18px 14px;
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      border-bottom: 1px solid #334155;
+    }
+
+    .user-popup-avatar {
+      width: 48px;
+      height: 48px;
+      border-radius: 14px;
+      background: linear-gradient(135deg, #3b82f6, #8b5cf6);
+      display: grid;
+      place-items: center;
+      font-weight: 800;
+      font-size: 18px;
+      color: #fff;
+      flex-shrink: 0;
+    }
+
+    .user-popup-name {
+      font-size: 15px;
+      font-weight: 750;
+      color: #f1f5f9;
+      letter-spacing: -0.02em;
+    }
+
+    .user-popup-status {
+      font-size: 12px;
+      color: #94a3b8;
+      margin-top: 2px;
+    }
+
+    .user-popup-fields {
+      padding: 14px 18px;
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+    }
+
+    .user-popup-field {
+      display: flex;
+      flex-direction: column;
+      gap: 2px;
+    }
+
+    .user-popup-field-label {
+      font-size: 10px;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      color: #475569;
+    }
+
+    .user-popup-field-value {
+      font-size: 13px;
+      color: #cbd5e1;
+    }
+
+    .user-popup-logout {
+      margin: 0 12px 12px;
+      width: calc(100% - 24px);
+      padding: 11px 14px;
+      border: 1px solid rgba(248, 113, 113, 0.25);
+      border-radius: 12px;
+      background: rgba(248, 113, 113, 0.08);
+      color: #f87171;
+      font-size: 13px;
+      font-weight: 700;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      transition: background 0.15s;
+      font-family: inherit;
+    }
+
+    .user-popup-logout:hover {
+      background: rgba(248, 113, 113, 0.16);
+    }
+
     .main {
       padding: 24px 28px 36px;
       overflow: hidden;
@@ -1493,6 +1661,42 @@
         <p>AI-агент сейчас работает в режиме согласования: ответы не отправляются без подтверждения.</p>
         <button class="upgrade">Настроить агента</button>
       </div>
+
+      <!-- Профиль пользователя + попап -->
+      <div class="user-profile-wrap">
+        <!-- Всплывающий попап профиля -->
+        <div class="user-popup" id="userPopup">
+          <div class="user-popup-head">
+            <div class="user-popup-avatar" id="popupAvatar">?</div>
+            <div>
+              <div class="user-popup-name" id="popupName">—</div>
+              <div class="user-popup-status" id="popupStatus">—</div>
+            </div>
+          </div>
+          <div class="user-popup-fields">
+            <div class="user-popup-field">
+              <div class="user-popup-field-label">Телефон</div>
+              <div class="user-popup-field-value" id="popupPhone">—</div>
+            </div>
+            <div class="user-popup-field">
+              <div class="user-popup-field-label">Email</div>
+              <div class="user-popup-field-value" id="popupEmail">—</div>
+            </div>
+          </div>
+          <button class="user-popup-logout" onclick="logoutUser()">
+            <span>⎋</span> Выйти из аккаунта
+          </button>
+        </div>
+
+        <div class="user-profile-btn" id="userProfileBtn" onclick="toggleUserPopup()" role="button" tabindex="0">
+          <div class="user-avatar" id="sidebarUserAvatar">?</div>
+          <div class="user-info nav-text">
+            <div class="user-info-name" id="sidebarUserName">Загрузка...</div>
+            <div class="user-info-role" id="sidebarUserRole">—</div>
+          </div>
+          <span class="user-chevron nav-text">▲</span>
+        </div>
+      </div>
     </aside>
 
     <main class="main">
@@ -1807,11 +2011,6 @@
             </div>
           </div>
 
-          <div style="margin-top:32px;padding-top:24px;border-top:1px solid var(--line);">
-            <button class="btn secondary" id="btnLogout" onclick="logoutUser()" style="border-color:var(--line);gap:6px;display:flex;align-items:center">
-              <span style="font-size:15px;line-height:1">⎋</span> Выйти
-            </button>
-          </div>
         </div>
       </section>
     </main>
@@ -3477,6 +3676,7 @@
         // Авторизован — показываем приложение
         document.querySelector(".app").style.visibility = "visible";
         console.info("[KT MediaScanner] Авторизован как:", data.user.name);
+        fillUserProfile(data.user);
 
         // ─── Инициализация приложения ───────────────────────────────────────
         // Сначала рендерим с demo-данными (мгновенно),
@@ -3511,6 +3711,31 @@
         renderAll();
       }
     })();
+
+    // ─── Профиль пользователя в сайдбаре ─────────────────────────────────────
+    function fillUserProfile(user) {
+      const initials = (user.name || "?").split(" ").map(w => w[0]).join("").slice(0, 2).toUpperCase();
+      document.getElementById("sidebarUserAvatar").textContent = initials;
+      document.getElementById("sidebarUserName").textContent   = user.name || user.username;
+      document.getElementById("sidebarUserRole").textContent   = user.status || user.role || "—";
+      document.getElementById("popupAvatar").textContent       = initials;
+      document.getElementById("popupName").textContent         = user.name || user.username;
+      document.getElementById("popupStatus").textContent       = user.status || user.role || "—";
+      document.getElementById("popupPhone").textContent        = user.phone || "—";
+      document.getElementById("popupEmail").textContent        = user.email || "—";
+    }
+
+    function toggleUserPopup() {
+      document.getElementById("userPopup").classList.toggle("open");
+    }
+
+    // Закрыть попап при клике вне обёртки
+    document.addEventListener("click", (e) => {
+      const wrap = document.getElementById("userProfileBtn")?.closest(".user-profile-wrap");
+      if (wrap && !wrap.contains(e.target)) {
+        document.getElementById("userPopup").classList.remove("open");
+      }
+    });
 
     // ─── Кнопка «Выйти» ──────────────────────────────────────────────────────
     async function logoutUser() {
