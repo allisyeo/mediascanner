@@ -4,15 +4,10 @@ const jwt = require("jsonwebtoken");
 
 // JWT_SECRET берётся только из env.
 // В dev-режиме допустим временный fallback, но в production — обязателен .env
-const JWT_SECRET = process.env.JWT_SECRET || (
-  process.env.NODE_ENV !== "production"
-    ? "kt_mediascanner_dev_secret_CHANGE_IN_PRODUCTION"
-    : null
-);
+const JWT_SECRET = process.env.JWT_SECRET || "kt_mediascanner_dev_secret_CHANGE_IN_PRODUCTION";
 
-if (!JWT_SECRET) {
-  console.error("[FATAL] JWT_SECRET не задан в .env. Сервер не может работать без него в production.");
-  process.exit(1);
+if (!process.env.JWT_SECRET) {
+  console.warn("[WARN] JWT_SECRET не задан в .env — используется небезопасный fallback. Установите JWT_SECRET в production.");
 }
 
 const COOKIE_NAME = process.env.AUTH_COOKIE_NAME || "kt_mediascanner_auth";
