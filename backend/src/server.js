@@ -79,18 +79,14 @@ app.use("/api/monitor",   requireAuth, monitorRouter);
 // ─── Раздача frontend ────────────────────────────────────────────────────────
 // Express раздаёт файлы из папки frontend/ как статику.
 // При переносе на VPS nginx может взять эту роль — тогда закомментировать блок.
-// На Vercel __dirname = /var/task/api/, локально = /...../backend/src/
-// Ищем frontend/ относительно корня репозитория
-const frontendDir = process.env.VERCEL
-  ? path.join(__dirname, "../frontend")
-  : path.join(__dirname, "../../frontend");
-
-app.use(express.static(frontendDir));
-
-// SPA fallback: любой неизвестный GET-запрос отдаёт index.html
-app.get("*", (req, res) => {
-  res.sendFile(path.join(frontendDir, "index.html"));
-});
+// На Vercel статику раздаёт CDN (vercel.json rewrites), Express только API
+if (!process.env.VERCEL) {
+  const frontendDir = path.join(__dirname, "../../frontend");
+  app.use(express.static(frontendDir));
+  app.get("*", (req, res) => {
+    res.sendFile(path.join(frontendDir, "index.html"));
+  });
+}
 
 // ─── Глобальный обработчик ошибок ───────────────────────────────────────────
 app.use((err, req, res, _next) => {
