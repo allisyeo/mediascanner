@@ -35,7 +35,7 @@
     "phone": "+7 705 234 5678",
     "createdAt": "2024-03-05T08:15:00.000Z",
     "lastLogin": "2026-06-15T11:45:00.000Z",
-    "active": true,
+    "active": false,
     "passwordHash": ""
   },
   {
@@ -48,7 +48,7 @@
     "phone": "+7 707 345 6789",
     "createdAt": "2024-04-20T14:00:00.000Z",
     "lastLogin": "2026-06-13T16:10:00.000Z",
-    "active": true,
+    "active": false,
     "passwordHash": ""
   },
   {

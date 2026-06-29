@@ -3217,7 +3217,7 @@
     });
 
     document.getElementById("btnExport").addEventListener("click", () => {
-      showToast("Отчёт сформирован", "success");
+      exportMentionsCSV();
     });
 
     document.getElementById("btnNewProject").addEventListener("click", () => openModal("modalNewProject"));
@@ -3346,7 +3346,7 @@
     document.getElementById("modalReport").addEventListener("click", e => {
       if (e.target.dataset.action === "export-report") {
         closeModal("modalReport");
-        showToast("Отчёт сформирован", "success");
+        exportMentionsCSV();
       }
     });
 
@@ -3738,6 +3738,36 @@
     });
 
     // ─── Кнопка «Выйти» ──────────────────────────────────────────────────────
+    function exportMentionsCSV() {
+      const rows = [
+        ["ID", "Источник", "Сотрудник", "Тональность", "Статус", "Ключевое слово", "Текст", "Дата"]
+      ];
+      const list = getFilteredMentions();
+      list.forEach(m => {
+        rows.push([
+          m.id,
+          m.source      || "",
+          m.employee    || "",
+          m.sentiment   || "",
+          m.status      || "",
+          m.keyword     || "",
+          (m.text || "").replace(/"/g, '""'),
+          m.date        || ""
+        ]);
+      });
+      const csv = rows.map(r => r.map(v => `"${v}"`).join(";")).join("\r\n");
+      const bom  = "﻿"; // BOM для корректного открытия в Excel
+      const blob = new Blob([bom + csv], { type: "text/csv;charset=utf-8;" });
+      const url  = URL.createObjectURL(blob);
+      const a    = document.createElement("a");
+      const date = new Date().toISOString().slice(0, 10);
+      a.href     = url;
+      a.download = `mediascanner_mentions_${date}.csv`;
+      a.click();
+      URL.revokeObjectURL(url);
+      showToast(`Экспортировано ${list.length} упоминаний`, "success");
+    }
+
     async function logoutUser() {
       try {
         await fetch("/api/auth/logout", {

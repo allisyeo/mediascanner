@@ -653,6 +653,11 @@
               <tr><td><span class="method method-get">GET</span></td><td class="route-path">/api/sla</td><td>SLA-статистика</td><td><span class="lock-auth">🔒 JWT</span></td></tr>
               <tr><td><span class="method method-get">GET</span></td><td class="route-path">/api/telegram/status</td><td>Статус Telegram</td><td><span class="lock-auth">🔒 JWT</span></td></tr>
               <tr><td><span class="method method-get">GET</span></td><td class="route-path">/api/instagram/status</td><td>Статус Instagram</td><td><span class="lock-auth">🔒 JWT</span></td></tr>
+              <tr><td><span class="method method-get">GET</span></td><td class="route-path">/api/users/:id</td><td>Пользователь по ID</td><td><span class="lock-auth">🔒 JWT</span></td></tr>
+              <tr><td><span class="method method-patch">PATCH</span></td><td class="route-path">/api/users/:id</td><td>Изменить пользователя</td><td><span class="lock-auth">🔒 JWT</span></td></tr>
+              <tr><td><span class="method method-get">GET</span></td><td class="route-path">/api/monitor/status</td><td>Статус сервера и метрики</td><td><span class="lock-auth">🔒 JWT</span></td></tr>
+              <tr><td><span class="method method-get">GET</span></td><td class="route-path">/api/monitor/alerts</td><td>Журнал алертов</td><td><span class="lock-auth">🔒 JWT</span></td></tr>
+              <tr><td><span class="method method-delete">DELETE</span></td><td class="route-path">/api/monitor/alerts</td><td>Очистить алерты</td><td><span class="lock-auth">🔒 JWT</span></td></tr>
             </tbody>
           </table>
         </div>
@@ -789,7 +794,8 @@
       document.querySelectorAll(".page").forEach(p => p.classList.remove("active"));
       btn.classList.add("active");
       document.getElementById("page-" + btn.dataset.page).classList.add("active");
-      if (btn.dataset.page === "users") loadUsersPage();
+      if (btn.dataset.page === "users")   loadUsersPage();
+      if (btn.dataset.page === "monitor") loadMonitor();
     });
   });
 
