@@ -103,15 +103,17 @@ app.use((err, req, res, _next) => {
   });
 });
 
-// ─── Запуск ─────────────────────────────────────────────────────────────────
-app.listen(PORT, () => {
-  console.log("━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━");
-  console.log("  KT MediaScanner API");
-  console.log(`  http://localhost:${PORT}`);
-  console.log(`  http://localhost:${PORT}/login.html`);
-  console.log(`  http://localhost:${PORT}/api/health`);
-  console.log(`  MODE: ${process.env.NODE_ENV || "development"} (demo data)`);
-  console.log("━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━");
-});
+// ─── Запуск (только локально, не на Vercel) ─────────────────────────────────
+if (!process.env.VERCEL) {
+  app.listen(PORT, () => {
+    console.log("━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━");
+    console.log("  KT MediaScanner API");
+    console.log(`  http://localhost:${PORT}`);
+    console.log(`  http://localhost:${PORT}/login.html`);
+    console.log(`  http://localhost:${PORT}/api/health`);
+    console.log(`  MODE: ${process.env.NODE_ENV || "development"} (demo data)`);
+    console.log("━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━");
+  });
+}
 
 module.exports = app;
