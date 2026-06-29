@@ -17,9 +17,11 @@ const slaRouter       = require("./routes/sla");
 const telegramRouter  = require("./routes/telegram");
 const instagramRouter = require("./routes/instagram");
 const usersRouter     = require("./routes/users");
+const monitorRouter   = require("./routes/monitor");
 
 // ─── Middleware авторизации ─────────────────────────────────────────────────
 const { requireAuth } = require("./middleware/auth");
+const { addAlert }    = require("./data/alerts");
 
 const app  = express();
 const PORT = process.env.PORT || 3000;
@@ -33,10 +35,30 @@ app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
 app.use(cookieParser()); // читает httpOnly cookies
 
-// Логирование запросов
+// Логирование запросов + перехват HTTP 5xx для алертов
 app.use((req, res, next) => {
   const ts = new Date().toISOString();
   console.log(`[${ts}] ${req.method} ${req.path}`);
+
+  const orig = res.json.bind(res);
+  res.json = function(body) {
+    if (res.statusCode >= 500) {
+      addAlert({
+        level:   "error",
+        source:  req.method + " " + req.path,
+        message: (body && body.message) || "HTTP " + res.statusCode,
+        detail:  JSON.stringify(body)
+      });
+    } else if (res.statusCode >= 400 && res.statusCode !== 401 && res.statusCode !== 404) {
+      addAlert({
+        level:   "warn",
+        source:  req.method + " " + req.path,
+        message: (body && body.message) || "HTTP " + res.statusCode,
+        detail:  null
+      });
+    }
+    return orig(body);
+  };
   next();
 });
 
@@ -52,6 +74,7 @@ app.use("/api/sla",       requireAuth, slaRouter);
 app.use("/api/telegram",  requireAuth, telegramRouter);
 app.use("/api/instagram", requireAuth, instagramRouter);
 app.use("/api/users",     requireAuth, usersRouter);
+app.use("/api/monitor",   requireAuth, monitorRouter);
 
 // ─── Раздача frontend ────────────────────────────────────────────────────────
 // Express раздаёт файлы из папки frontend/ как статику.
@@ -67,6 +90,12 @@ app.get("*", (req, res) => {
 // ─── Глобальный обработчик ошибок ───────────────────────────────────────────
 app.use((err, req, res, _next) => {
   console.error("[ERROR]", err.message);
+  addAlert({
+    level:   "error",
+    source:  req.method + " " + req.path,
+    message: err.message || "Внутренняя ошибка сервера",
+    detail:  err.stack ? err.stack.split("\n").slice(0, 3).join(" | ") : null
+  });
   res.status(500).json({
     success: false,
     message: "Внутренняя ошибка сервера",

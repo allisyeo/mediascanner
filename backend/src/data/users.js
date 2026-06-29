@@ -11,7 +11,9 @@
 const fs   = require("fs");
 const path = require("path");
 
-const USERS_FILE = path.join(__dirname, "users.json");
+const USERS_FILE = process.env.VERCEL
+  ? "/tmp/kt_users.json"
+  : path.join(__dirname, "users.json");
 
 // ─── Начальные данные (используются только если users.json не существует) ──
 const SEED = [

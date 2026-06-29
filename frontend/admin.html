@@ -256,6 +256,25 @@
       box-shadow: 0 0 0 3px rgba(37,87,214,0.12);
     }
 
+    /* ── Alert levels ── */
+    .alert-badge {
+      display: inline-flex; align-items: center; gap: 5px;
+      padding: 3px 9px; border-radius: 20px;
+      font-size: 11px; font-weight: 750; white-space: nowrap;
+    }
+    .alert-error { background: var(--red-soft);    color: var(--red); }
+    .alert-warn  { background: var(--yellow-soft); color: var(--yellow); }
+    .alert-info  { background: var(--accent-soft); color: var(--accent); }
+    .alert-detail {
+      font-size: 11px; color: var(--muted); font-family: monospace;
+      margin-top: 3px; white-space: pre-wrap; word-break: break-all;
+    }
+    .api-status-ok   { color: var(--green);  font-weight: 700; }
+    .api-status-err  { color: var(--red);    font-weight: 700; }
+    .api-status-auth { color: var(--yellow); font-weight: 700; }
+    .api-status-pending { color: var(--muted); }
+    .ping-ms { font-size: 11px; color: var(--muted); }
+
     /* ── Role select ── */
     .role-select {
       border: 1px solid var(--line); border-radius: 8px;
@@ -397,6 +416,10 @@
     </button>
     <button class="nav-item" data-page="routes">
       <span class="nav-icon">🔗</span><span>API маршруты</span>
+    </button>
+    <button class="nav-item" data-page="monitor">
+      <span class="nav-icon">📡</span><span>Мониторинг</span>
+      <span class="nav-badge" id="navBadgeAlerts" style="display:none">0</span>
     </button>
     <button class="nav-item" data-page="log">
       <span class="nav-icon">📋</span><span>Лог сессии</span>
@@ -636,6 +659,105 @@
       </div>
     </div>
 
+    <!-- ── Мониторинг ──────────────────────────────────────────── -->
+    <div class="page" id="page-monitor">
+      <div class="topbar">
+        <div>
+          <h2>Мониторинг</h2>
+          <p>Работоспособность API и алерты системы</p>
+        </div>
+        <div style="display:flex;gap:8px;align-items:center">
+          <span id="monLastUpdate" style="font-size:12px;color:var(--muted)">—</span>
+          <button class="btn btn-secondary btn-sm" onclick="loadMonitor()">🔄 Обновить</button>
+          <button class="btn btn-red btn-sm" onclick="clearMonitorAlerts()">🗑 Очистить алерты</button>
+        </div>
+      </div>
+
+      <!-- Карточки сервера -->
+      <div class="stat-grid" style="margin-bottom:20px">
+        <div class="stat-card">
+          <div class="stat-label">Сервер</div>
+          <div class="stat-value" id="monUptime" style="font-size:18px;margin-top:4px">—</div>
+          <div class="stat-sub">Uptime</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-label">Память (RSS)</div>
+          <div class="stat-value" id="monMem" style="font-size:18px;margin-top:4px">—</div>
+          <div class="stat-sub">Node.js heap</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-label">Ошибок</div>
+          <div class="stat-value" id="monErrCount" style="font-size:18px;margin-top:4px;color:var(--red)">—</div>
+          <div class="stat-sub">За текущую сессию</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-label">Предупреждений</div>
+          <div class="stat-value" id="monWarnCount" style="font-size:18px;margin-top:4px;color:var(--yellow)">—</div>
+          <div class="stat-sub">За текущую сессию</div>
+        </div>
+      </div>
+
+      <!-- Статус API-эндпоинтов -->
+      <div class="section">
+        <div class="card">
+          <div class="card-head">
+            <h3>Статус API</h3>
+            <button class="btn btn-secondary btn-sm" onclick="checkApiEndpoints()">Проверить все</button>
+          </div>
+          <div class="card-body" style="padding:0">
+            <table class="data-table" style="margin:0">
+              <thead>
+                <tr>
+                  <th style="width:140px">Эндпоинт</th>
+                  <th style="width:80px">Метод</th>
+                  <th style="width:100px">Статус</th>
+                  <th style="width:90px">Время</th>
+                  <th>Ответ</th>
+                </tr>
+              </thead>
+              <tbody id="apiStatusBody">
+                <tr><td colspan="5" class="empty-state">Нажмите «Проверить все»</td></tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+
+      <!-- Алерты -->
+      <div class="section">
+        <div class="card">
+          <div class="card-head">
+            <h3>Журнал алертов
+              <span id="alertTotalBadge" style="margin-left:8px;font-size:11px;font-weight:800;
+                padding:2px 8px;border-radius:20px;background:var(--line);color:var(--muted)">0</span>
+            </h3>
+            <div style="display:flex;gap:8px">
+              <select id="alertLevelFilter" class="role-select" onchange="renderAlerts()" style="font-size:12px;padding:5px 10px">
+                <option value="">Все уровни</option>
+                <option value="error">Ошибки</option>
+                <option value="warn">Предупреждения</option>
+                <option value="info">Информация</option>
+              </select>
+            </div>
+          </div>
+          <div class="card-body" style="padding:0;max-height:440px;overflow-y:auto" id="alertsScrollWrap">
+            <div class="empty-state" id="alertsEmpty">Алертов нет — система работает штатно</div>
+            <table class="data-table" id="alertsTable" style="display:none;margin:0">
+              <thead style="position:sticky;top:0;z-index:2">
+                <tr>
+                  <th style="width:90px">Уровень</th>
+                  <th style="width:160px">Источник</th>
+                  <th>Сообщение</th>
+                  <th style="width:140px">Время</th>
+                </tr>
+              </thead>
+              <tbody id="alertsBody"></tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+    </div>
+
     <!-- ── Лог ───────────────────────────────────────────────────── -->
     <div class="page" id="page-log">
       <div class="topbar">
@@ -696,6 +818,173 @@
     log("Лог очищен", "info");
   }
 
+  // ── Мониторинг ─────────────────────────────────────────────────────────
+  let monitorAlerts = [];
+  let monitorTimer  = null;
+
+  async function loadMonitor() {
+    try {
+      const res  = await fetch("/api/monitor/status", { credentials: "include" });
+      if (!res.ok) return;
+      const data = await res.json();
+      if (!data.success) return;
+
+      const s = data.server;
+      document.getElementById("monUptime").textContent   = s.uptimeFmt;
+      document.getElementById("monMem").textContent      = s.memMB + " МБ";
+      document.getElementById("monErrCount").textContent = data.alerts.error || 0;
+      document.getElementById("monWarnCount").textContent= data.alerts.warn  || 0;
+      document.getElementById("monLastUpdate").textContent = "Обновлено: " +
+        new Date().toLocaleTimeString("ru-RU", { hour: "2-digit", minute: "2-digit", second: "2-digit" });
+    } catch (e) { /* silent */ }
+
+    await loadMonitorAlerts();
+  }
+
+  async function loadMonitorAlerts() {
+    try {
+      const res  = await fetch("/api/monitor/alerts?limit=100", { credentials: "include" });
+      if (!res.ok) return;
+      const data = await res.json();
+      monitorAlerts = data.data || [];
+      renderAlerts();
+      updateAlertBadge();
+    } catch (e) { /* silent */ }
+  }
+
+  function renderAlerts() {
+    const filter = document.getElementById("alertLevelFilter")?.value || "";
+    const list   = filter ? monitorAlerts.filter(a => a.level === filter) : monitorAlerts;
+
+    const badge = document.getElementById("alertTotalBadge");
+    if (badge) badge.textContent = list.length;
+
+    const empty = document.getElementById("alertsEmpty");
+    const table = document.getElementById("alertsTable");
+    const tbody = document.getElementById("alertsBody");
+    if (!tbody) return;
+
+    if (!list.length) {
+      empty.style.display = "block";
+      table.style.display = "none";
+      return;
+    }
+    empty.style.display = "none";
+    table.style.display = "";
+
+    tbody.innerHTML = list.map(a => {
+      const levelCls = { error: "alert-error", warn: "alert-warn", info: "alert-info" }[a.level] || "alert-info";
+      const levelLbl = { error: "⛔ Ошибка", warn: "⚠️ Предупр.", info: "ℹ️ Инфо" }[a.level] || a.level;
+      const ts = new Date(a.ts).toLocaleString("ru-RU", {
+        day:"2-digit", month:"2-digit", hour:"2-digit", minute:"2-digit", second:"2-digit"
+      });
+      const detail = a.detail
+        ? `<div class="alert-detail">${escHtml(a.detail)}</div>`
+        : "";
+      return `<tr>
+        <td><span class="alert-badge ${levelCls}">${levelLbl}</span></td>
+        <td style="font-size:12px;font-family:monospace;color:var(--muted)">${escHtml(a.source || "—")}</td>
+        <td style="font-size:13px">${escHtml(a.message || "—")}${detail}</td>
+        <td style="font-size:11px;color:var(--muted);white-space:nowrap">${ts}</td>
+      </tr>`;
+    }).join("");
+  }
+
+  function updateAlertBadge() {
+    const errCount = monitorAlerts.filter(a => a.level === "error").length;
+    const badge    = document.getElementById("navBadgeAlerts");
+    if (!badge) return;
+    if (errCount > 0) {
+      badge.textContent    = errCount;
+      badge.style.display  = "inline-block";
+    } else {
+      badge.style.display  = "none";
+    }
+  }
+
+  async function clearMonitorAlerts() {
+    if (!confirm("Очистить все алерты?")) return;
+    try {
+      await fetch("/api/monitor/alerts", { method: "DELETE", credentials: "include" });
+      monitorAlerts = [];
+      renderAlerts();
+      updateAlertBadge();
+      toast("Журнал алертов очищен", "success");
+    } catch (e) {
+      toast("Ошибка при очистке алертов", "error");
+    }
+  }
+
+  async function checkApiEndpoints() {
+    const tbody = document.getElementById("apiStatusBody");
+    if (!tbody) return;
+
+    const res  = await fetch("/api/monitor/status", { credentials: "include" });
+    const data = await res.json();
+    const groups = data.apiGroups || [];
+
+    tbody.innerHTML = groups.map(g =>
+      `<tr id="apirow-${g.id}">
+        <td style="font-family:monospace;font-size:12px">${escHtml(g.path)}</td>
+        <td><span class="method method-${g.method.toLowerCase()}">${g.method}</span></td>
+        <td class="api-status-pending" id="apistatus-${g.id}">⏳ Проверка...</td>
+        <td class="ping-ms" id="apims-${g.id}">—</td>
+        <td style="font-size:11px;color:var(--muted)" id="apiresp-${g.id}">—</td>
+      </tr>`
+    ).join("");
+
+    for (const g of groups) {
+      const t0  = performance.now();
+      try {
+        const r   = await fetch(g.path, { method: g.method, credentials: "include" });
+        const ms  = Math.round(performance.now() - t0);
+        const txt = await r.text().catch(() => "");
+        let preview = "";
+        try { const j = JSON.parse(txt); preview = j.status || j.message || (j.success ? "ok" : "—"); } catch {}
+
+        const statusEl = document.getElementById(`apistatus-${g.id}`);
+        const msEl     = document.getElementById(`apims-${g.id}`);
+        const respEl   = document.getElementById(`apiresp-${g.id}`);
+
+        if (r.status === 401) {
+          statusEl.className = "api-status-auth";
+          statusEl.textContent = "🔒 401 Auth";
+        } else if (r.ok) {
+          statusEl.className = "api-status-ok";
+          statusEl.textContent = "✅ " + r.status + " OK";
+        } else {
+          statusEl.className = "api-status-err";
+          statusEl.textContent = "❌ " + r.status;
+        }
+        msEl.textContent   = ms + " мс";
+        respEl.textContent = preview;
+      } catch (e) {
+        const ms = Math.round(performance.now() - t0);
+        document.getElementById(`apistatus-${g.id}`).className   = "api-status-err";
+        document.getElementById(`apistatus-${g.id}`).textContent = "❌ Недоступен";
+        document.getElementById(`apims-${g.id}`).textContent     = ms + " мс";
+        document.getElementById(`apiresp-${g.id}`).textContent   = e.message;
+      }
+    }
+  }
+
+  function escHtml(s) {
+    return String(s).replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;");
+  }
+
+  function startMonitorPolling() {
+    loadMonitor();
+    if (monitorTimer) clearInterval(monitorTimer);
+    monitorTimer = setInterval(() => {
+      if (document.getElementById("page-monitor")?.classList.contains("active")) {
+        loadMonitor();
+      } else {
+        // Обновляем бейдж даже на других вкладках
+        loadMonitorAlerts();
+      }
+    }, 10000);
+  }
+
   let currentAdminId = null;
   const userNames = {}; // id → актуальное имя
 
@@ -739,6 +1028,7 @@
     await loadPending();
 
     setInterval(loadPending, 10000);
+    startMonitorPolling();
   })();
 
   // ── Health-check ────────────────────────────────────────────────────────

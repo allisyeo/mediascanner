@@ -10,7 +10,9 @@ const { findByUsername, findById, publicUser } = require("../data/users");
 const { JWT_SECRET, COOKIE_NAME, requireAuth } = require("../middleware/auth");
 
 // ─── Хранилище заявок на регистрацию (JSON-файл) ───────────────────────────
-const PENDING_FILE = path.join(__dirname, "../data/pending.json");
+const PENDING_FILE = process.env.VERCEL
+  ? "/tmp/kt_pending.json"
+  : path.join(__dirname, "../data/pending.json");
 
 function loadPending() {
   try {
