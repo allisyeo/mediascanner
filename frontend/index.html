@@ -3634,7 +3634,7 @@
       const tgStatus = await apiRequest("/api/telegram/status");
       const tgCard = document.getElementById("telegramSourceCardStatus");
       if (tgCard) {
-        if (tgStatus && tgStatus.connected) {
+        if (tgStatus && (tgStatus.connected || tgStatus.botConnected)) {
           tgCard.textContent = "Подключено (бот)";
           tgCard.style.color = "#0f9f6e";
         } else {
