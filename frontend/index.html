@@ -1708,6 +1708,7 @@
         <div class="top-actions">
           <input class="search" id="globalSearch" placeholder="Поиск по тексту упоминания..." />
           <button class="btn secondary" id="btnExport">Экспорт</button>
+          <button class="btn" id="btnScanInstagram" style="background:#e1306c;color:#fff;border:none" title="Поиск упоминаний в Instagram по ключевым словам">📸 Сканировать Instagram</button>
           <button class="btn" id="btnNewProject">+ Новый проект</button>
         </div>
       </header>
@@ -3220,6 +3221,8 @@
       exportMentionsCSV();
     });
 
+    document.getElementById("btnScanInstagram").addEventListener("click", () => scanInstagram());
+
     document.getElementById("btnNewProject").addEventListener("click", () => openModal("modalNewProject"));
     document.getElementById("btnAddKeyword").addEventListener("click", () => {
       resetKeywordForm();
@@ -3736,6 +3739,48 @@
         document.getElementById("userPopup").classList.remove("open");
       }
     });
+
+    // ─── Сканирование Instagram через Apify ──────────────────────────────────
+    async function scanInstagram() {
+      const btn = document.getElementById("btnScanInstagram");
+      btn.disabled = true;
+      btn.textContent = "⏳ Сканирование...";
+
+      try {
+        const res  = await fetch("/api/apify/scan-keywords", {
+          method: "POST",
+          credentials: "include",
+          headers: { "Content-Type": "application/json" }
+        });
+        const data = await res.json();
+
+        if (!res.ok || !data.success) {
+          throw new Error(data.message || "Ошибка сканирования");
+        }
+
+        if (data.total === 0) {
+          showToast("Instagram: новых упоминаний не найдено", "info");
+          return;
+        }
+
+        // Добавляем найденные упоминания в общий список
+        data.data.forEach(m => {
+          if (!mentions.find(x => x.id === m.id)) {
+            mentions.unshift(m);
+          }
+        });
+
+        renderMentions();
+        renderStats();
+        showToast(`📸 Instagram: найдено ${data.total} упоминаний`, "success");
+
+      } catch (err) {
+        showToast("Ошибка: " + err.message, "error");
+      } finally {
+        btn.disabled = false;
+        btn.textContent = "📸 Сканировать Instagram";
+      }
+    }
 
     // ─── Кнопка «Выйти» ──────────────────────────────────────────────────────
     function exportMentionsCSV() {
