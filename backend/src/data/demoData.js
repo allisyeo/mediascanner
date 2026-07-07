@@ -11,6 +11,7 @@ const employees = [
     name: "Ляззат Баймагамбетова",
     role: "Старший оператор",
     telegramUsername: "@lyazzat_b",
+    telegramChatId: "",
     status: "active"
   },
   {
@@ -18,6 +19,7 @@ const employees = [
     name: "Каракоз Сыздыкова",
     role: "Оператор",
     telegramUsername: "@karakoz_s",
+    telegramChatId: "",
     status: "active"
   },
   {
@@ -25,6 +27,7 @@ const employees = [
     name: "Жансая Медеубаева",
     role: "Оператор",
     telegramUsername: "@zhansaya_m",
+    telegramChatId: "",
     status: "active"
   },
   {
@@ -32,6 +35,7 @@ const employees = [
     name: "Альменбетова Айнур Мейрамбековна",
     role: "Модератор",
     telegramUsername: "@ainur_a",
+    telegramChatId: "",
     status: "active"
   }
 ];

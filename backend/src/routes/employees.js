@@ -29,4 +29,17 @@ router.get("/:id", (req, res) => {
   res.json({ success: true, data: emp });
 });
 
+// PATCH /api/employees/:id — обновить telegramChatId (и другие поля)
+router.patch("/:id", (req, res) => {
+  const emp = employees.find(e => e.id === req.params.id);
+  if (!emp) {
+    return res.status(404).json({ success: false, message: "Сотрудник не найден" });
+  }
+  const allowed = ["telegramChatId", "telegramUsername", "role", "status"];
+  allowed.forEach(field => {
+    if (req.body[field] !== undefined) emp[field] = req.body[field];
+  });
+  res.json({ success: true, data: emp });
+});
+
 module.exports = router;
