@@ -2164,7 +2164,7 @@
         </p>
         <div class="modal-actions">
           <button class="btn secondary" data-close="modalConnectInstagram">Отмена</button>
-          <button class="btn" id="confirmConnectInstagram">Подключить (demo)</button>
+          <button class="btn" id="confirmConnectInstagram">Проверить подключение</button>
         </div>
       </div>
     </div>
@@ -2648,6 +2648,11 @@
       resetKeywordForm();
       closeModal("modalAddKeyword");
       showToast("Ключевое слово добавлено", "success");
+
+      apiRequest("/api/keywords", {
+        method: "POST",
+        body: JSON.stringify({ keyword: text, type: keyword.type, sources, status: keyword.active ? "active" : "inactive" })
+      });
     }
 
     function toggleKeyword(id) {
@@ -2658,6 +2663,7 @@
       renderKeywords();
       populateKeywordFilter();
       showToast(kw.active ? "Ключевое слово активировано" : "Ключевое слово отключено", "success");
+      apiRequest(`/api/keywords/${id}`, { method: "PATCH", body: JSON.stringify({ status: kw.active ? "active" : "inactive" }) });
     }
 
     function deleteKeyword(id) {
@@ -2666,6 +2672,7 @@
       renderKeywords();
       populateKeywordFilter();
       showToast("Ключевое слово удалено", "success");
+      apiRequest(`/api/keywords/${id}`, { method: "DELETE" });
     }
 
     // sendInstagramReply() определена ниже в блоке Backend API Integration.
@@ -2865,17 +2872,21 @@
     }
 
     function handleGenericSend(mentionId) {
-      const mention = mentions.find(m => m.id === mentionId);
+      const mention = mentions.find(m => String(m.id) === String(mentionId));
       if (!mention) return;
       const text = document.getElementById("replyModalText").value;
       if (!validateReplyText(text)) return;
 
+      const newStatus = isInstagramMention(mention) ? "Ответ отправлен" : "Обработан";
       mentionDrafts[mentionId] = text.trim();
-      appendReplyHistory(mention, text.trim(), APP_CONFIG.DEMO_MODE ? "demo_sent" : "sent");
-      mention.status = isInstagramMention(mention) ? "Ответ отправлен" : "Обработан";
+      appendReplyHistory(mention, text.trim(), "sent");
+      mention.status = newStatus;
       const wasOverdue = mention.slaMinutes < 0;
       mention.slaMinutes = 0;
       updateEmployeeSla(mention.employee, wasOverdue);
+
+      apiRequest(`/api/mentions/${mentionId}/status`, { method: "PATCH", body: JSON.stringify({ status: newStatus }) });
+      apiRequest(`/api/mentions/${mentionId}/reply`, { method: "POST", body: JSON.stringify({ author: "Оператор", text: text.trim() }) });
 
       addActionLog({ action: "Ответ сохранён", detail: `${mention.source} · ${mention.author}` });
       showToast("Ответ отправлен", "success");
@@ -3294,8 +3305,8 @@
     document.getElementById("agentQueue").addEventListener("click", e => {
       const btn = e.target.closest("[data-action]");
       if (!btn) return;
-      const id = parseInt(btn.dataset.id);
-      const mention = mentions.find(m => m.id === id);
+      const id = btn.dataset.id;
+      const mention = mentions.find(m => String(m.id) === String(id));
       if (!mention) return;
 
       if (!agentReplies[id]) agentReplies[id] = { text: "", editing: false };
@@ -3316,6 +3327,7 @@
           mention.status = "Обработан";
           mention.slaMinutes = 0;
           delete agentReplies[id];
+          apiRequest(`/api/mentions/${id}/status`, { method: "PATCH", body: JSON.stringify({ status: "Обработан" }) });
           showToast("Ответ отправлен", "success");
           renderAll();
           break;
@@ -3358,8 +3370,8 @@
       if (!btn) return;
       e.stopPropagation();
 
-      const id = parseInt(btn.dataset.id);
-      const mention = mentions.find(m => m.id === id);
+      const id = btn.dataset.id;
+      const mention = mentions.find(m => String(m.id) === String(id));
       if (!mention) return;
 
       switch (btn.dataset.mentionAction) {
