@@ -3,6 +3,7 @@ const { Router } = require("express");
 const router = Router();
 
 const APIFY_TOKEN  = process.env.APIFY_TOKEN;
+const mentionsStore = require("../data/mentionsStore");
 const APIFY_BASE   = "https://api.apify.com/v2";
 // Официальный Instagram Scraper от Apify
 const ACTOR_ID     = "apify~instagram-scraper";
@@ -91,8 +92,9 @@ router.post("/search", async (req, res) => {
       ? posts.map(p => postToMention(p, keyword))
       : [];
 
-    console.log(`[Apify] Найдено постов: ${mentions.length}`);
-    res.json({ success: true, keyword, searchType, total: mentions.length, data: mentions });
+    const added = mentionsStore.addMany(mentions);
+    console.log(`[Apify] Найдено: ${mentions.length}, новых: ${added}`);
+    res.json({ success: true, keyword, searchType, total: mentions.length, added, data: mentions });
 
   } catch (err) {
     console.error("[Apify] Ошибка:", err.message);
@@ -131,7 +133,9 @@ router.post("/scan-keywords", async (req, res) => {
       );
       const posts = await resultsRes.json();
       if (Array.isArray(posts)) {
-        allMentions.push(...posts.map(p => postToMention(p, kw.keyword)));
+        const items = posts.map(p => postToMention(p, kw.keyword));
+        mentionsStore.addMany(items);
+        allMentions.push(...items);
       }
     } catch (err) {
       errors.push({ keyword: kw.keyword, error: err.message });

@@ -1,18 +1,12 @@
 "use strict";
 const { Router } = require("express");
 const router = Router();
-const { mentions } = require("../data/demoData");
-
-// В-памяти хранилище для demo-режима.
-// TODO: заменить на запросы к PostgreSQL (см. DATABASE_URL в .env)
-let demоMentions = [...mentions];
+const store = require("../data/mentionsStore");
 
 // GET /api/mentions
-// Возвращает список упоминаний. Поддерживает фильтры через query-параметры:
-//   ?source=Instagram&sentiment=negative&status=Новый&keyword=интернет
 router.get("/", (req, res) => {
   const { source, sentiment, status, keyword, assignedTo } = req.query;
-  let result = [...demоMentions];
+  let result = store.getAll();
 
   if (source)     result = result.filter(m => m.source === source);
   if (sentiment)  result = result.filter(m => m.sentiment === sentiment);
@@ -26,119 +20,64 @@ router.get("/", (req, res) => {
     );
   }
 
-  res.json({
-    success: true,
-    mode: "demo",
-    total: result.length,
-    data: result
-  });
+  res.json({ success: true, total: result.length, data: result });
 });
 
 // GET /api/mentions/:id
-// Возвращает одно упоминание по id.
 router.get("/:id", (req, res) => {
-  const mention = demоMentions.find(m => m.id === req.params.id);
-  if (!mention) {
-    return res.status(404).json({ success: false, message: "Упоминание не найдено" });
-  }
+  const mention = store.getAll().find(m => m.id === req.params.id);
+  if (!mention) return res.status(404).json({ success: false, message: "Упоминание не найдено" });
   res.json({ success: true, data: mention });
 });
 
-// POST /api/mentions
-// Принимает новое упоминание (например, пришедшее от парсера/вебхука).
-// TODO: сохранять в PostgreSQL вместо массива в памяти
+// POST /api/mentions — добавить вручную или из парсера
 router.post("/", (req, res) => {
-  const {
-    source, author, text, sentiment,
-    keyword, status, assignedTo, priority,
-    slaStatus, instagramSourceType, instagramCommentId
-  } = req.body;
-
+  const { source, author, text, sentiment, keyword, status, assignedTo, priority } = req.body;
   if (!source || !text) {
-    return res.status(400).json({
-      success: false,
-      message: "Поля source и text обязательны"
-    });
+    return res.status(400).json({ success: false, message: "Поля source и text обязательны" });
   }
-
   const newMention = {
     id: "m_" + Date.now(),
-    source: source || "Telegram",
-    author: author || "@unknown",
-    text,
+    source, author: author || "@unknown", text,
     sentiment: sentiment || "neutral",
     importance: priority === "high" ? "high" : priority === "low" ? "low" : "medium",
     keyword: keyword || "",
     status: status || "Новый",
     assignedTo: assignedTo || null,
     priority: priority || "medium",
-    slaStatus: slaStatus || "good",
-    slaMinutes: 60,
-    instagramSourceType: instagramSourceType || null,
-    instagramCommentId: instagramCommentId || null,
-    replyHistory: [],
-    createdAt: new Date().toISOString()
+    slaStatus: "good", slaMinutes: 60,
+    instagramSourceType: null, instagramCommentId: null,
+    replyHistory: [], createdAt: new Date().toISOString()
   };
-
-  demоMentions.unshift(newMention);
-
-  res.status(201).json({
-    success: true,
-    mode: "demo",
-    message: "Упоминание добавлено",
-    data: newMention
-  });
+  store.addMany([newMention]);
+  res.status(201).json({ success: true, message: "Упоминание добавлено", data: newMention });
 });
 
 // PATCH /api/mentions/:id/status
-// Обновляет статус упоминания.
-// TODO: обновлять запись в PostgreSQL
 router.patch("/:id/status", (req, res) => {
-  const mention = demоMentions.find(m => m.id === req.params.id);
-  if (!mention) {
-    return res.status(404).json({ success: false, message: "Упоминание не найдено" });
-  }
   const { status } = req.body;
-  if (!status) {
-    return res.status(400).json({ success: false, message: "Поле status обязательно" });
-  }
-  mention.status = status;
-  mention.updatedAt = new Date().toISOString();
-  res.json({ success: true, mode: "demo", data: mention });
+  if (!status) return res.status(400).json({ success: false, message: "Поле status обязательно" });
+  const updated = store.update(req.params.id, { status, updatedAt: new Date().toISOString() });
+  if (!updated) return res.status(404).json({ success: false, message: "Упоминание не найдено" });
+  res.json({ success: true, data: updated });
 });
 
 // POST /api/mentions/:id/reply
-// Сохраняет ответ оператора в историю упоминания.
-// Для Instagram — вызывает /api/instagram/reply (через frontend или напрямую).
-// TODO: сохранять в таблицу reply_history в PostgreSQL
 router.post("/:id/reply", (req, res) => {
-  const mention = demоMentions.find(m => m.id === req.params.id);
-  if (!mention) {
-    return res.status(404).json({ success: false, message: "Упоминание не найдено" });
-  }
+  const mention = store.getAll().find(m => m.id === req.params.id);
+  if (!mention) return res.status(404).json({ success: false, message: "Упоминание не найдено" });
   const { author, text } = req.body;
-  if (!text) {
-    return res.status(400).json({ success: false, message: "Поле text обязательно" });
-  }
+  if (!text) return res.status(400).json({ success: false, message: "Поле text обязательно" });
+  const entry = { author: author || "Оператор", date: new Date().toLocaleString("ru-RU"), text, status: "sent" };
+  const replyHistory = [...(mention.replyHistory || []), entry];
+  store.update(mention.id, { replyHistory, status: "Ответ отправлен", updatedAt: new Date().toISOString() });
+  res.json({ success: true, message: "Ответ сохранён", data: entry });
+});
 
-  const historyEntry = {
-    author: author || "Оператор",
-    date: new Date().toLocaleString("ru-RU"),
-    text,
-    status: "demo_sent"
-  };
-
-  if (!mention.replyHistory) mention.replyHistory = [];
-  mention.replyHistory.push(historyEntry);
-  mention.status = "Ответ отправлен";
-  mention.updatedAt = new Date().toISOString();
-
-  res.json({
-    success: true,
-    mode: "demo",
-    message: "Ответ сохранён",
-    data: historyEntry
-  });
+// DELETE /api/mentions — очистить все
+router.delete("/", (req, res) => {
+  store.clear();
+  res.json({ success: true, message: "Все упоминания удалены" });
 });
 
 module.exports = router;

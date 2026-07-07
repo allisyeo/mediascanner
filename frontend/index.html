@@ -3584,6 +3584,9 @@
       if (mentionsResult && mentionsResult.success && Array.isArray(mentionsResult.data)) {
         mentions = mentionsResult.data.map(adaptMentionFromApi);
         console.info(`[API] mentions: ${mentions.length} загружено`);
+        if (mentions.length === 0) {
+          showToast("Упоминаний нет — нажмите «📸 Сканировать Instagram» для загрузки", "info");
+        }
       }
 
       // Загрузка ключевых слов (приоритет — API, иначе localStorage)
