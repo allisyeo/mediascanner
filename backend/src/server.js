@@ -18,6 +18,7 @@ const telegramRouter  = require("./routes/telegram");
 const instagramRouter = require("./routes/instagram");
 const usersRouter     = require("./routes/users");
 const monitorRouter   = require("./routes/monitor");
+const apifyRouter     = require("./routes/apify");
 
 // ─── Middleware авторизации ─────────────────────────────────────────────────
 const { requireAuth } = require("./middleware/auth");
@@ -75,6 +76,7 @@ app.use("/api/telegram",  requireAuth, telegramRouter);
 app.use("/api/instagram", requireAuth, instagramRouter);
 app.use("/api/users",     requireAuth, usersRouter);
 app.use("/api/monitor",   requireAuth, monitorRouter);
+app.use("/api/apify",     requireAuth, apifyRouter);
 
 // ─── Раздача frontend ────────────────────────────────────────────────────────
 // Express раздаёт файлы из папки frontend/ как статику.
