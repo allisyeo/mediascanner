@@ -1923,13 +1923,13 @@
               <div class="source-icon">TG</div>
               <h3>Telegram</h3>
               <p>Открытые каналы, группы с ботом, мониторинг ключевых слов.</p>
-              <div class="status-line"><span>Статус</span><strong>Подключено</strong></div>
+              <div class="status-line"><span>Статус</span><strong id="telegramSourceCardStatus">Проверка...</strong></div>
             </div>
             <div class="card source-card">
               <div class="source-icon">IG</div>
               <h3>Instagram</h3>
-              <p>Упоминания, комментарии, отметки бизнес/creator-аккаунта.</p>
-              <div class="status-line"><span>Статус</span><strong id="instagramSourceCardStatus">Требует API</strong></div>
+              <p>Парсинг по ключевым словам через Apify.</p>
+              <div class="status-line"><span>Статус</span><strong id="instagramSourceCardStatus">Проверка...</strong></div>
             </div>
             <div class="card source-card">
               <div class="source-icon">TT</div>
@@ -1941,7 +1941,7 @@
               <div class="source-icon">YT</div>
               <h3>YouTube</h3>
               <p>Поиск видео, комментариев, каналов и упоминаний в описаниях.</p>
-              <div class="status-line"><span>Статус</span><strong>Подключено</strong></div>
+              <div class="status-line"><span>Статус</span><strong>Не подключено</strong></div>
             </div>
             <div class="card source-card">
               <div class="source-icon">X</div>
@@ -1953,7 +1953,7 @@
               <div class="source-icon">NW</div>
               <h3>Новости</h3>
               <p>Открытые новостные сайты, RSS и медиа-агрегаторы.</p>
-              <div class="status-line"><span>Статус</span><strong>Подключено</strong></div>
+              <div class="status-line"><span>Статус</span><strong>Не подключено</strong></div>
             </div>
           </div>
         </div>
@@ -2188,7 +2188,7 @@
 
     // Конфиг приложения — DEMO_MODE отключается при подключении backend
     const APP_CONFIG = {
-      DEMO_MODE: true,
+      DEMO_MODE: false,
       API_BASE: "" // например: "https://api.mediascanner.local"
     };
 
@@ -2283,7 +2283,7 @@
       return t.map((row, i) => createMention(i + 1, row[0], row[1], row[2], row[3]));
     }
 
-    let mentions = buildDemoMentions();
+    let mentions = [];
 
     function getPeriodBounds() {
       const now = new Date();
@@ -2890,7 +2890,7 @@
       if (!el) return;
       if (instagramConnected) {
         el.className = "integration-status connected";
-        el.innerHTML = "<span>●</span> Подключено (demo)";
+        el.innerHTML = "<span>●</span> Подключено";
       } else {
         el.className = "integration-status disconnected";
         el.innerHTML = "<span>●</span> Не подключено";
@@ -3432,23 +3432,28 @@
 
     document.getElementById("btnConnectInstagram").addEventListener("click", () => openModal("modalConnectInstagram"));
 
-    document.getElementById("confirmConnectInstagram").addEventListener("click", () => {
-      // TODO: в production — window.location.href = `${APP_CONFIG.API_BASE}/api/instagram/oauth/start`;
-      instagramConnected = true;
-      updateInstagramConnectionUI();
-      const igCard = document.getElementById("instagramSourceCardStatus");
-      if (igCard) igCard.textContent = "Подключено (demo)";
+    document.getElementById("confirmConnectInstagram").addEventListener("click", async () => {
       closeModal("modalConnectInstagram");
-      showToast("Instagram подключён (demo). Token хранится на backend.", "success");
-      addActionLog({ action: "Instagram OAuth", detail: "Подключение выполнено в demo mode" });
+      const igStatus = await apiRequest("/api/apify/status");
+      const igCard = document.getElementById("instagramSourceCardStatus");
+      if (igStatus && igStatus.connected) {
+        instagramConnected = true;
+        updateInstagramConnectionUI();
+        if (igCard) { igCard.textContent = "Подключено (Apify)"; igCard.style.color = "#0f9f6e"; }
+        showToast("Instagram подключён через Apify (" + igStatus.username + ")", "success");
+        addActionLog({ action: "Instagram статус", detail: "Подключено как " + igStatus.username });
+      } else {
+        if (igCard) { igCard.textContent = "Нет токена"; igCard.style.color = "#d92d20"; }
+        showToast("APIFY_TOKEN не настроен на сервере", "error");
+      }
     });
 
-    document.getElementById("btnCheckInstagram").addEventListener("click", () => {
-      // TODO: fetch(`${APP_CONFIG.API_BASE}/api/instagram/status`)
-      if (instagramConnected) {
-        showToast("Соединение активно (demo mode)", "success");
+    document.getElementById("btnCheckInstagram").addEventListener("click", async () => {
+      const igStatus = await apiRequest("/api/apify/status");
+      if (igStatus && igStatus.connected) {
+        showToast("Apify подключён: " + igStatus.username + " (" + igStatus.plan + ")", "success");
       } else {
-        showToast("Instagram не подключён. Нажмите «Подключить Instagram».", "warning");
+        showToast("Instagram не подключён — нет APIFY_TOKEN на сервере", "warning");
       }
     });
 
@@ -3599,7 +3604,6 @@
       // Загрузка сотрудников
       const employeesResult = await apiRequest("/api/employees");
       if (employeesResult && employeesResult.success && Array.isArray(employeesResult.data)) {
-        // Обновляем employee filter
         const select = document.getElementById("filterEmployee");
         if (select) {
           select.innerHTML = `<option value="">Все сотрудники</option>`;
@@ -3611,6 +3615,32 @@
           });
         }
         console.info(`[API] employees: ${employeesResult.data.length} загружено`);
+      }
+
+      // Проверяем реальный статус Instagram (Apify)
+      const igStatus = await apiRequest("/api/apify/status");
+      const igCard = document.getElementById("instagramSourceCardStatus");
+      if (igCard) {
+        if (igStatus && igStatus.connected) {
+          igCard.textContent = "Подключено (Apify)";
+          igCard.style.color = "#0f9f6e";
+        } else {
+          igCard.textContent = "Нет токена";
+          igCard.style.color = "#d92d20";
+        }
+      }
+
+      // Проверяем реальный статус Telegram бота
+      const tgStatus = await apiRequest("/api/telegram/status");
+      const tgCard = document.getElementById("telegramSourceCardStatus");
+      if (tgCard) {
+        if (tgStatus && tgStatus.connected) {
+          tgCard.textContent = "Подключено (бот)";
+          tgCard.style.color = "#0f9f6e";
+        } else {
+          tgCard.textContent = "Нет токена";
+          tgCard.style.color = "#d92d20";
+        }
       }
     }
 
