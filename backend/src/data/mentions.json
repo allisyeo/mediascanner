@@ -1,0 +1,28 @@
+[
+  {
+    "id": "m_1783409876539",
+    "source": "Instagram",
+    "author": "@test_user",
+    "text": "Тест Казахтелеком работает!",
+    "sentiment": "positive",
+    "importance": "medium",
+    "keyword": "Казахтелеком",
+    "status": "Ответ отправлен",
+    "assignedTo": null,
+    "priority": "medium",
+    "slaStatus": "good",
+    "slaMinutes": 60,
+    "instagramSourceType": null,
+    "instagramCommentId": null,
+    "replyHistory": [
+      {
+        "author": "Оператор",
+        "date": "07.07.2026, 12:38:26",
+        "text": "Спасибо за обратную связь! Рады, что всё прошло успешно. Если понадобится помощь — мы всегда на связи.",
+        "status": "sent"
+      }
+    ],
+    "createdAt": "2026-07-07T07:37:56.539Z",
+    "updatedAt": "2026-07-07T07:38:26.445Z"
+  }
+]
