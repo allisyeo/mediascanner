@@ -28,7 +28,7 @@ const SEED = [
     createdAt:    "2024-01-15T09:00:00.000Z",
     lastLogin:    new Date().toISOString(),
     active:       true,
-    passwordHash: "$2b$12$exMp9h6U1y5jNyG.D7G/M.yaRaRjkLl8N5./jJYYy79tQqUB4UgP2"
+    passwordHash: "$2b$12$uofYsWhG1z/TEqgBUZXgie8yHfKP.VYvgUdO.bSHUAR5amAbgIWAm"
   },
   {
     id:           "user_002",
