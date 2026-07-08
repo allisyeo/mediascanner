@@ -108,9 +108,9 @@ router.post("/scan-keywords", async (req, res) => {
     return res.status(503).json({ success: false, message: "APIFY_TOKEN не задан в .env" });
   }
 
-  // Получаем ключевые слова из нашего сервиса
-  const { keywords } = require("../data/demoData");
-  const activeKeywords = keywords.filter(k => k.status === "active" && k.sources.includes("Instagram"));
+  // Получаем ключевые слова из хранилища (включая добавленные через UI)
+  const keywordsStore = require("../data/keywordsStore");
+  const activeKeywords = keywordsStore.getAll({ status: "active" }).filter(k => Array.isArray(k.sources) && k.sources.includes("Instagram"));
 
   if (!activeKeywords.length) {
     return res.json({ success: true, message: "Нет активных ключевых слов для Instagram", data: [] });
