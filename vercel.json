@@ -3,5 +3,19 @@
     { "source": "/api/(.*)", "destination": "/api/index" },
     { "source": "/",         "destination": "/frontend/index.html" },
     { "source": "/(.*)",     "destination": "/frontend/$1" }
+  ],
+  "headers": [
+    {
+      "source": "/(.*)\\.html",
+      "headers": [
+        { "key": "Cache-Control", "value": "no-store, no-cache, must-revalidate" }
+      ]
+    },
+    {
+      "source": "/",
+      "headers": [
+        { "key": "Cache-Control", "value": "no-store, no-cache, must-revalidate" }
+      ]
+    }
   ]
 }
