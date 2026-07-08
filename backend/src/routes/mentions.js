@@ -80,4 +80,12 @@ router.delete("/", (req, res) => {
   res.json({ success: true, message: "Все упоминания удалены" });
 });
 
+// GET /api/mentions/snapshot — экспорт всех упоминаний как JSON-файл (для коммита в git)
+router.get("/snapshot", (req, res) => {
+  const data = store.exportBundle();
+  res.setHeader("Content-Type", "application/json");
+  res.setHeader("Content-Disposition", "attachment; filename=\"mentions.json\"");
+  res.send(JSON.stringify(data, null, 2));
+});
+
 module.exports = router;

@@ -3048,10 +3048,15 @@
       document.getElementById("mentionsCount").textContent = `Показано: ${filtered.length} из ${periodData.length}`;
 
       if (!filtered.length) {
-        const msg = !periodData.length
-          ? "Нет данных за выбранный период"
-          : "Упоминания не найдены. Измените фильтры или поисковый запрос.";
-        tbody.innerHTML = `<tr><td colspan="10" class="empty-state">${msg}</td></tr>`;
+        let msg;
+        if (mentions.length === 0) {
+          msg = `📭 Упоминаний нет. Нажмите <strong>«📸 Сканировать Instagram»</strong> чтобы загрузить реальные данные.`;
+        } else if (!periodData.length) {
+          msg = "Нет данных за выбранный период. Попробуйте расширить период.";
+        } else {
+          msg = "Упоминания не найдены. Измените фильтры или поисковый запрос.";
+        }
+        tbody.innerHTML = `<tr><td colspan="10" class="empty-state" style="padding:32px;text-align:center">${msg}</td></tr>`;
         return;
       }
 

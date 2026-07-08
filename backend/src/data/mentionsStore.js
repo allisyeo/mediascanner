@@ -2,16 +2,39 @@
 const fs   = require("fs");
 const path = require("path");
 
+// На Vercel файловая система read-only кроме /tmp/.
+// Используем bundled mentions.json как постоянную базу (обновляется через git),
+// а /tmp/ — как кэш для текущей сессии (сбрасывается при cold start).
+const BUNDLE_FILE = path.join(__dirname, "mentions.json");
+const TMP_FILE    = "/tmp/kt_mentions.json";
+
 const STORE_FILE = process.env.VERCEL
-  ? "/tmp/kt_mentions.json"
-  : path.join(__dirname, "mentions.json");
+  ? TMP_FILE
+  : BUNDLE_FILE;
 
 let _mentions = [];
 
 function load() {
   try {
-    if (fs.existsSync(STORE_FILE)) {
-      _mentions = JSON.parse(fs.readFileSync(STORE_FILE, "utf8"));
+    if (process.env.VERCEL) {
+      // На Vercel: сначала пробуем /tmp/ (данные текущей сессии)
+      if (fs.existsSync(TMP_FILE)) {
+        _mentions = JSON.parse(fs.readFileSync(TMP_FILE, "utf8"));
+        console.log(`[mentionsStore] Загружено из /tmp/: ${_mentions.length}`);
+        return;
+      }
+      // Если /tmp/ пуст — грузим из bundled файла (закоммиченные данные)
+      if (fs.existsSync(BUNDLE_FILE)) {
+        _mentions = JSON.parse(fs.readFileSync(BUNDLE_FILE, "utf8"));
+        console.log(`[mentionsStore] Загружено из bundle: ${_mentions.length}`);
+        // Копируем в /tmp/ чтобы туда шли новые записи
+        fs.writeFileSync(TMP_FILE, JSON.stringify(_mentions, null, 2), "utf8");
+        return;
+      }
+    } else {
+      if (fs.existsSync(STORE_FILE)) {
+        _mentions = JSON.parse(fs.readFileSync(STORE_FILE, "utf8"));
+      }
     }
   } catch (e) {
     console.error("[mentionsStore] Ошибка чтения:", e.message);
@@ -58,4 +81,7 @@ function clear() {
 
 function count() { return _mentions.length; }
 
-module.exports = { getAll, addMany, update, clear, count };
+// Экспортируем snapshot текущих данных (для обновления bundled файла через endpoint)
+function exportBundle() { return [..._mentions]; }
+
+module.exports = { getAll, addMany, update, clear, count, exportBundle };
