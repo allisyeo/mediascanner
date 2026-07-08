@@ -1738,6 +1738,10 @@
 
       <section class="content">
         <div class="page active" id="dashboard">
+          <div style="margin-bottom:16px;display:flex;gap:10px;flex-wrap:wrap">
+            <button onclick="scanInstagram()" style="background:#e1306c;color:#fff;border:none;padding:12px 20px;border-radius:12px;font-size:14px;font-weight:600;cursor:pointer;display:flex;align-items:center;gap:8px">📸 Сканировать Instagram</button>
+            <span style="color:var(--muted);font-size:13px;align-self:center">Нажмите чтобы загрузить реальные упоминания по ключевым словам</span>
+          </div>
           <div class="grid-kpis" id="dashboardKpis"></div>
 
           <div class="dashboard-grid">
@@ -1814,7 +1818,10 @@
         <div class="page" id="mentions">
           <div class="page-title-row">
             <h2>Упоминания</h2>
-            <span id="mentionsCount" style="color:var(--muted);font-size:13px"></span>
+            <div style="display:flex;gap:8px;align-items:center">
+              <span id="mentionsCount" style="color:var(--muted);font-size:13px"></span>
+              <button onclick="scanInstagram()" style="background:#e1306c;color:#fff;border:none;padding:8px 16px;border-radius:10px;font-size:13px;font-weight:600;cursor:pointer">📸 Сканировать Instagram</button>
+            </div>
           </div>
           <div class="filters">
             <select class="select" id="filterSource">
