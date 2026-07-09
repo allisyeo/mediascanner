@@ -17,8 +17,13 @@ const ACTORS = {
   Facebook:  "apify~facebook-posts-scraper", // требует startUrls, ограниченно
 };
 
+function apifyUrl(path) {
+  const sep = path.includes("?") ? "&" : "?";
+  return `${APIFY_BASE}${path}${sep}token=${APIFY_TOKEN}`;
+}
+
 async function apifyPost(path, body) {
-  const res = await fetch(`${APIFY_BASE}${path}?token=${APIFY_TOKEN}`, {
+  const res = await fetch(apifyUrl(path), {
     method: "POST",
     headers: { "Content-Type": "application/json" },
     body: JSON.stringify(body)
@@ -29,7 +34,7 @@ async function apifyPost(path, body) {
 }
 
 async function apifyGet(path) {
-  const res = await fetch(`${APIFY_BASE}${path}?token=${APIFY_TOKEN}`);
+  const res = await fetch(apifyUrl(path));
   const data = await res.json();
   if (!res.ok) throw new Error(data.error?.message || "Apify API error");
   return data;
