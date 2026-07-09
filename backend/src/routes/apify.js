@@ -52,8 +52,8 @@ function buildActorInput(platform, keyword, limit = 10) {
   switch (platform) {
     case "Instagram":
       return {
-        search: keyword,
-        searchType: keyword.startsWith("#") ? "hashtag" : "hashtag",
+        search: keyword.replace(/^#/, ""),
+        searchType: "hashtag",
         resultsLimit: limit,
         addParentData: false
       };
@@ -157,11 +157,17 @@ async function scanPlatform(platform, keyword, limit = 10) {
     `${APIFY_BASE}/datasets/${finishedRun.defaultDatasetId}/items?token=${APIFY_TOKEN}&limit=${limit}`
   );
   const items = await resultsRes.json();
-  if (Array.isArray(items) && items.length > 0) {
-    console.log(`[Apify] ${platform} raw fields:`, JSON.stringify(Object.keys(items[0])));
-    console.log(`[Apify] ${platform} sample:`, JSON.stringify(items[0]).slice(0, 500));
+  if (!Array.isArray(items) || items.length === 0) return [];
+
+  // Фильтруем ошибки от Apify (error objects вместо реальных данных)
+  const valid = items.filter(i => !i.error && !i.errorDescription);
+  if (valid.length > 0) {
+    console.log(`[Apify] ${platform} fields:`, Object.keys(valid[0]).join(", "));
+  } else {
+    const errItem = items[0];
+    console.warn(`[Apify] ${platform} returned errors:`, errItem.error, errItem.errorDescription);
   }
-  return Array.isArray(items) ? items.map(i => toMention(i, platform, keyword)) : [];
+  return valid.map(i => toMention(i, platform, keyword));
 }
 
 // POST /api/apify/scan-keywords — сканируем все активные ключевые слова по всем платформам

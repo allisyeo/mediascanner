@@ -6,7 +6,7 @@ const path = require("path");
 // Используем bundled mentions.json как постоянную базу (обновляется через git),
 // а /tmp/ — как кэш для текущей сессии (сбрасывается при cold start).
 const BUNDLE_FILE = path.join(__dirname, "mentions.json");
-const TMP_FILE    = "/tmp/kt_mentions.json";
+const TMP_FILE    = "/tmp/kt_mentions_v2.json";
 
 const STORE_FILE = process.env.VERCEL
   ? TMP_FILE
