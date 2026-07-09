@@ -4,7 +4,7 @@ const path = require("path");
 const { keywords: defaultKeywords } = require("./demoData");
 
 const STORE_FILE = process.env.VERCEL
-  ? "/tmp/kt_keywords_v2.json"
+  ? "/tmp/kt_keywords_v3.json"
   : path.join(__dirname, "keywords.json");
 
 let _keywords = [];

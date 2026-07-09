@@ -9,12 +9,12 @@ const APIFY_BASE = "https://api.apify.com/v2";
 // APP_URL нужен для webhook — задайте в Vercel как https://mediascanner.vercel.app
 const APP_URL = (process.env.APP_URL || "").replace(/\/$/, "");
 
+// Только проверенные рабочие акторы
 const ACTORS = {
-  Instagram: "apify~instagram-scraper",
-  Twitter:   "apify~twitter-scraper",
-  TikTok:    "apify~tiktok-scraper",
-  Facebook:  "apify~facebook-posts-scraper",
-  Threads:   "apify~threads-scraper",
+  TikTok:    "clockworks~free-tiktok-scraper",
+  Threads:   "igview-owner~threads-search-scraper",
+  Instagram: "apify~instagram-scraper",      // только хэштег-поиск
+  Facebook:  "apify~facebook-posts-scraper", // требует startUrls, ограниченно
 };
 
 async function apifyPost(path, body) {
@@ -38,16 +38,14 @@ async function apifyGet(path) {
 // Входные параметры актора для каждой платформы
 function buildActorInput(platform, keyword, limit = 10) {
   switch (platform) {
-    case "Instagram":
-      return { search: keyword.replace(/^#/, ""), searchType: "hashtag", resultsLimit: limit, addParentData: false };
-    case "Twitter":
-      return { searchTerms: [keyword], maxItems: limit, queryType: "Latest" };
     case "TikTok":
-      return { keywords: [keyword], resultsPerPage: limit };
-    case "Facebook":
-      return { search: keyword, maxPosts: limit };
+      return { hashtags: [keyword], resultsPerPage: limit };
     case "Threads":
       return { search: keyword, maxItems: limit };
+    case "Instagram":
+      return { search: keyword.replace(/^#/, ""), searchType: "hashtag", resultsLimit: limit, addParentData: false };
+    case "Facebook":
+      return { startUrls: [{ url: `https://www.facebook.com/search/posts/?q=${encodeURIComponent(keyword)}` }], maxPosts: limit };
     default:
       throw new Error(`Неизвестная платформа: ${platform}`);
   }
@@ -74,11 +72,11 @@ function toMention(item, platform, keyword) {
       likesCount = item.likeCount || item.favorite_count || 0;
       break;
     case "TikTok":
-      author = item.authorMeta?.name || item.author?.uniqueId || "unknown";
+      author = item.authorMeta?.nickName || item.authorMeta?.name || item.author?.uniqueId || "unknown";
       text   = item.text || item.description || "";
-      url    = item.webVideoUrl || `https://tiktok.com/@${author}/video/${item.id}`;
+      url    = item.webVideoUrl || (item.authorMeta?.profileUrl && item.id ? `${item.authorMeta.profileUrl}/video/${item.id}` : "");
       date   = item.createTimeISO || date;
-      likesCount = item.diggCount || item.stats?.diggCount || 0;
+      likesCount = item.diggCount || 0;
       break;
     case "Facebook":
       author = item.pageName || item.user?.name || "unknown";
