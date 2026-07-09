@@ -1867,6 +1867,7 @@
                   <th>Источник</th>
                   <th>Автор</th>
                   <th>Текст</th>
+                  <th>Ссылка</th>
                   <th>Тональность</th>
                   <th>Важность</th>
                   <th>Статус</th>
@@ -3066,7 +3067,7 @@
         } else {
           msg = "Упоминания не найдены. Измените фильтры или поисковый запрос.";
         }
-        tbody.innerHTML = `<tr><td colspan="10" class="empty-state" style="padding:32px;text-align:center">${msg}</td></tr>`;
+        tbody.innerHTML = `<tr><td colspan="11" class="empty-state" style="padding:32px;text-align:center">${msg}</td></tr>`;
         return;
       }
 
@@ -3081,6 +3082,7 @@
           </td>
           <td>${m.author}</td>
           <td class="text-cell">${m.text}${m.replyHistory && m.replyHistory.length ? `<br><small style="color:var(--muted)">${m.replyHistory.length} ответ(ов) в истории</small>` : ""}</td>
+          <td>${m.url ? `<a href="${m.url}" target="_blank" rel="noopener" style="color:var(--accent);font-size:12px;white-space:nowrap">🔗 Открыть</a>` : '<span style="color:var(--muted);font-size:12px">—</span>'}</td>
           <td>${sentimentTag(m.sentiment)}</td>
           <td><span class="${importanceClass(m.importance)}">${m.importance}</span></td>
           <td>${statusTag(m.status)}</td>
