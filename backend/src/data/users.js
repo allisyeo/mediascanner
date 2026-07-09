@@ -12,7 +12,7 @@ const fs   = require("fs");
 const path = require("path");
 
 const USERS_FILE = process.env.VERCEL
-  ? "/tmp/kt_users_v2.json"
+  ? "/tmp/kt_users_v3.json"
   : path.join(__dirname, "users.json");
 
 // ─── Начальные данные (используются только если users.json не существует) ──
@@ -28,7 +28,7 @@ const SEED = [
     createdAt:    "2024-01-15T09:00:00.000Z",
     lastLogin:    new Date().toISOString(),
     active:       true,
-    passwordHash: "$2b$12$3FuiCLplP5EVU0.hW41yh.Js5zQoNm8KknUfvAykt13U1.kDKJwEa"
+    passwordHash: "$2b$12$FRr2SUvVQBznaO3i.BW2zuwtiNi0XtNiaOnjNBWKC8xYDUK7xus9O"
   },
   {
     id:           "user_002",
