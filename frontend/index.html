@@ -3829,9 +3829,11 @@
 
     // ─── Сканирование Instagram через Apify ──────────────────────────────────
     async function scanInstagram() {
-      const btn = document.getElementById("btnScanInstagram");
-      btn.disabled = true;
-      btn.textContent = "⏳ Сканирование...";
+      const btns = [
+        document.getElementById("btnScanInstagram"),
+        ...document.querySelectorAll("[onclick='scanInstagram()']")
+      ].filter(Boolean);
+      btns.forEach(b => { b.disabled = true; b.textContent = "⏳ Запуск..."; });
 
       try {
         const res  = await fetch("/api/apify/scan-keywords", {
@@ -3841,38 +3843,61 @@
         });
         const data = await res.json();
 
-        if (!res.ok || !data.success) {
-          throw new Error(data.message || "Ошибка сканирования");
-        }
+        if (!res.ok || !data.success) throw new Error(data.message || "Ошибка сканирования");
 
-        if (data.total === 0) {
-          showToast("Новых упоминаний не найдено", "info");
+        if (!data.started) {
+          showToast("Нет активных ключевых слов для сканирования", "info");
           return;
         }
 
-        data.data.forEach(m => {
-          if (!mentions.find(x => x.id === m.id)) mentions.unshift(adaptMentionFromApi(m));
-        });
-
-        renderMentions();
-        renderStats();
-
-        // Группируем по платформам для уведомления
-        const byPlatform = data.data.reduce((acc, m) => {
-          acc[m.source] = (acc[m.source] || 0) + 1; return acc;
-        }, {});
-        const summary = Object.entries(byPlatform).map(([p, n]) => `${p}: ${n}`).join(", ");
-        showToast(`🔍 Найдено ${data.total} упоминаний — ${summary}`, "success");
+        // Асинхронный режим — поллим результаты пока акторы работают
+        showToast(`⏳ Запущено ${data.started} сканирований. Ожидаем результаты...`, "info");
+        btns.forEach(b => { b.textContent = "⏳ Идёт сканирование..."; });
 
         if (data.errors?.length) {
-          showToast(`⚠️ Ошибки на ${data.errors.length} платформах`, "warning");
+          showToast(`⚠️ Не удалось запустить ${data.errors.length} задач`, "warning");
         }
+
+        // Поллинг: каждые 8 сек проверяем /api/mentions на новые записи
+        const countBefore = mentions.length;
+        let polls = 0;
+        const maxPolls = 22; // ~3 минуты
+        const pollInterval = setInterval(async () => {
+          polls++;
+          try {
+            const mr = await apiRequest("/api/mentions");
+            if (mr && mr.success && Array.isArray(mr.data)) {
+              const fresh = mr.data.filter(m => !mentions.find(x => x.id === m.id));
+              if (fresh.length > 0) {
+                fresh.forEach(m => mentions.unshift(adaptMentionFromApi(m)));
+                renderMentions();
+                renderStats();
+                const byPlat = fresh.reduce((a, m) => { a[m.source] = (a[m.source]||0)+1; return a; }, {});
+                const sum = Object.entries(byPlat).map(([p,n]) => `${p}: ${n}`).join(", ");
+                showToast(`✅ Получено +${fresh.length} упоминаний — ${sum}`, "success");
+              }
+              btns.forEach(b => { b.textContent = `⏳ Опрос... (${polls}/${maxPolls})`; });
+            }
+          } catch (_) {}
+
+          if (polls >= maxPolls) {
+            clearInterval(pollInterval);
+            const added = mentions.length - countBefore;
+            btns.forEach(b => { b.disabled = false; b.textContent = "🔍 Сканировать все платформы"; });
+            if (added === 0) showToast("Новых упоминаний не найдено — попробуйте позже", "info");
+            else showToast(`✅ Сканирование завершено. Всего добавлено: ${added}`, "success");
+          }
+        }, 8000);
+
+        // Через 3 минуты принудительно разблокируем кнопку
+        setTimeout(() => {
+          clearInterval(pollInterval);
+          btns.forEach(b => { b.disabled = false; b.textContent = "🔍 Сканировать все платформы"; });
+        }, 185000);
 
       } catch (err) {
         showToast("Ошибка: " + err.message, "error");
-      } finally {
-        btn.disabled = false;
-        btn.textContent = "🔍 Сканировать все платформы";
+        btns.forEach(b => { b.disabled = false; b.textContent = "🔍 Сканировать все платформы"; });
       }
     }
 
