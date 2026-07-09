@@ -94,11 +94,17 @@ function toMention(item, platform, keyword) {
 
   switch (platform) {
     case "Instagram":
-      author = item.ownerUsername || item.username || "unknown";
-      text   = item.caption || item.text || "";
-      url    = item.url || `https://instagram.com/p/${item.shortCode}`;
-      date   = item.timestamp || item.takenAt || date;
-      likesCount = item.likesCount || 0;
+      author = item.ownerUsername || item.username || item.owner?.username
+             || item.user?.username || item.authorUsername || "unknown";
+      text   = item.caption || item.text || item.description
+             || item.edge_media_to_caption?.edges?.[0]?.node?.text || "";
+      url    = item.url || item.postUrl
+             || (item.shortCode ? `https://instagram.com/p/${item.shortCode}` : "")
+             || (item.id ? `https://instagram.com/p/${item.id}` : "");
+      date   = item.timestamp || item.takenAt || item.taken_at_timestamp
+             || item.createdAt || date;
+      likesCount = item.likesCount || item.like_count
+                 || item.edge_media_preview_like?.count || 0;
       break;
     case "Twitter":
       author = item.author?.userName || item.user?.screen_name || "unknown";
@@ -151,6 +157,10 @@ async function scanPlatform(platform, keyword, limit = 10) {
     `${APIFY_BASE}/datasets/${finishedRun.defaultDatasetId}/items?token=${APIFY_TOKEN}&limit=${limit}`
   );
   const items = await resultsRes.json();
+  if (Array.isArray(items) && items.length > 0) {
+    console.log(`[Apify] ${platform} raw fields:`, JSON.stringify(Object.keys(items[0])));
+    console.log(`[Apify] ${platform} sample:`, JSON.stringify(items[0]).slice(0, 500));
+  }
   return Array.isArray(items) ? items.map(i => toMention(i, platform, keyword)) : [];
 }
 
