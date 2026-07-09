@@ -4,7 +4,10 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>KT MediaScanner — Interface Mockup</title>
+  <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate" />
+  <meta http-equiv="Pragma" content="no-cache" />
+  <meta http-equiv="Expires" content="0" />
+  <title>KT MediaScanner v2</title>
   <style>
     :root {
       --bg: #f5f7fb;
@@ -150,6 +153,174 @@
       border-radius: 12px;
       font-weight: 700;
       cursor: pointer;
+    }
+
+    /* ── Профиль пользователя в сайдбаре ── */
+    .user-profile-wrap {
+      margin-top: 8px;
+      position: relative;
+    }
+
+    .user-profile-btn {
+      margin-top: 0;
+      display: flex;
+      align-items: center;
+      gap: 11px;
+      padding: 12px 14px;
+      border-radius: 16px;
+      background: rgba(255, 255, 255, 0.07);
+      border: 1px solid rgba(255, 255, 255, 0.1);
+      cursor: pointer;
+      transition: background 0.15s;
+      text-align: left;
+      width: 100%;
+      color: #fff;
+      position: relative;
+    }
+
+    .user-profile-btn:hover {
+      background: rgba(255, 255, 255, 0.13);
+    }
+
+    .user-avatar {
+      width: 38px;
+      height: 38px;
+      border-radius: 12px;
+      background: linear-gradient(135deg, #3b82f6, #8b5cf6);
+      display: grid;
+      place-items: center;
+      font-weight: 800;
+      font-size: 14px;
+      color: #fff;
+      flex-shrink: 0;
+    }
+
+    .user-info {
+      flex: 1;
+      min-width: 0;
+    }
+
+    .user-info-name {
+      font-size: 13px;
+      font-weight: 700;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      color: #f1f5f9;
+    }
+
+    .user-info-role {
+      font-size: 11px;
+      color: #94a3b8;
+      margin-top: 2px;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+
+    .user-chevron {
+      font-size: 12px;
+      color: #64748b;
+      flex-shrink: 0;
+    }
+
+    /* ── Попап профиля ── */
+    .user-popup {
+      display: none;
+      position: absolute;
+      bottom: calc(100% + 10px);
+      left: 0;
+      right: 0;
+      background: #1e293b;
+      border: 1px solid #334155;
+      border-radius: 18px;
+      box-shadow: 0 24px 60px rgba(0, 0, 0, 0.5);
+      z-index: 50;
+      overflow: hidden;
+    }
+
+    .user-popup.open { display: block; }
+
+    .user-popup-head {
+      padding: 18px 18px 14px;
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      border-bottom: 1px solid #334155;
+    }
+
+    .user-popup-avatar {
+      width: 48px;
+      height: 48px;
+      border-radius: 14px;
+      background: linear-gradient(135deg, #3b82f6, #8b5cf6);
+      display: grid;
+      place-items: center;
+      font-weight: 800;
+      font-size: 18px;
+      color: #fff;
+      flex-shrink: 0;
+    }
+
+    .user-popup-name {
+      font-size: 15px;
+      font-weight: 750;
+      color: #f1f5f9;
+      letter-spacing: -0.02em;
+    }
+
+    .user-popup-status {
+      font-size: 12px;
+      color: #94a3b8;
+      margin-top: 2px;
+    }
+
+    .user-popup-fields {
+      padding: 14px 18px;
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+    }
+
+    .user-popup-field {
+      display: flex;
+      flex-direction: column;
+      gap: 2px;
+    }
+
+    .user-popup-field-label {
+      font-size: 10px;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      color: #475569;
+    }
+
+    .user-popup-field-value {
+      font-size: 13px;
+      color: #cbd5e1;
+    }
+
+    .user-popup-logout {
+      margin: 0 12px 12px;
+      width: calc(100% - 24px);
+      padding: 11px 14px;
+      border: 1px solid rgba(248, 113, 113, 0.25);
+      border-radius: 12px;
+      background: rgba(248, 113, 113, 0.08);
+      color: #f87171;
+      font-size: 13px;
+      font-weight: 700;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      transition: background 0.15s;
+      font-family: inherit;
+    }
+
+    .user-popup-logout:hover {
+      background: rgba(248, 113, 113, 0.16);
     }
 
     .main {
@@ -1493,6 +1664,42 @@
         <p>AI-агент сейчас работает в режиме согласования: ответы не отправляются без подтверждения.</p>
         <button class="upgrade">Настроить агента</button>
       </div>
+
+      <!-- Профиль пользователя + попап -->
+      <div class="user-profile-wrap">
+        <!-- Всплывающий попап профиля -->
+        <div class="user-popup" id="userPopup">
+          <div class="user-popup-head">
+            <div class="user-popup-avatar" id="popupAvatar">?</div>
+            <div>
+              <div class="user-popup-name" id="popupName">—</div>
+              <div class="user-popup-status" id="popupStatus">—</div>
+            </div>
+          </div>
+          <div class="user-popup-fields">
+            <div class="user-popup-field">
+              <div class="user-popup-field-label">Телефон</div>
+              <div class="user-popup-field-value" id="popupPhone">—</div>
+            </div>
+            <div class="user-popup-field">
+              <div class="user-popup-field-label">Email</div>
+              <div class="user-popup-field-value" id="popupEmail">—</div>
+            </div>
+          </div>
+          <button class="user-popup-logout" onclick="logoutUser()">
+            <span>⎋</span> Выйти из аккаунта
+          </button>
+        </div>
+
+        <div class="user-profile-btn" id="userProfileBtn" onclick="toggleUserPopup()" role="button" tabindex="0">
+          <div class="user-avatar" id="sidebarUserAvatar">?</div>
+          <div class="user-info nav-text">
+            <div class="user-info-name" id="sidebarUserName">Загрузка...</div>
+            <div class="user-info-role" id="sidebarUserRole">—</div>
+          </div>
+          <span class="user-chevron nav-text">▲</span>
+        </div>
+      </div>
     </aside>
 
     <main class="main">
@@ -1504,6 +1711,7 @@
         <div class="top-actions">
           <input class="search" id="globalSearch" placeholder="Поиск по тексту упоминания..." />
           <button class="btn secondary" id="btnExport">Экспорт</button>
+          <button class="btn" id="btnScanInstagram" style="background:#e1306c;color:#fff;border:none" title="Поиск упоминаний в Instagram по ключевым словам">📸 Сканировать Instagram</button>
           <button class="btn" id="btnNewProject">+ Новый проект</button>
         </div>
       </header>
@@ -1533,6 +1741,10 @@
 
       <section class="content">
         <div class="page active" id="dashboard">
+          <div style="margin-bottom:16px;display:flex;gap:10px;flex-wrap:wrap">
+            <button onclick="scanInstagram()" style="background:#e1306c;color:#fff;border:none;padding:12px 20px;border-radius:12px;font-size:14px;font-weight:600;cursor:pointer;display:flex;align-items:center;gap:8px">📸 Сканировать Instagram</button>
+            <span style="color:var(--muted);font-size:13px;align-self:center">Нажмите чтобы загрузить реальные упоминания по ключевым словам</span>
+          </div>
           <div class="grid-kpis" id="dashboardKpis"></div>
 
           <div class="dashboard-grid">
@@ -1609,7 +1821,10 @@
         <div class="page" id="mentions">
           <div class="page-title-row">
             <h2>Упоминания</h2>
-            <span id="mentionsCount" style="color:var(--muted);font-size:13px"></span>
+            <div style="display:flex;gap:8px;align-items:center">
+              <span id="mentionsCount" style="color:var(--muted);font-size:13px"></span>
+              <button onclick="scanInstagram()" style="background:#e1306c;color:#fff;border:none;padding:8px 16px;border-radius:10px;font-size:13px;font-weight:600;cursor:pointer">📸 Сканировать Instagram</button>
+            </div>
           </div>
           <div class="filters">
             <select class="select" id="filterSource">
@@ -1718,13 +1933,13 @@
               <div class="source-icon">TG</div>
               <h3>Telegram</h3>
               <p>Открытые каналы, группы с ботом, мониторинг ключевых слов.</p>
-              <div class="status-line"><span>Статус</span><strong>Подключено</strong></div>
+              <div class="status-line"><span>Статус</span><strong id="telegramSourceCardStatus">Проверка...</strong></div>
             </div>
             <div class="card source-card">
               <div class="source-icon">IG</div>
               <h3>Instagram</h3>
-              <p>Упоминания, комментарии, отметки бизнес/creator-аккаунта.</p>
-              <div class="status-line"><span>Статус</span><strong id="instagramSourceCardStatus">Требует API</strong></div>
+              <p>Парсинг по ключевым словам через Apify.</p>
+              <div class="status-line"><span>Статус</span><strong id="instagramSourceCardStatus">Проверка...</strong></div>
             </div>
             <div class="card source-card">
               <div class="source-icon">TT</div>
@@ -1736,7 +1951,7 @@
               <div class="source-icon">YT</div>
               <h3>YouTube</h3>
               <p>Поиск видео, комментариев, каналов и упоминаний в описаниях.</p>
-              <div class="status-line"><span>Статус</span><strong>Подключено</strong></div>
+              <div class="status-line"><span>Статус</span><strong>Не подключено</strong></div>
             </div>
             <div class="card source-card">
               <div class="source-icon">X</div>
@@ -1748,7 +1963,7 @@
               <div class="source-icon">NW</div>
               <h3>Новости</h3>
               <p>Открытые новостные сайты, RSS и медиа-агрегаторы.</p>
-              <div class="status-line"><span>Статус</span><strong>Подключено</strong></div>
+              <div class="status-line"><span>Статус</span><strong>Не подключено</strong></div>
             </div>
           </div>
         </div>
@@ -1806,6 +2021,7 @@
               <button class="btn secondary" data-open-report>Открыть</button>
             </div>
           </div>
+
         </div>
       </section>
     </main>
@@ -1958,7 +2174,7 @@
         </p>
         <div class="modal-actions">
           <button class="btn secondary" data-close="modalConnectInstagram">Отмена</button>
-          <button class="btn" id="confirmConnectInstagram">Подключить (demo)</button>
+          <button class="btn" id="confirmConnectInstagram">Проверить подключение</button>
         </div>
       </div>
     </div>
@@ -1982,7 +2198,7 @@
 
     // Конфиг приложения — DEMO_MODE отключается при подключении backend
     const APP_CONFIG = {
-      DEMO_MODE: true,
+      DEMO_MODE: false,
       API_BASE: "" // например: "https://api.mediascanner.local"
     };
 
@@ -2077,7 +2293,7 @@
       return t.map((row, i) => createMention(i + 1, row[0], row[1], row[2], row[3]));
     }
 
-    let mentions = buildDemoMentions();
+    let mentions = [];
 
     function getPeriodBounds() {
       const now = new Date();
@@ -2442,6 +2658,11 @@
       resetKeywordForm();
       closeModal("modalAddKeyword");
       showToast("Ключевое слово добавлено", "success");
+
+      apiRequest("/api/keywords", {
+        method: "POST",
+        body: JSON.stringify({ keyword: text, type: keyword.type, sources, status: keyword.active ? "active" : "inactive" })
+      });
     }
 
     function toggleKeyword(id) {
@@ -2452,6 +2673,7 @@
       renderKeywords();
       populateKeywordFilter();
       showToast(kw.active ? "Ключевое слово активировано" : "Ключевое слово отключено", "success");
+      apiRequest(`/api/keywords/${id}`, { method: "PATCH", body: JSON.stringify({ status: kw.active ? "active" : "inactive" }) });
     }
 
     function deleteKeyword(id) {
@@ -2460,37 +2682,11 @@
       renderKeywords();
       populateKeywordFilter();
       showToast("Ключевое слово удалено", "success");
+      apiRequest(`/api/keywords/${id}`, { method: "DELETE" });
     }
 
-    /**
-     * Отправка ответа в Instagram через backend API.
-     * Access token хранится только на сервере — frontend передаёт payload без секретов.
-     */
-    async function sendInstagramReply(payload) {
-      // TODO: replace demo mode with backend API call
-      // const response = await fetch(`${APP_CONFIG.API_BASE}/api/instagram/reply`, {
-      //   method: "POST",
-      //   headers: { "Content-Type": "application/json" },
-      //   body: JSON.stringify(payload)
-      // });
-      // if (!response.ok) {
-      //   const err = await response.json().catch(() => ({}));
-      //   throw new Error(err.message || "Instagram reply failed");
-      // }
-      // return response.json();
-
-      if (APP_CONFIG.DEMO_MODE) {
-        await new Promise(resolve => setTimeout(resolve, 500));
-        return {
-          success: true,
-          mode: "demo",
-          messageId: "demo_ig_" + Date.now(),
-          payload
-        };
-      }
-
-      throw new Error("Backend API не настроен");
-    }
+    // sendInstagramReply() определена ниже в блоке Backend API Integration.
+    // Она использует /api/instagram/reply и падает gracefully на demo при недоступности backend.
 
     function isInstagramMention(mention) {
       return mention.source === "Instagram" && mention.instagramSourceType;
@@ -2686,17 +2882,21 @@
     }
 
     function handleGenericSend(mentionId) {
-      const mention = mentions.find(m => m.id === mentionId);
+      const mention = mentions.find(m => String(m.id) === String(mentionId));
       if (!mention) return;
       const text = document.getElementById("replyModalText").value;
       if (!validateReplyText(text)) return;
 
+      const newStatus = isInstagramMention(mention) ? "Ответ отправлен" : "Обработан";
       mentionDrafts[mentionId] = text.trim();
-      appendReplyHistory(mention, text.trim(), APP_CONFIG.DEMO_MODE ? "demo_sent" : "sent");
-      mention.status = isInstagramMention(mention) ? "Ответ отправлен" : "Обработан";
+      appendReplyHistory(mention, text.trim(), "sent");
+      mention.status = newStatus;
       const wasOverdue = mention.slaMinutes < 0;
       mention.slaMinutes = 0;
       updateEmployeeSla(mention.employee, wasOverdue);
+
+      apiRequest(`/api/mentions/${mentionId}/status`, { method: "PATCH", body: JSON.stringify({ status: newStatus }) });
+      apiRequest(`/api/mentions/${mentionId}/reply`, { method: "POST", body: JSON.stringify({ author: "Оператор", text: text.trim() }) });
 
       addActionLog({ action: "Ответ сохранён", detail: `${mention.source} · ${mention.author}` });
       showToast("Ответ отправлен", "success");
@@ -2711,7 +2911,7 @@
       if (!el) return;
       if (instagramConnected) {
         el.className = "integration-status connected";
-        el.innerHTML = "<span>●</span> Подключено (demo)";
+        el.innerHTML = "<span>●</span> Подключено";
       } else {
         el.className = "integration-status disconnected";
         el.innerHTML = "<span>●</span> Не подключено";
@@ -2858,10 +3058,15 @@
       document.getElementById("mentionsCount").textContent = `Показано: ${filtered.length} из ${periodData.length}`;
 
       if (!filtered.length) {
-        const msg = !periodData.length
-          ? "Нет данных за выбранный период"
-          : "Упоминания не найдены. Измените фильтры или поисковый запрос.";
-        tbody.innerHTML = `<tr><td colspan="10" class="empty-state">${msg}</td></tr>`;
+        let msg;
+        if (mentions.length === 0) {
+          msg = `📭 Упоминаний нет. Нажмите <strong>«📸 Сканировать Instagram»</strong> чтобы загрузить реальные данные.`;
+        } else if (!periodData.length) {
+          msg = "Нет данных за выбранный период. Попробуйте расширить период.";
+        } else {
+          msg = "Упоминания не найдены. Измените фильтры или поисковый запрос.";
+        }
+        tbody.innerHTML = `<tr><td colspan="10" class="empty-state" style="padding:32px;text-align:center">${msg}</td></tr>`;
         return;
       }
 
@@ -3039,8 +3244,10 @@
     });
 
     document.getElementById("btnExport").addEventListener("click", () => {
-      showToast("Отчёт сформирован", "success");
+      exportMentionsCSV();
     });
+
+    document.getElementById("btnScanInstagram").addEventListener("click", () => scanInstagram());
 
     document.getElementById("btnNewProject").addEventListener("click", () => openModal("modalNewProject"));
     document.getElementById("btnAddKeyword").addEventListener("click", () => {
@@ -3113,8 +3320,8 @@
     document.getElementById("agentQueue").addEventListener("click", e => {
       const btn = e.target.closest("[data-action]");
       if (!btn) return;
-      const id = parseInt(btn.dataset.id);
-      const mention = mentions.find(m => m.id === id);
+      const id = btn.dataset.id;
+      const mention = mentions.find(m => String(m.id) === String(id));
       if (!mention) return;
 
       if (!agentReplies[id]) agentReplies[id] = { text: "", editing: false };
@@ -3135,6 +3342,7 @@
           mention.status = "Обработан";
           mention.slaMinutes = 0;
           delete agentReplies[id];
+          apiRequest(`/api/mentions/${id}/status`, { method: "PATCH", body: JSON.stringify({ status: "Обработан" }) });
           showToast("Ответ отправлен", "success");
           renderAll();
           break;
@@ -3168,7 +3376,7 @@
     document.getElementById("modalReport").addEventListener("click", e => {
       if (e.target.dataset.action === "export-report") {
         closeModal("modalReport");
-        showToast("Отчёт сформирован", "success");
+        exportMentionsCSV();
       }
     });
 
@@ -3177,8 +3385,8 @@
       if (!btn) return;
       e.stopPropagation();
 
-      const id = parseInt(btn.dataset.id);
-      const mention = mentions.find(m => m.id === id);
+      const id = btn.dataset.id;
+      const mention = mentions.find(m => String(m.id) === String(id));
       if (!mention) return;
 
       switch (btn.dataset.mentionAction) {
@@ -3251,23 +3459,28 @@
 
     document.getElementById("btnConnectInstagram").addEventListener("click", () => openModal("modalConnectInstagram"));
 
-    document.getElementById("confirmConnectInstagram").addEventListener("click", () => {
-      // TODO: в production — window.location.href = `${APP_CONFIG.API_BASE}/api/instagram/oauth/start`;
-      instagramConnected = true;
-      updateInstagramConnectionUI();
-      const igCard = document.getElementById("instagramSourceCardStatus");
-      if (igCard) igCard.textContent = "Подключено (demo)";
+    document.getElementById("confirmConnectInstagram").addEventListener("click", async () => {
       closeModal("modalConnectInstagram");
-      showToast("Instagram подключён (demo). Token хранится на backend.", "success");
-      addActionLog({ action: "Instagram OAuth", detail: "Подключение выполнено в demo mode" });
+      const igStatus = await apiRequest("/api/apify/status");
+      const igCard = document.getElementById("instagramSourceCardStatus");
+      if (igStatus && igStatus.connected) {
+        instagramConnected = true;
+        updateInstagramConnectionUI();
+        if (igCard) { igCard.textContent = "Подключено (Apify)"; igCard.style.color = "#0f9f6e"; }
+        showToast("Instagram подключён через Apify (" + igStatus.username + ")", "success");
+        addActionLog({ action: "Instagram статус", detail: "Подключено как " + igStatus.username });
+      } else {
+        if (igCard) { igCard.textContent = "Нет токена"; igCard.style.color = "#d92d20"; }
+        showToast("APIFY_TOKEN не настроен на сервере", "error");
+      }
     });
 
-    document.getElementById("btnCheckInstagram").addEventListener("click", () => {
-      // TODO: fetch(`${APP_CONFIG.API_BASE}/api/instagram/status`)
-      if (instagramConnected) {
-        showToast("Соединение активно (demo mode)", "success");
+    document.getElementById("btnCheckInstagram").addEventListener("click", async () => {
+      const igStatus = await apiRequest("/api/apify/status");
+      if (igStatus && igStatus.connected) {
+        showToast("Apify подключён: " + igStatus.username + " (" + igStatus.plan + ")", "success");
       } else {
-        showToast("Instagram не подключён. Нажмите «Подключить Instagram».", "warning");
+        showToast("Instagram не подключён — нет APIFY_TOKEN на сервере", "warning");
       }
     });
 
@@ -3290,14 +3503,388 @@
 
     document.querySelector(".upgrade")?.addEventListener("click", () => showToast("Настройки агента открыты", "info"));
 
-    initAgentReplies();
-    loadKeywords();
-    populateEmployeeFilter();
-    populateKeywordFilter();
-    updateInstagramConnectionUI();
-    updatePeriodLabel();
-    updatePeriodBarVisibility("dashboard");
-    renderAll();
+    // ─── Backend API Integration ────────────────────────────────────────────
+    // Если backend недоступен — все функции ниже возвращают null
+    // и интерфейс продолжает работу на demo-данных из index.html.
+
+    const API_BASE = ""; // Пустая строка = тот же хост (localhost:3000 в dev, VPS-домен в prod)
+
+    /**
+     * Универсальная обёртка для API-запросов.
+     * credentials:"include" — обязательно для передачи httpOnly cookie.
+     * При 401 — редирект на страницу входа.
+     * При любой другой ошибке — возвращает null (UI не ломается).
+     */
+    async function apiRequest(url, options = {}) {
+      try {
+        const response = await fetch(API_BASE + url, {
+          credentials: "include",
+          headers: { "Content-Type": "application/json" },
+          ...options
+        });
+
+        if (response.status === 401) {
+          // Сессия истекла или не авторизован — на страницу входа
+          window.location.href = "/login.html";
+          return null;
+        }
+
+        if (!response.ok) {
+          throw new Error(`API error: ${response.status} ${response.statusText}`);
+        }
+        return await response.json();
+      } catch (error) {
+        console.warn("[API fallback]", url, "→", error.message);
+        return null;
+      }
+    }
+
+    /**
+     * Проверяет доступность backend.
+     * Возвращает true если сервер ответил на /api/health.
+     */
+    async function checkBackendHealth() {
+      const result = await apiRequest("/api/health");
+      return result && result.status === "ok";
+    }
+
+    /**
+     * Адаптер: преобразует упоминание из формата backend в формат frontend.
+     * Backend использует sentiment: "negative" / "positive" / "neutral",
+     * frontend ожидает "Негатив" / "Позитив" / "Нейтрально".
+     */
+    function adaptMentionFromApi(m) {
+      const sentimentMap = { negative: "Негатив", positive: "Позитив", neutral: "Нейтрально" };
+      const importanceMap = { high: "Высокая", medium: "Средняя", low: "Низкая" };
+      const published = new Date(m.createdAt || m.publishedAt || new Date());
+      const slaMin    = typeof m.slaMinutes === "number" ? m.slaMinutes : 60;
+      return {
+        id:                  m.id,
+        publishedAt:         published.toISOString(),
+        createdAt:           published.toISOString(),
+        updatedAt:           published.toISOString(),
+        slaDeadline:         new Date(published.getTime() + 60 * 60000).toISOString(),
+        repliedAt:           m.repliedAt || null,
+        date:                formatRuDateTime(published),
+        source:              m.source,
+        author:              m.author,
+        text:                m.text,
+        sentiment:           sentimentMap[m.sentiment] || m.sentiment || "Нейтрально",
+        importance:          importanceMap[m.importance] || m.importance || "Средняя",
+        status:              m.status || "Новый",
+        employee:            m.assignedTo || m.employee || "",
+        slaMinutes:          slaMin,
+        instagramSourceType: m.instagramSourceType || null,
+        instagramCommentId:  m.instagramCommentId  || null,
+        replyHistory:        Array.isArray(m.replyHistory) ? m.replyHistory : []
+      };
+    }
+
+    /**
+     * Адаптер: преобразует ключевое слово из формата backend в формат frontend.
+     */
+    function adaptKeywordFromApi(k) {
+      return {
+        id:               k.id,
+        text:             k.keyword || k.text,
+        type:             k.type || "бренд",
+        sources:          Array.isArray(k.sources) ? k.sources : ["Telegram"],
+        active:           k.status !== "inactive",
+        baselineMentions: 0,
+        baselineNegative: 0,
+        secondaryLabel:   "негатив"
+      };
+    }
+
+    /**
+     * Загружает данные с backend.
+     * Если backend недоступен или возвращает ошибку — оставляет demo-данные без изменений.
+     */
+    async function initFromApi() {
+      const isBackendUp = await checkBackendHealth();
+
+      if (!isBackendUp) {
+        console.info("[KT MediaScanner] Backend недоступен — работаем на demo-данных.");
+        return;
+      }
+
+      console.info("[KT MediaScanner] Backend доступен — загружаем данные из API.");
+      showToast("Подключено к backend API", "success");
+
+      // Загрузка упоминаний
+      const mentionsResult = await apiRequest("/api/mentions");
+      if (mentionsResult && mentionsResult.success && Array.isArray(mentionsResult.data)) {
+        mentions = mentionsResult.data.map(adaptMentionFromApi);
+        console.info(`[API] mentions: ${mentions.length} загружено`);
+        if (mentions.length === 0) {
+          showToast("Упоминаний нет — нажмите «📸 Сканировать Instagram» для загрузки", "info");
+        }
+      }
+
+      // Загрузка ключевых слов (приоритет — API, иначе localStorage)
+      const keywordsResult = await apiRequest("/api/keywords");
+      if (keywordsResult && keywordsResult.success && Array.isArray(keywordsResult.data)) {
+        keywords = keywordsResult.data.map(adaptKeywordFromApi);
+        console.info(`[API] keywords: ${keywords.length} загружено`);
+      }
+
+      // Загрузка сотрудников
+      const employeesResult = await apiRequest("/api/employees");
+      if (employeesResult && employeesResult.success && Array.isArray(employeesResult.data)) {
+        const select = document.getElementById("filterEmployee");
+        if (select) {
+          select.innerHTML = `<option value="">Все сотрудники</option>`;
+          employeesResult.data.forEach(e => {
+            const opt = document.createElement("option");
+            opt.value = e.name;
+            opt.textContent = e.name;
+            select.appendChild(opt);
+          });
+        }
+        console.info(`[API] employees: ${employeesResult.data.length} загружено`);
+      }
+
+      // Проверяем реальный статус Instagram (Apify)
+      const igStatus = await apiRequest("/api/apify/status");
+      const igCard = document.getElementById("instagramSourceCardStatus");
+      if (igCard) {
+        if (igStatus && igStatus.connected) {
+          igCard.textContent = "Подключено (Apify)";
+          igCard.style.color = "#0f9f6e";
+        } else {
+          igCard.textContent = "Нет токена";
+          igCard.style.color = "#d92d20";
+        }
+      }
+
+      // Проверяем реальный статус Telegram бота
+      const tgStatus = await apiRequest("/api/telegram/status");
+      const tgCard = document.getElementById("telegramSourceCardStatus");
+      if (tgCard) {
+        if (tgStatus && (tgStatus.connected || tgStatus.botConnected)) {
+          tgCard.textContent = "Подключено (бот)";
+          tgCard.style.color = "#0f9f6e";
+        } else {
+          tgCard.textContent = "Нет токена";
+          tgCard.style.color = "#d92d20";
+        }
+      }
+    }
+
+    /**
+     * Переопределяем sendInstagramReply — теперь использует backend /api/instagram/reply.
+     * Если backend недоступен — падает gracefully с тем же demo-ответом что и раньше.
+     */
+    async function sendInstagramReply(payload) {
+      const result = await apiRequest("/api/instagram/reply", {
+        method: "POST",
+        body: JSON.stringify(payload)
+      });
+
+      if (result && result.success) {
+        return result; // backend ответил успешно (demo или real)
+      }
+
+      // Fallback: backend недоступен — имитируем локально
+      if (APP_CONFIG.DEMO_MODE) {
+        await new Promise(resolve => setTimeout(resolve, 400));
+        return {
+          success:   true,
+          mode:      "demo_local",
+          messageId: "demo_local_ig_" + Date.now(),
+          payload
+        };
+      }
+
+      throw new Error("Backend API недоступен и DEMO_MODE отключён");
+    }
+
+    /**
+     * Отправляет Telegram-уведомление через backend.
+     * Используется при назначении упоминания сотруднику.
+     */
+    async function sendTelegramNotification(payload) {
+      const result = await apiRequest("/api/telegram/send-notification", {
+        method: "POST",
+        body: JSON.stringify(payload)
+      });
+      if (result && result.success) {
+        console.info("[Telegram]", result.message);
+      }
+    }
+
+    // ─── Авторизация ─────────────────────────────────────────────────────────
+    // Скрываем приложение до проверки — показываем только после подтверждения сессии.
+    document.querySelector(".app").style.visibility = "hidden";
+
+    (async function initAuth() {
+      try {
+        const res = await fetch("/api/auth/me", {
+          credentials: "include",
+          headers: { "Content-Type": "application/json" }
+        });
+
+        if (!res.ok) {
+          // Не авторизован — на страницу входа
+          window.location.href = "/login.html";
+          return;
+        }
+
+        const data = await res.json();
+        if (!data.success) {
+          window.location.href = "/login.html";
+          return;
+        }
+
+        // Авторизован — показываем приложение
+        document.querySelector(".app").style.visibility = "visible";
+        console.info("[KT MediaScanner] Авторизован как:", data.user.name);
+        fillUserProfile(data.user);
+
+        // ─── Инициализация приложения ───────────────────────────────────────
+        // Сначала рендерим с demo-данными (мгновенно),
+        // затем пробуем загрузить с backend и перерендериваем.
+        initAgentReplies();
+        loadKeywords();
+        populateEmployeeFilter();
+        populateKeywordFilter();
+        updateInstagramConnectionUI();
+        updatePeriodLabel();
+        updatePeriodBarVisibility("dashboard");
+        renderAll();
+
+        // Асинхронная загрузка данных с backend
+        initFromApi().then(() => {
+          renderAll();
+          initAgentReplies();
+          populateKeywordFilter();
+        });
+
+      } catch {
+        // Backend недоступен — работаем на demo-данных без авторизации
+        console.warn("[KT MediaScanner] Backend недоступен — demo-режим без авторизации.");
+        document.querySelector(".app").style.visibility = "visible";
+        initAgentReplies();
+        loadKeywords();
+        populateEmployeeFilter();
+        populateKeywordFilter();
+        updateInstagramConnectionUI();
+        updatePeriodLabel();
+        updatePeriodBarVisibility("dashboard");
+        renderAll();
+      }
+    })();
+
+    // ─── Профиль пользователя в сайдбаре ─────────────────────────────────────
+    function fillUserProfile(user) {
+      const initials = (user.name || "?").split(" ").map(w => w[0]).join("").slice(0, 2).toUpperCase();
+      document.getElementById("sidebarUserAvatar").textContent = initials;
+      document.getElementById("sidebarUserName").textContent   = user.name || user.username;
+      document.getElementById("sidebarUserRole").textContent   = user.status || user.role || "—";
+      document.getElementById("popupAvatar").textContent       = initials;
+      document.getElementById("popupName").textContent         = user.name || user.username;
+      document.getElementById("popupStatus").textContent       = user.status || user.role || "—";
+      document.getElementById("popupPhone").textContent        = user.phone || "—";
+      document.getElementById("popupEmail").textContent        = user.email || "—";
+    }
+
+    function toggleUserPopup() {
+      document.getElementById("userPopup").classList.toggle("open");
+    }
+
+    // Закрыть попап при клике вне обёртки
+    document.addEventListener("click", (e) => {
+      const wrap = document.getElementById("userProfileBtn")?.closest(".user-profile-wrap");
+      if (wrap && !wrap.contains(e.target)) {
+        document.getElementById("userPopup").classList.remove("open");
+      }
+    });
+
+    // ─── Сканирование Instagram через Apify ──────────────────────────────────
+    async function scanInstagram() {
+      const btn = document.getElementById("btnScanInstagram");
+      btn.disabled = true;
+      btn.textContent = "⏳ Сканирование...";
+
+      try {
+        const res  = await fetch("/api/apify/scan-keywords", {
+          method: "POST",
+          credentials: "include",
+          headers: { "Content-Type": "application/json" }
+        });
+        const data = await res.json();
+
+        if (!res.ok || !data.success) {
+          throw new Error(data.message || "Ошибка сканирования");
+        }
+
+        if (data.total === 0) {
+          showToast("Instagram: новых упоминаний не найдено", "info");
+          return;
+        }
+
+        // Добавляем найденные упоминания в общий список
+        data.data.forEach(m => {
+          if (!mentions.find(x => x.id === m.id)) {
+            mentions.unshift(m);
+          }
+        });
+
+        renderMentions();
+        renderStats();
+        showToast(`📸 Instagram: найдено ${data.total} упоминаний`, "success");
+
+      } catch (err) {
+        showToast("Ошибка: " + err.message, "error");
+      } finally {
+        btn.disabled = false;
+        btn.textContent = "📸 Сканировать Instagram";
+      }
+    }
+
+    // ─── Кнопка «Выйти» ──────────────────────────────────────────────────────
+    function exportMentionsCSV() {
+      const rows = [
+        ["ID", "Источник", "Сотрудник", "Тональность", "Статус", "Ключевое слово", "Текст", "Дата"]
+      ];
+      const list = getFilteredMentions();
+      list.forEach(m => {
+        rows.push([
+          m.id,
+          m.source      || "",
+          m.employee    || "",
+          m.sentiment   || "",
+          m.status      || "",
+          m.keyword     || "",
+          (m.text || "").replace(/"/g, '""'),
+          m.date        || ""
+        ]);
+      });
+      const csv = rows.map(r => r.map(v => `"${v}"`).join(";")).join("\r\n");
+      const bom  = "﻿"; // BOM для корректного открытия в Excel
+      const blob = new Blob([bom + csv], { type: "text/csv;charset=utf-8;" });
+      const url  = URL.createObjectURL(blob);
+      const a    = document.createElement("a");
+      const date = new Date().toISOString().slice(0, 10);
+      a.href     = url;
+      a.download = `mediascanner_mentions_${date}.csv`;
+      a.click();
+      URL.revokeObjectURL(url);
+      showToast(`Экспортировано ${list.length} упоминаний`, "success");
+    }
+
+    async function logoutUser() {
+      try {
+        await fetch("/api/auth/logout", {
+          method:      "POST",
+          credentials: "include",
+          headers:     { "Content-Type": "application/json" }
+        });
+      } catch {
+        // игнорируем ошибку сети — всё равно редиректим
+      }
+      window.location.href = "/login.html";
+    }
   </script>
 </body>
 </html>
