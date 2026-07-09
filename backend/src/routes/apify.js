@@ -142,12 +142,10 @@ router.post("/scan-keywords", async (req, res) => {
   const started = [];
   const errors  = [];
 
-  const webhookUrl = APP_URL ? `${APP_URL}/api/apify/webhook` : null;
-
-  // Собираем все задачи и запускаем ПАРАЛЛЕЛЬНО
+  // Собираем все задачи и запускаем ПАРАЛЛЕЛЬНО (без вебхуков — фронтенд сам поллит статус)
   const tasks = [];
   for (const kw of activeKeywords) {
-    const sources   = Array.isArray(kw.sources) ? kw.sources : ["Twitter"];
+    const sources   = Array.isArray(kw.sources) ? kw.sources : ["TikTok"];
     const platforms = filterPlatforms ? sources.filter(s => filterPlatforms.includes(s)) : sources;
     for (const platform of platforms) {
       if (!ACTORS[platform]) continue;
@@ -155,28 +153,10 @@ router.post("/scan-keywords", async (req, res) => {
     }
   }
 
-  const runOpts = webhookUrl ? `?webhooks=${encodeURIComponent(JSON.stringify([{
-    eventTypes: ["ACTOR.RUN.SUCCEEDED", "ACTOR.RUN.FAILED"],
-    requestUrl: webhookUrl,
-    payloadTemplate: JSON.stringify({
-      eventType: "{{eventType}}",
-      runId: "{{runId}}",
-      datasetId: "{{defaultDatasetId}}",
-      platform: "{{actorId}}",  // будет переопределено ниже через customData
-    })
-  }]))}` : "";
-
   await Promise.all(tasks.map(async ({ keyword, platform }) => {
     try {
       const input = buildActorInput(platform, keyword, 10);
-      const webhooksParam = webhookUrl
-        ? `?webhooks=${encodeURIComponent(JSON.stringify([{
-            eventTypes: ["ACTOR.RUN.SUCCEEDED"],
-            requestUrl: webhookUrl,
-            payloadTemplate: `{"eventType":"{{eventType}}","runId":"{{runId}}","datasetId":"{{defaultDatasetId}}","platform":${JSON.stringify(platform)},"keyword":${JSON.stringify(keyword)}}`
-          }]))}`
-        : "";
-      const { data: run } = await apifyPost(`/acts/${ACTORS[platform]}/runs${webhooksParam}`, input);
+      const { data: run } = await apifyPost(`/acts/${ACTORS[platform]}/runs`, input);
       started.push({ runId: run.id, platform, keyword, datasetId: run.defaultDatasetId });
       console.log(`[Apify] Запущен ${platform} "${keyword}" runId=${run.id}`);
     } catch (err) {
