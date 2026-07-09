@@ -3570,7 +3570,7 @@
     function adaptMentionFromApi(m) {
       const sentimentMap = { negative: "Негатив", positive: "Позитив", neutral: "Нейтрально" };
       const importanceMap = { high: "Высокая", medium: "Средняя", low: "Низкая" };
-      const published = new Date(m.createdAt || m.publishedAt || new Date());
+      const published = new Date(m.date || m.createdAt || m.publishedAt || new Date());
       const slaMin    = typeof m.slaMinutes === "number" ? m.slaMinutes : 60;
       return {
         id:                  m.id,
@@ -3588,6 +3588,11 @@
         status:              m.status || "Новый",
         employee:            m.assignedTo || m.employee || "",
         slaMinutes:          slaMin,
+        url:                 m.url || "",
+        keyword:             m.keyword || "",
+        likesCount:          m.likesCount || 0,
+        commentsCount:       m.commentsCount || 0,
+        imageUrl:            m.imageUrl || null,
         instagramSourceType: m.instagramSourceType || null,
         instagramCommentId:  m.instagramCommentId  || null,
         replyHistory:        Array.isArray(m.replyHistory) ? m.replyHistory : []
@@ -3846,7 +3851,7 @@
         }
 
         data.data.forEach(m => {
-          if (!mentions.find(x => x.id === m.id)) mentions.unshift(m);
+          if (!mentions.find(x => x.id === m.id)) mentions.unshift(adaptMentionFromApi(m));
         });
 
         renderMentions();
