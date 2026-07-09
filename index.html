@@ -1711,7 +1711,7 @@
         <div class="top-actions">
           <input class="search" id="globalSearch" placeholder="Поиск по тексту упоминания..." />
           <button class="btn secondary" id="btnExport">Экспорт</button>
-          <button class="btn" id="btnScanInstagram" style="background:#e1306c;color:#fff;border:none" title="Поиск упоминаний в Instagram по ключевым словам">📸 Сканировать Instagram</button>
+          <button class="btn" id="btnScanInstagram" style="background:#e1306c;color:#fff;border:none" title="Поиск упоминаний по всем платформам">🔍 Сканировать все платформы</button>
           <button class="btn" id="btnNewProject">+ Новый проект</button>
         </div>
       </header>
@@ -1742,7 +1742,7 @@
       <section class="content">
         <div class="page active" id="dashboard">
           <div style="margin-bottom:16px;display:flex;gap:10px;flex-wrap:wrap">
-            <button onclick="scanInstagram()" style="background:#e1306c;color:#fff;border:none;padding:12px 20px;border-radius:12px;font-size:14px;font-weight:600;cursor:pointer;display:flex;align-items:center;gap:8px">📸 Сканировать Instagram</button>
+            <button onclick="scanInstagram()" style="background:#e1306c;color:#fff;border:none;padding:12px 20px;border-radius:12px;font-size:14px;font-weight:600;cursor:pointer;display:flex;align-items:center;gap:8px">🔍 Сканировать все платформы</button>
             <span style="color:var(--muted);font-size:13px;align-self:center">Нажмите чтобы загрузить реальные упоминания по ключевым словам</span>
           </div>
           <div class="grid-kpis" id="dashboardKpis"></div>
@@ -1823,7 +1823,7 @@
             <h2>Упоминания</h2>
             <div style="display:flex;gap:8px;align-items:center">
               <span id="mentionsCount" style="color:var(--muted);font-size:13px"></span>
-              <button onclick="scanInstagram()" style="background:#e1306c;color:#fff;border:none;padding:8px 16px;border-radius:10px;font-size:13px;font-weight:600;cursor:pointer">📸 Сканировать Instagram</button>
+              <button onclick="scanInstagram()" style="background:#e1306c;color:#fff;border:none;padding:8px 16px;border-radius:10px;font-size:13px;font-weight:600;cursor:pointer">🔍 Сканировать все платформы</button>
             </div>
           </div>
           <div class="filters">
@@ -2463,7 +2463,7 @@
     function renderSourceList(containerId, data) {
       const el = document.getElementById(containerId);
       if (!el) return;
-      const sources = ["Telegram", "Instagram", "TikTok", "YouTube", "X/Twitter", "Новости"];
+      const sources = ["Instagram", "Twitter", "TikTok", "Facebook", "Threads", "Telegram", "YouTube", "Новости"];
       if (!data.length) {
         el.innerHTML = `<div class="empty-state" style="padding:20px">Нет данных за выбранный период</div>`;
         return;
@@ -3060,7 +3060,7 @@
       if (!filtered.length) {
         let msg;
         if (mentions.length === 0) {
-          msg = `📭 Упоминаний нет. Нажмите <strong>«📸 Сканировать Instagram»</strong> чтобы загрузить реальные данные.`;
+          msg = `📭 Упоминаний нет. Нажмите <strong>«🔍 Сканировать все платформы»</strong> чтобы загрузить реальные данные.`;
         } else if (!periodData.length) {
           msg = "Нет данных за выбранный период. Попробуйте расширить период.";
         } else {
@@ -3617,7 +3617,7 @@
         mentions = mentionsResult.data.map(adaptMentionFromApi);
         console.info(`[API] mentions: ${mentions.length} загружено`);
         if (mentions.length === 0) {
-          showToast("Упоминаний нет — нажмите «📸 Сканировать Instagram» для загрузки", "info");
+          showToast("Упоминаний нет — нажмите «🔍 Сканировать все платформы» для загрузки", "info");
         }
       }
 
@@ -3819,26 +3819,33 @@
         }
 
         if (data.total === 0) {
-          showToast("Instagram: новых упоминаний не найдено", "info");
+          showToast("Новых упоминаний не найдено", "info");
           return;
         }
 
-        // Добавляем найденные упоминания в общий список
         data.data.forEach(m => {
-          if (!mentions.find(x => x.id === m.id)) {
-            mentions.unshift(m);
-          }
+          if (!mentions.find(x => x.id === m.id)) mentions.unshift(m);
         });
 
         renderMentions();
         renderStats();
-        showToast(`📸 Instagram: найдено ${data.total} упоминаний`, "success");
+
+        // Группируем по платформам для уведомления
+        const byPlatform = data.data.reduce((acc, m) => {
+          acc[m.source] = (acc[m.source] || 0) + 1; return acc;
+        }, {});
+        const summary = Object.entries(byPlatform).map(([p, n]) => `${p}: ${n}`).join(", ");
+        showToast(`🔍 Найдено ${data.total} упоминаний — ${summary}`, "success");
+
+        if (data.errors?.length) {
+          showToast(`⚠️ Ошибки на ${data.errors.length} платформах`, "warning");
+        }
 
       } catch (err) {
         showToast("Ошибка: " + err.message, "error");
       } finally {
         btn.disabled = false;
-        btn.textContent = "📸 Сканировать Instagram";
+        btn.textContent = "🔍 Сканировать все платформы";
       }
     }
 
