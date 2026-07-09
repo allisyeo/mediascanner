@@ -139,41 +139,48 @@ router.post("/scan-keywords", async (req, res) => {
   const started = [];
   const errors  = [];
 
-  // Webhook URL — если APP_URL не задан, пробуем без webhook (для локальной разработки)
   const webhookUrl = APP_URL ? `${APP_URL}/api/apify/webhook` : null;
 
+  // Собираем все задачи и запускаем ПАРАЛЛЕЛЬНО
+  const tasks = [];
   for (const kw of activeKeywords) {
     const sources   = Array.isArray(kw.sources) ? kw.sources : ["Twitter"];
     const platforms = filterPlatforms ? sources.filter(s => filterPlatforms.includes(s)) : sources;
-
     for (const platform of platforms) {
       if (!ACTORS[platform]) continue;
-      try {
-        const input = buildActorInput(platform, kw.keyword, 10);
-        const body  = { ...input };
-
-        // Добавляем webhook если знаем публичный URL
-        const runOpts = webhookUrl ? `?webhooks=${encodeURIComponent(JSON.stringify([{
-          eventTypes: ["ACTOR.RUN.SUCCEEDED", "ACTOR.RUN.FAILED"],
-          requestUrl: webhookUrl,
-          payloadTemplate: JSON.stringify({
-            eventType: "{{eventType}}",
-            runId: "{{runId}}",
-            datasetId: "{{defaultDatasetId}}",
-            platform,
-            keyword: kw.keyword
-          })
-        }]))}` : "";
-
-        const { data: run } = await apifyPost(`/acts/${ACTORS[platform]}/runs${runOpts}`, body);
-        started.push({ runId: run.id, platform, keyword: kw.keyword, datasetId: run.defaultDatasetId });
-        console.log(`[Apify] Запущен ${platform} "${kw.keyword}" runId=${run.id}`);
-      } catch (err) {
-        errors.push({ platform, keyword: kw.keyword, error: err.message });
-        console.error(`[Apify] Ошибка запуска ${platform} "${kw.keyword}":`, err.message);
-      }
+      tasks.push({ keyword: kw.keyword, platform });
     }
   }
+
+  const runOpts = webhookUrl ? `?webhooks=${encodeURIComponent(JSON.stringify([{
+    eventTypes: ["ACTOR.RUN.SUCCEEDED", "ACTOR.RUN.FAILED"],
+    requestUrl: webhookUrl,
+    payloadTemplate: JSON.stringify({
+      eventType: "{{eventType}}",
+      runId: "{{runId}}",
+      datasetId: "{{defaultDatasetId}}",
+      platform: "{{actorId}}",  // будет переопределено ниже через customData
+    })
+  }]))}` : "";
+
+  await Promise.all(tasks.map(async ({ keyword, platform }) => {
+    try {
+      const input = buildActorInput(platform, keyword, 10);
+      const webhooksParam = webhookUrl
+        ? `?webhooks=${encodeURIComponent(JSON.stringify([{
+            eventTypes: ["ACTOR.RUN.SUCCEEDED"],
+            requestUrl: webhookUrl,
+            payloadTemplate: `{"eventType":"{{eventType}}","runId":"{{runId}}","datasetId":"{{defaultDatasetId}}","platform":${JSON.stringify(platform)},"keyword":${JSON.stringify(keyword)}}`
+          }]))}`
+        : "";
+      const { data: run } = await apifyPost(`/acts/${ACTORS[platform]}/runs${webhooksParam}`, input);
+      started.push({ runId: run.id, platform, keyword, datasetId: run.defaultDatasetId });
+      console.log(`[Apify] Запущен ${platform} "${keyword}" runId=${run.id}`);
+    } catch (err) {
+      errors.push({ platform, keyword, error: err.message });
+      console.error(`[Apify] Ошибка запуска ${platform} "${keyword}":`, err.message);
+    }
+  }));
 
   res.json({
     success: true,
