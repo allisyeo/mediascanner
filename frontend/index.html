@@ -3834,89 +3834,98 @@
         ...document.querySelectorAll("[onclick='scanInstagram()']")
       ].filter(Boolean);
       const resetBtns = () => btns.forEach(b => { b.disabled = false; b.textContent = "🔍 Сканировать все платформы"; });
-      btns.forEach(b => { b.disabled = true; b.textContent = "⏳ Запуск..."; });
+      btns.forEach(b => { b.disabled = true; b.textContent = "⏳ Получаем ключевые слова..."; });
 
       try {
-        // ШАГ 1: Запускаем все Apify акторы параллельно (быстро, ~3 сек)
-        const startRes = await fetch("/api/apify/scan-keywords", {
-          method: "POST", credentials: "include",
-          headers: { "Content-Type": "application/json" }
-        });
-        const startData = await startRes.json();
-        if (!startRes.ok || !startData.success) throw new Error(startData.message || "Ошибка запуска");
-        if (!startData.started) { showToast("Нет активных ключевых слов", "info"); resetBtns(); return; }
+        // ШАГ 1: Получаем активные ключевые слова
+        const kwRes = await apiRequest("/api/keywords");
+        if (!kwRes?.success) throw new Error("Ошибка загрузки ключевых слов");
 
-        const runs = startData.runs || []; // [{ runId, platform, keyword, datasetId }]
-        showToast(`⏳ Запущено ${startData.started} задач (TikTok + Threads). Ждём результаты...`, "info");
-        btns.forEach(b => { b.textContent = `⏳ Ждём ${runs.length} задач...`; });
-
-        // ШАГ 2: Ждём завершения ранов через polling Apify статуса
-        const pending   = new Set(runs.map(r => r.runId));
-        const completed = [];
-        let  elapsed    = 0;
-        const maxWait   = 180; // секунд
-
-        while (pending.size > 0 && elapsed < maxWait) {
-          await new Promise(r => setTimeout(r, 8000));
-          elapsed += 8;
-          btns.forEach(b => { b.textContent = `⏳ Ждём (${elapsed}с)... завершено ${runs.length - pending.size}/${runs.length}`; });
-
-          await Promise.all([...pending].map(async runId => {
-            try {
-              const sr = await fetch(`/api/apify/runs/${runId}`, { credentials: "include" });
-              if (!sr.ok) return;
-              const sd = await sr.json();
-              if (sd.status === "SUCCEEDED" || sd.status === "FAILED") {
-                pending.delete(runId);
-                if (sd.status === "SUCCEEDED") {
-                  const run = runs.find(r => r.runId === runId);
-                  completed.push({ ...run, datasetId: sd.datasetId || run.datasetId });
-                }
-              }
-            } catch (_) {}
-          }));
-        }
-
-        if (completed.length === 0) {
-          showToast("Акторы не завершились за 3 минуты. Попробуйте позже.", "warning");
-          resetBtns(); return;
-        }
-
-        btns.forEach(b => { b.textContent = "⏳ Загружаем результаты..."; });
-
-        // ШАГ 3: Собираем данные напрямую из Apify через /api/apify/collect
-        const collectRes = await fetch("/api/apify/collect", {
-          method: "POST", credentials: "include",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({ runs: completed })
-        });
-        const collectData = await collectRes.json();
-
-        if (!collectData.success) throw new Error(collectData.message || "Ошибка сбора данных");
-
-        // ШАГ 4: Данные пришли прямо в ответе — добавляем в список и рендерим
-        const newMentions = Array.isArray(collectData.data) ? collectData.data : [];
-        let added = 0;
-        newMentions.forEach(m => {
-          if (!mentions.find(x => x.id === m.id)) {
-            mentions.unshift(adaptMentionFromApi(m));
-            added++;
+        // Строим список задач: каждое ключевое слово × каждая платформа
+        const APIFY_PLATFORMS = ["TikTok", "Threads", "Instagram", "Facebook"];
+        const tasks = [];
+        for (const kw of kwRes.data) {
+          if (kw.status === "inactive") continue;
+          const sources = Array.isArray(kw.sources) ? kw.sources : [];
+          for (const platform of sources) {
+            if (APIFY_PLATFORMS.includes(platform)) {
+              tasks.push({ keyword: kw.keyword || kw.text, platform });
+            }
           }
-        });
-
-        renderMentions();
-        renderStats();
-
-        if (added > 0) {
-          const byPlat = newMentions.reduce((a, m) => { a[m.source] = (a[m.source]||0)+1; return a; }, {});
-          const sum = Object.entries(byPlat).map(([p,n]) => `${p}: ${n}`).join(", ");
-          showToast(`✅ Загружено ${added} упоминаний — ${sum}`, "success");
-        } else {
-          showToast("Новых упоминаний не найдено по ключевым словам", "info");
         }
+
+        if (!tasks.length) { showToast("Нет ключевых слов с активными Apify-платформами", "info"); resetBtns(); return; }
+
+        showToast(`⏳ Запускаем ${tasks.length} задач по очереди...`, "info");
+        let totalAdded = 0;
+
+        // ШАГ 2: Запускаем задачи по одной (каждый запрос ~1-2 сек, не вызывает timeout)
+        for (let i = 0; i < tasks.length; i++) {
+          const task = tasks[i];
+          btns.forEach(b => { b.textContent = `⏳ ${i+1}/${tasks.length}: ${task.platform} "${task.keyword}"...`; });
+
+          try {
+            // Запускаем один актор
+            const startRes = await fetch("/api/apify/search", {
+              method: "POST", credentials: "include",
+              headers: { "Content-Type": "application/json" },
+              body: JSON.stringify({ keyword: task.keyword, platform: task.platform, limit: 10 })
+            });
+            const startData = await startRes.json();
+            if (!startData.success || !startData.runId) {
+              console.warn(`[scan] Не удалось запустить ${task.platform} "${task.keyword}":`, startData.message);
+              continue;
+            }
+
+            const runId     = startData.runId;
+            const datasetId = startData.datasetId;
+
+            // Поллим статус (каждые 8 сек, макс 3 мин)
+            let collected = false;
+            for (let attempt = 0; attempt < 23; attempt++) {
+              await new Promise(r => setTimeout(r, 8000));
+              btns.forEach(b => { b.textContent = `⏳ ${i+1}/${tasks.length} ждём ${task.platform}... (${(attempt+1)*8}с)`; });
+
+              const statusRes = await fetch(`/api/apify/runs/${runId}`, { credentials: "include" });
+              const statusData = await statusRes.json();
+
+              if (statusData.status === "SUCCEEDED") {
+                // Собираем данные
+                const collectRes = await fetch("/api/apify/collect", {
+                  method: "POST", credentials: "include",
+                  headers: { "Content-Type": "application/json" },
+                  body: JSON.stringify({ runs: [{ runId, platform: task.platform, keyword: task.keyword, datasetId: statusData.datasetId || datasetId }] })
+                });
+                const collectData = await collectRes.json();
+                const newItems = Array.isArray(collectData.data) ? collectData.data : [];
+                let added = 0;
+                newItems.forEach(m => {
+                  if (!mentions.find(x => x.id === m.id)) { mentions.unshift(adaptMentionFromApi(m)); added++; }
+                });
+                if (added > 0) {
+                  totalAdded += added;
+                  renderMentions(); renderStats();
+                  showToast(`✅ ${task.platform} "${task.keyword}": +${added} упоминаний`, "success");
+                }
+                collected = true;
+                break;
+              } else if (statusData.status === "FAILED" || statusData.status === "ABORTED") {
+                console.warn(`[scan] ${task.platform} "${task.keyword}" failed`);
+                break;
+              }
+            }
+            if (!collected) console.warn(`[scan] Timeout: ${task.platform} "${task.keyword}"`);
+
+          } catch (taskErr) {
+            console.error(`[scan] Ошибка задачи ${task.platform} "${task.keyword}":`, taskErr.message);
+          }
+        }
+
+        if (totalAdded === 0) showToast("Новых упоминаний не найдено", "info");
+        else showToast(`✅ Сканирование завершено. Всего добавлено: ${totalAdded}`, "success");
 
       } catch (err) {
-        showToast("Ошибка сканирования: " + err.message, "error");
+        showToast("Ошибка: " + err.message, "error");
         console.error("[scan]", err);
       } finally {
         resetBtns();
