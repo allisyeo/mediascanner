@@ -10,9 +10,9 @@ const employees = [
 
 // ─── Ключевые слова ────────────────────────────────────────────────────────
 const keywords = [
-  { id: "kw_1", keyword: "Казахтелеком",         type: "brand",      status: "active", sources: ["Instagram", "Telegram", "Новости"], createdAt: "2026-01-10T09:00:00.000Z" },
-  { id: "kw_2", keyword: "интернет не работает", type: "problem",    status: "active", sources: ["Instagram", "Telegram"],            createdAt: "2026-01-12T10:30:00.000Z" },
-  { id: "kw_3", keyword: "мусин",                type: "person",     status: "active", sources: ["Instagram", "Новости"],             createdAt: "2026-03-01T09:00:00.000Z" }
+  { id: "kw_1", keyword: "Казахтелеком",         type: "brand",      status: "active", sources: ["Twitter", "TikTok", "Facebook", "Threads", "Telegram"], createdAt: "2026-01-10T09:00:00.000Z" },
+  { id: "kw_2", keyword: "интернет не работает", type: "problem",    status: "active", sources: ["Twitter", "TikTok", "Facebook", "Threads", "Telegram"], createdAt: "2026-01-12T10:30:00.000Z" },
+  { id: "kw_3", keyword: "мусин",                type: "person",     status: "active", sources: ["Twitter", "TikTok", "Facebook", "Threads"],             createdAt: "2026-03-01T09:00:00.000Z" }
 ];
 
 // ─── SLA по сотрудникам ────────────────────────────────────────────────────
