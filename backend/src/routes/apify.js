@@ -227,7 +227,7 @@ router.get("/runs/:runId", async (req, res) => {
   }
 });
 
-// POST /api/apify/collect — фронтенд явно запрашивает результаты по runIds
+// POST /api/apify/collect — забирает результаты завершённых ранов и возвращает упоминания напрямую
 router.post("/collect", async (req, res) => {
   if (!APIFY_TOKEN) return res.status(503).json({ success: false, message: "APIFY_TOKEN не задан" });
 
@@ -236,12 +236,11 @@ router.post("/collect", async (req, res) => {
     return res.status(400).json({ success: false, message: "runs обязателен" });
   }
 
-  let totalAdded = 0;
-  const results  = [];
+  const allMentions = [];
+  const results     = [];
 
   for (const run of runs) {
     try {
-      // Проверяем статус если datasetId не передан
       let datasetId = run.datasetId;
       if (!datasetId) {
         const { data } = await apifyGet(`/actor-runs/${run.runId}`);
@@ -251,15 +250,23 @@ router.post("/collect", async (req, res) => {
         }
         datasetId = data.defaultDatasetId;
       }
-      const added = await fetchAndSaveDataset(datasetId, run.platform, run.keyword, 10);
-      totalAdded += added;
+      // Забираем сырые items и конвертируем в упоминания
+      const rawRes = await fetch(`${APIFY_BASE}/datasets/${datasetId}/items?token=${APIFY_TOKEN}&limit=10`);
+      const items  = await rawRes.json();
+      if (!Array.isArray(items)) { results.push({ ...run, status: "EMPTY", added: 0 }); continue; }
+
+      const valid    = items.filter(i => !i.error && !i.errorDescription && !i.noResults);
+      const mentions = valid.map(i => toMention(i, run.platform, run.keyword));
+      const added    = mentionsStore.addMany(mentions);
+      allMentions.push(...mentions);
       results.push({ ...run, status: "SUCCEEDED", added });
     } catch (err) {
       results.push({ ...run, status: "ERROR", error: err.message, added: 0 });
     }
   }
 
-  res.json({ success: true, totalAdded, results });
+  // Возвращаем упоминания прямо в ответе — фронтенд рендерит без polling /api/mentions
+  res.json({ success: true, totalAdded: allMentions.length, data: allMentions, results });
 });
 
 // POST /api/apify/search — поиск по одному ключевому слову АСИНХРОННО
