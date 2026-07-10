@@ -2505,7 +2505,43 @@
     let activeReplyMentionId = null;
     let instagramConnected = false;
 
-    const KEYWORDS_STORAGE_KEY = "kt_mediascanner_keywords";
+    const KEYWORDS_STORAGE_KEY  = "kt_mediascanner_keywords";
+    const MENTIONS_STORAGE_KEY  = "kt_mediascanner_mentions_v2";
+
+    // ─── Сохранение/загрузка упоминаний в localStorage ───────────────────────
+    function saveMentionsLocal() {
+      try {
+        localStorage.setItem(MENTIONS_STORAGE_KEY, JSON.stringify(mentions));
+        console.info(`[localStorage] Сохранено ${mentions.length} упоминаний`);
+      } catch (e) {
+        console.warn("[localStorage] Не удалось сохранить mentions:", e.message);
+      }
+    }
+
+    function loadMentionsLocal() {
+      try {
+        const raw = localStorage.getItem(MENTIONS_STORAGE_KEY);
+        if (!raw) return [];
+        const data = JSON.parse(raw);
+        console.info(`[localStorage] Восстановлено ${data.length} упоминаний из localStorage`);
+        return Array.isArray(data) ? data : [];
+      } catch (e) {
+        return [];
+      }
+    }
+
+    function mergeMentionsFromLocal() {
+      const local = loadMentionsLocal();
+      if (!local.length) return;
+      let added = 0;
+      local.forEach(m => {
+        if (!mentions.find(x => x.id === m.id)) { mentions.push(m); added++; }
+      });
+      if (added > 0) {
+        mentions.sort((a, b) => new Date(b.publishedAt || b.createdAt) - new Date(a.publishedAt || a.createdAt));
+        console.info(`[localStorage] Добавлено ${added} упоминаний из кэша`);
+      }
+    }
 
     function getDefaultKeywords() {
       return [
@@ -3630,14 +3666,16 @@
       console.info("[KT MediaScanner] Backend доступен — загружаем данные из API.");
       showToast("Подключено к backend API", "success");
 
-      // Загрузка упоминаний
+      // Загрузка упоминаний из API
       const mentionsResult = await apiRequest("/api/mentions");
       if (mentionsResult && mentionsResult.success && Array.isArray(mentionsResult.data)) {
         mentions = mentionsResult.data.map(adaptMentionFromApi);
         console.info(`[API] mentions: ${mentions.length} загружено`);
-        if (mentions.length === 0) {
-          showToast("Упоминаний нет — нажмите «🔍 Сканировать все платформы» для загрузки", "info");
-        }
+      }
+      // Восстанавливаем из localStorage (данные предыдущих сканов)
+      mergeMentionsFromLocal();
+      if (mentions.length === 0) {
+        showToast("Упоминаний нет — нажмите «🔍 Сканировать все платформы» для загрузки", "info");
       }
 
       // Загрузка ключевых слов (приоритет — API, иначе localStorage)
@@ -3922,7 +3960,10 @@
         }
 
         if (totalAdded === 0) showToast("Новых упоминаний не найдено", "info");
-        else showToast(`✅ Сканирование завершено. Всего добавлено: ${totalAdded}`, "success");
+        else {
+          showToast(`✅ Сканирование завершено. Всего добавлено: ${totalAdded}`, "success");
+          saveMentionsLocal();
+        }
 
       } catch (err) {
         showToast("Ошибка: " + err.message, "error");
@@ -3935,19 +3976,22 @@
     // ─── Кнопка «Выйти» ──────────────────────────────────────────────────────
     function exportMentionsCSV() {
       const rows = [
-        ["ID", "Источник", "Сотрудник", "Тональность", "Статус", "Ключевое слово", "Текст", "Дата"]
+        ["ID", "Источник", "Автор", "Ссылка", "Сотрудник", "Тональность", "Статус", "Ключевое слово", "Текст", "Лайки", "Дата"]
       ];
       const list = getFilteredMentions();
       list.forEach(m => {
         rows.push([
           m.id,
-          m.source      || "",
-          m.employee    || "",
-          m.sentiment   || "",
-          m.status      || "",
-          m.keyword     || "",
+          m.source        || "",
+          m.author        || "",
+          m.url           || "",
+          m.employee      || "",
+          m.sentiment     || "",
+          m.status        || "",
+          m.keyword       || "",
           (m.text || "").replace(/"/g, '""'),
-          m.date        || ""
+          m.likesCount    || 0,
+          m.date          || ""
         ]);
       });
       const csv = rows.map(r => r.map(v => `"${v}"`).join(";")).join("\r\n");
