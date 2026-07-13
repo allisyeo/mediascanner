@@ -3816,6 +3816,8 @@
         updateInstagramConnectionUI();
         updatePeriodLabel();
         updatePeriodBarVisibility("dashboard");
+        // Мгновенно восстанавливаем сохранённые упоминания из localStorage
+        mergeMentionsFromLocal();
         renderAll();
 
         // Асинхронная загрузка данных с backend
@@ -3943,6 +3945,7 @@
                 if (added > 0) {
                   totalAdded += added;
                   renderMentions(); renderStats();
+                  saveMentionsLocal(); // сохраняем сразу после каждой задачи
                   showToast(`✅ ${task.platform} "${task.keyword}": +${added} упоминаний`, "success");
                 }
                 collected = true;
